@@ -26,13 +26,13 @@ public class FeedbackService {
         User user = userRepository.findById(reqFeedback.getUserId())
                 .orElse(null);
         if (user == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("User topilmadi"));
+            return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
 
         Barbershop barbershop = barbershopRepository.findById(reqFeedback.getBarbershopId())
                 .orElse(null);
         if (barbershop == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop topilmadi"));
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
         if (reqFeedback.getComment() == null || reqFeedback.getComment().trim().isEmpty()) {

@@ -22,7 +22,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
-
     public ApiResponse login(AuthLogin authLogin)
     {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber());

@@ -31,19 +31,19 @@ public class FavoriteService {
     public ApiResponse addFavorite(ReqFavorite reqFavorite) {
         Optional<User> userOptional = userRepository.findById(reqFavorite.getUserId());
         if (userOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("User not found"));
+            return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
         User user = userOptional.get();
 
         Optional<User> barberOptional = userRepository.findById(reqFavorite.getBarberId());
         if (barberOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barber not found"));
+            return new ApiResponse(ResponseError.NOTFOUND("Barber"));
         }
         User barber = barberOptional.get();
 
         Optional<Barbershop> barbershopOptional = barbershopRepository.findById(reqFavorite.getBarbershopId());
         if (barbershopOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop not found"));
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
         Barbershop barbershop = barbershopOptional.get();
 
@@ -68,7 +68,7 @@ public class FavoriteService {
     public ApiResponse getById(Long id) {
         Optional<Favourite> favouriteOptional = favoriteRepository.findById(id);
         if (favouriteOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Favorite not found"));
+            return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
         Favourite favourite = favouriteOptional.get();
 

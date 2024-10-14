@@ -48,10 +48,8 @@ public class User implements UserDetails {
 
     private Integer activationCode;
 
-
     @OneToOne
     private File file;
-
 
     private boolean accountNonExpired;
 
