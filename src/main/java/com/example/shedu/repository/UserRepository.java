@@ -36,4 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> findAllByRole(UserRole role, PageRequest pageRequest);
 
-    Optional<User> findById(Long id);}
+    Optional<User> findById(Long id);
+
+    Optional<User> findByEmail(String email);
+}
