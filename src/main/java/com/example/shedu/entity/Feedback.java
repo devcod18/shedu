@@ -27,9 +27,9 @@ public class Feedback {
     @CreationTimestamp
     private LocalDateTime date;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private User user;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Barbershop barbershop;
 }

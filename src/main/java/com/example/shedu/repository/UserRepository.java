@@ -35,7 +35,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                               @Param("phoneNumber") String phoneNumber,
                               @Param("email") String email);
 
-    Page<User> findAllByRole(UserRole role, PageRequest pageRequest);
+    Page<User> findAllByUserRole(UserRole role, PageRequest pageRequest);
 
     Optional<User> findById(Long id);
 

@@ -1,7 +1,7 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.Favourite;
+import com.example.shedu.entity.Favorite;
 import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
@@ -47,7 +47,7 @@ public class FavoriteService {
         }
         Barbershop barbershop = barbershopOptional.get();
 
-        Favourite favourite = Favourite.builder()
+        Favorite favourite = Favorite.builder()
                 .user(user)
                 .barber(barber)
                 .barbershop(barbershop)
@@ -57,20 +57,23 @@ public class FavoriteService {
         favoriteRepository.save(favourite);
 
         ResFavorite response = ResFavorite.builder()
-                .userName(user.getFullName())
-                .barberName(barber.getFullName())
-                .barbershopName(barbershop.getTitle())
-                .date(favourite.getDate())
-                .build();
+                .userId(favourite.getUser().getId())
+                .userName(favourite.getUser().getFullName())
+                .barberId(favourite.getBarber().getId())
+                .barberName(favourite.getBarber().getFullName())
+                .barbershopId(favourite.getBarbershop().getId())
+                .barbershopName(favourite.getBarbershop().getTitle())
+                .date(favourite.getDate()).build();
         return new ApiResponse(response);
     }
 
-    public ApiResponse getById(Long id) {
-        Optional<Favourite> favouriteOptional = favoriteRepository.findById(id);
+
+    /*public ApiResponse getOneFavorite(Long id) {
+        Optional<Favorite> favouriteOptional = favoriteRepository.findById(id);
         if (favouriteOptional.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
-        Favourite favourite = favouriteOptional.get();
+        Favorite favourite = favouriteOptional.get();
 
         ResFavorite response = ResFavorite.builder()
                 .userId(favourite.getUser().getId())
@@ -79,13 +82,13 @@ public class FavoriteService {
                 .barberName(favourite.getBarber().getFullName())
                 .barbershopId(favourite.getBarbershop().getId())
                 .barbershopName(favourite.getBarbershop().getTitle())
-                .date(favourite.getDate())
-                .build();
-        return new ApiResponse(response);
-    }
+                .date(favourite.getDate()).build();
 
-    public ApiResponse getAll(int page, int size) {
-        Page<Favourite> favouritePage = favoriteRepository.findAll(PageRequest.of(page, size));
+        return new ApiResponse(response);
+    }*/
+
+    public ApiResponse getAllFavorites(int page, int size) {
+        Page<Favorite> favouritePage = favoriteRepository.findAll(PageRequest.of(page, size));
 
         List<ResFavorite> responseList = favouritePage.getContent()
                 .stream().map(favourite -> ResFavorite.builder()
@@ -96,22 +99,20 @@ public class FavoriteService {
                         .barbershopId(favourite.getBarbershop().getId())
                         .barbershopName(favourite.getBarbershop().getTitle())
                         .date(favourite.getDate())
-                        .build())
-                .toList();
+                        .build()).toList();
 
         CustomPageable customPageable = CustomPageable.builder()
                 .size(favouritePage.getSize())
                 .page(favouritePage.getNumber())
                 .totalPage(favouritePage.getTotalPages())
                 .totalElements(favouritePage.getTotalElements())
-                .data(responseList)
-                .build();
+                .data(responseList).build();
 
         return new ApiResponse(customPageable);
     }
 
-    public ApiResponse delete(Long id) {
-        Optional<Favourite> favouriteOptional = favoriteRepository.findById(id);
+    public ApiResponse deleteFavorite(Long id) {
+        Optional<Favorite> favouriteOptional = favoriteRepository.findById(id);
         if (favouriteOptional.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
