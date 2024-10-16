@@ -3,10 +3,11 @@ package com.example.shedu.repository;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.UserRole;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -16,27 +17,29 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByPhoneNumber(String phoneNumber);
 
-//    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
-//
-//    int countByUserRoleAndEnabledTrue(UserRole role);
+    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
 
-    Optional<User> findByIdAndUserRoleAndEnabledTrue(Long id, UserRole role);
+    int countByUserRoleAndEnabledTrue(UserRole role);
 
-//    List<User> findByUserRole(UserRole role);
-//
-//    Optional<User> findByActivationCode(Integer activationCode);
+    User findByIdAndUserRoleAndEnabledTrue(Long id, UserRole role);
 
-//    @Query(value = "SELECT * FROM users u WHERE " +
-//            "(:fullName IS NULL OR LOWER(u.full_name) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND " +
-//            "(:phoneNumber IS NULL OR u.phone_number LIKE CONCAT('%', :phoneNumber, '%')) AND " +
-//            "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))", nativeQuery = true)
-//    List<User> findUsersByFullNameOrPhoneNumberOrEmail(@Param("fullName") String fullName,
-//                              @Param("phoneNumber") String phoneNumber,
-//                              @Param("email") String email);
+    List<User> findByUserRole(UserRole role);
 
+    Optional<User> findByActivationCode(Integer activationCode);
 
+    @Query("SELECT u FROM users u WHERE " +
+            "(:fullName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND " +
+            "(:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%')) AND " +
+            "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))")
+    List<User> searchByFieldsAndUserRole(@Param("fullName") String fullName,
+                              @Param("role") UserRole role,
+                              @Param("phoneNumber") String phoneNumber,
+                              @Param("email") String email);
 
-    Page<User> findAllByUserRole(UserRole role, Pageable pageable);
+    Page<User> findAllByUserRole(UserRole role, PageRequest pageRequest);
+
+    Optional<User> findById(Long id);
 
     Optional<User> findByEmail(String email);
+
 }
