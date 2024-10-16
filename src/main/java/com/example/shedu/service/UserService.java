@@ -28,19 +28,19 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
 
-    public ApiResponse getOne(Long id) {
-        return userRepository.findById(id)
-                .map(ApiResponse::new)
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
-    }
+//    public ApiResponse getOne(Long id) {
+//        return userRepository.findById(id)
+//                .map(ApiResponse::new)
+//                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+//    }
 
     public ApiResponse getMe(User user) {
         return new ApiResponse(toResponseUser(user));
     }
 
-    public ApiResponse getAllUsers(int page, int size) {
+    public ApiResponse getAllUsersByRole(int page, int size,UserRole role) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<User> users = userRepository.findAllByUserRole(UserRole.ROLE_USER, pageRequest);
+        Page<User> users = userRepository.findAllByRole(role, pageRequest);
         List<ResUser> responseUsers = toResponseUserList(users.getContent());
 
         if (users.getTotalElements() == 0) {
@@ -59,12 +59,11 @@ public class UserService {
     }
 
     public ApiResponse updateUser(Long id, AuthRegister authRegister, UserDTO userDTO) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
         }
 
-        User user = userOptional.get();
         user.setFile(fileRepository.findById(userDTO.getFileId()).orElse(null));
         user.setUpdated(LocalDateTime.now());
         user.setFullName(authRegister.getFullName());
@@ -78,51 +77,28 @@ public class UserService {
     public ApiResponse deleteUser(Long id) {
         return userRepository.findById(id)
                 .map(user -> {
-                    user.setEnabled(false);
-                    userRepository.save(user);
+                    userRepository.delete(user);
                     return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'chirildi");
                 })
                 .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
     }
 
-    public ApiResponse blockUser(Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setEnabled(false);
-                    userRepository.save(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli bloklandi");
-                })
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+    public ApiResponse enableUser(Long id,boolean enabled) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
+        }
+        user.setEnabled(enabled);
+        userRepository.save(user);
+        return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
     }
 
-    public ApiResponse unLockUser(Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    if (user.isEnabled()) {
-                        return new ApiResponse("Ushbu foydalanuvchi bloklanmagan");
-                    }
-                    user.setEnabled(true);
-                    userRepository.save(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli ochildi");
-                })
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
-    }
-
-    public ApiResponse searchUser(String fullName, String phoneNumber, String email) {
-        List<User> users = userRepository.searchByFields(fullName, phoneNumber, email);
+    public ApiResponse searchUserByRole(String fullName, String phoneNumber, String email,UserRole role) {
+        List<User> users = userRepository.searchByFieldsAndUserRole(fullName, role, email,phoneNumber);
         if (users.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
         }
         List<ResUser> responseUsers = toResponseUserList(users);
-        return new ApiResponse(responseUsers);
-    }
-
-    public ApiResponse getAdminUsers() {
-        List<User> admins = userRepository.findByUserRole(UserRole.ROLE_ADMIN);
-        if (admins.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Adminlar"));
-        }
-        List<ResUser> responseUsers = toResponseUserList(admins);
         return new ApiResponse(responseUsers);
     }
 

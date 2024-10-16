@@ -31,7 +31,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "(:fullName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND " +
             "(:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%')) AND " +
             "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))")
-    List<User> searchByFields(@Param("fullName") String fullName,
+    List<User> searchByFieldsAndUserRole(@Param("fullName") String fullName,
+                              @Param("role") UserRole role,
                               @Param("phoneNumber") String phoneNumber,
                               @Param("email") String email);
 
