@@ -19,8 +19,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +30,15 @@ import java.util.List;
 public class BarbershopService {
 
     private final BarberShopRepository barberShopRepository;
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
     public ApiResponse save(ReqBarbershop reqBarbershop) {
-        Barbershop barbershop = barberShopRepository.findByTitle(reqBarbershop.getTitle());
-        if (barbershop != null) {
+        if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
         }
-        Barbershop barbershop1 = Barbershop.builder()
+
+        Barbershop barbershop = Barbershop.builder()
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
                 .date(LocalDate.now())
@@ -45,32 +47,31 @@ public class BarbershopService {
                 .longitude(reqBarbershop.getLng())
                 .homeNumber(reqBarbershop.getHomeNumber())
                 .barbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null))
-                .region(BarbershopRegion.valueOf(reqBarbershop.getRegion().toUpperCase()))
-                .build();
-        barberShopRepository.save(barbershop1);
-        return new ApiResponse("Success");
+                .region(BarbershopRegion.valueOf(reqBarbershop.getRegion().toUpperCase())).build();
 
+        barberShopRepository.save(barbershop);
+        return new ApiResponse("Success");
     }
 
     public ApiResponse getAll(int size, int page) {
-        Page<Barbershop> barbershop = barberShopRepository.findAll(PageRequest.of(page, size));
-        List<ResBarbershop> list = toResponseBarbershopList(barbershop.getContent());
+        Page<Barbershop> barbershopPage = barberShopRepository.findAll(PageRequest.of(page, size));
+        List<ResBarbershop> list = toResponseBarbershopList(barbershopPage.getContent());
+
         CustomPageable customPageable = CustomPageable.builder()
                 .data(list)
                 .page(page)
                 .size(size)
-                .totalElements(barbershop.getTotalElements())
-                .totalPage(barbershop.getTotalPages())
+                .totalElements(barbershopPage.getTotalElements())
+                .totalPage(barbershopPage.getTotalPages())
                 .build();
+
         return new ApiResponse(customPageable);
     }
 
     public ApiResponse getOne(Long id) {
-        boolean b = barberShopRepository.existsById(id);
-        if (!b) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-        Barbershop barbershop = barberShopRepository.findById(id).get();
+        Barbershop barbershop = barberShopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+
         ResBarbershop resBarbershop = ResBarbershop.builder()
                 .owner(barbershop.getOwner().getId())
                 .title(barbershop.getTitle())
@@ -82,25 +83,22 @@ public class BarbershopService {
                 .lng(barbershop.getLongitude())
                 .region(barbershop.getRegion().toString())
                 .build();
+
         return new ApiResponse(resBarbershop);
     }
 
     public ApiResponse delete(Long id) {
-        boolean b = barberShopRepository.existsById(id);
-        if (!b) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-        Barbershop barbershop = barberShopRepository.findById(id).get();
+        Barbershop barbershop = barberShopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+
         barbershop.setActive(false);
         return new ApiResponse("Success");
     }
 
     public ApiResponse update(Long id, ReqBarbershop reqBarbershop) {
-        boolean b = barberShopRepository.existsById(id);
-        if (!b) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-        Barbershop barbershop = barberShopRepository.findById(id).get();
+        Barbershop barbershop = barberShopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+
         barbershop.setTitle(reqBarbershop.getTitle());
         barbershop.setInfo(reqBarbershop.getInfo());
         barbershop.setEmail(reqBarbershop.getEmail());
@@ -109,40 +107,40 @@ public class BarbershopService {
         barbershop.setLongitude(reqBarbershop.getLng());
         barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
         barbershop.setRegion(BarbershopRegion.valueOf(reqBarbershop.getRegion().toUpperCase()));
+
         return new ApiResponse("Success");
     }
 
     public ApiResponse search(String title) {
-        List<Barbershop> barbershop = barberShopRepository.findByTitleAndActive(title);
-        List<Barbershop> barbershops =
-                barberShopRepository.
-                        findByRegionAndIsActive(BarbershopRegion.valueOf(title.toUpperCase()));
+        List<Barbershop> barbershops = barberShopRepository.findByTitleAndActive(title);
+        barbershops.addAll(barberShopRepository.findByRegionAndIsActive(BarbershopRegion.valueOf(title.toUpperCase())));
 
-        barbershop.addAll(barbershops);
-        List<ResBarbershop> list = toResponseBarbershopList(barbershop);
+        List<ResBarbershop> list = toResponseBarbershopList(barbershops);
         return new ApiResponse(list);
-
     }
 
-    private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershop) {
-        List<ResBarbershop> list = new ArrayList<>();
-        for (Barbershop barbershop1 : barbershop) {
-            Long owner = barbershop1.getOwner().getId();
-            User user = repository.findByIdAndUserRoleAndEnabledTrue(owner, UserRole.ROLE_MASTER);
+    private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershopList) {
+        List<ResBarbershop> responseList = new ArrayList<>();
+        for (Barbershop barbershop : barbershopList) {
+            Optional<User> user = userRepository.findByIdAndUserRoleAndEnabledTrue
+                    (barbershop.getOwner().getId(), UserRole.ROLE_MASTER);
+
+            Long ownerId = user.map(User::getId).orElse(null);
+
             ResBarbershop resBarbershop = ResBarbershop.builder()
-                    .title(barbershop1.getTitle())
-                    .owner(user.getId())
-                    .lat(barbershop1.getLatitude())
-                    .lng(barbershop1.getLongitude())
-                    .info(barbershop1.getInfo())
-                    .email(barbershop1.getEmail())
-                    .file_id(barbershop1.getBarbershopPic() != null ? barbershop1.getBarbershopPic().getId() : null)
-                    .region(barbershop1.getRegion().toString())
-                    .homeNumber(barbershop1.getHomeNumber())
+                    .title(barbershop.getTitle())
+                    .owner(ownerId)
+                    .lat(barbershop.getLatitude())
+                    .lng(barbershop.getLongitude())
+                    .info(barbershop.getInfo())
+                    .email(barbershop.getEmail())
+                    .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
+                    .region(barbershop.getRegion().toString())
+                    .homeNumber(barbershop.getHomeNumber())
                     .build();
-            list.add(resBarbershop);
-        }
-        return list;
-    }
 
+            responseList.add(resBarbershop);
+        }
+        return responseList;
+    }
 }

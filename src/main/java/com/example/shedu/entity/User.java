@@ -39,8 +39,8 @@ public class User implements UserDetails {
 
     private LocalDateTime updated;
 
-    @ManyToOne
-    private Barbershop barbershop;
+    @Column(nullable = false)
+    private Long barbershopId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,25 +57,19 @@ public class FavoriteService {
     }
 
     public ApiResponse getAllFavorites(int page, int size) {
-        Page<Favorite> favouritePage = favoriteRepository.findAll(PageRequest.of(page, size));
+        Page<Favorite> favoritePage = favoriteRepository.findAll(PageRequest.of(page, size));
 
-        List<ResFavorite> responseList = favouritePage.getContent()
-                .stream().map(favourite -> ResFavorite.builder()
-                        .userId(favourite.getUser().getId())
-                        .userName(favourite.getUser().getFullName())
-                        .barberId(favourite.getBarber().getId())
-                        .barberName(favourite.getBarber().getFullName())
-                        .barbershopId(favourite.getBarbershop().getId())
-                        .barbershopName(favourite.getBarbershop().getTitle())
-                        .date(favourite.getDate())
-                        .build()).toList();
+        List<ResFavorite> responseList = favoritePage.getContent().stream()
+                .map(this::toResFavorite)
+                .collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
-                .size(favouritePage.getSize())
-                .page(favouritePage.getNumber())
-                .totalPage(favouritePage.getTotalPages())
-                .totalElements(favouritePage.getTotalElements())
-                .data(responseList).build();
+                .size(favoritePage.getSize())
+                .page(favoritePage.getNumber())
+                .totalPage(favoritePage.getTotalPages())
+                .totalElements(favoritePage.getTotalElements())
+                .data(responseList)
+                .build();
 
         return new ApiResponse(customPageable);
     }
@@ -87,5 +82,17 @@ public class FavoriteService {
 
         favoriteRepository.delete(favourite);
         return new ApiResponse("Favorite deleted successfully");
+    }
+
+    private ResFavorite toResFavorite(Favorite favorite) {
+        return ResFavorite.builder()
+                .userId(favorite.getUser().getId())
+                .userName(favorite.getUser().getFullName())
+                .barberId(favorite.getBarber().getId())
+                .barberName(favorite.getBarber().getFullName())
+                .barbershopId(favorite.getBarbershop().getId())
+                .barbershopName(favorite.getBarbershop().getTitle())
+                .date(favorite.getDate())
+                .build();
     }
 }

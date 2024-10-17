@@ -23,17 +23,16 @@ import java.util.stream.Collectors;
 public class OffersService {
 
     private final OffersRepository offersRepository;
-
     private final BarberShopRepository barberShopRepository;
 
-
     public ApiResponse addService(ReqOffers reqOffers) {
-        Barbershop barbershop = barberShopRepository.findById(reqOffers.getBarbershopId()).orElse(null);
+        Barbershop barbershop = barberShopRepository.findById(reqOffers.getBarbershopId())
+                .orElse(null);
         if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
-        Offers offers = Offers.builder()
+        Offers offer = Offers.builder()
                 .barbershop(barbershop)
                 .title(reqOffers.getTitle())
                 .info(reqOffers.getInfo())
@@ -41,60 +40,64 @@ public class OffersService {
                 .duration(reqOffers.getDuration())
                 .build();
 
-        offersRepository.save(offers);
-
+        offersRepository.save(offer);
         return new ApiResponse("Success");
     }
-
 
     public ApiResponse getAllOffers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Offers> offersPage = offersRepository.findAll(pageable);
 
         List<ResOffers> resOffersList = offersPage.getContent()
-                .stream().map(offer -> ResOffers.builder()
-                        .title(offer.getTitle())
-                        .info(offer.getInfo())
-                        .price(offer.getPrice())
-                        .duration(offer.getDuration())
-                        .barbershopId(offer.getBarbershop().getId())
-                        .build()).collect(Collectors.toList());
+                .stream()
+                .map(this::mapToResOffers)
+                .collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
                 .size(offersPage.getSize())
                 .page(offersPage.getNumber())
                 .totalPage(offersPage.getTotalPages())
                 .totalElements(offersPage.getTotalElements())
-                .data(resOffersList).build();
+                .data(resOffersList)
+                .build();
 
         return new ApiResponse(customPageable);
     }
 
-
     public ApiResponse updateOffer(Long id, ReqOffers reqOffers) {
-        Offers offers = offersRepository.findById(id).orElse(null);
-        if (offers == null) {
+        Offers offer = offersRepository.findById(id)
+                .orElse(null);
+        if (offer == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
 
-        offers.setTitle(reqOffers.getTitle());
-        offers.setInfo(reqOffers.getInfo());
-        offers.setPrice(reqOffers.getPrice());
-        offers.setDuration(reqOffers.getDuration());
+        offer.setTitle(reqOffers.getTitle());
+        offer.setInfo(reqOffers.getInfo());
+        offer.setPrice(reqOffers.getPrice());
+        offer.setDuration(reqOffers.getDuration());
 
-        offersRepository.save(offers);
-
+        offersRepository.save(offer);
         return new ApiResponse("Success");
     }
 
-
     public ApiResponse deleteOffer(Long id) {
-        Offers offers = offersRepository.findById(id).orElse(null);
-        if (offers == null) {
+        Offers offer = offersRepository.findById(id)
+                .orElse(null);
+        if (offer == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
 
-        offersRepository.delete(offers);
+        offersRepository.delete(offer);
         return new ApiResponse("Success");
+    }
+
+    private ResOffers mapToResOffers(Offers offer) {
+        return ResOffers.builder()
+                .title(offer.getTitle())
+                .info(offer.getInfo())
+                .price(offer.getPrice())
+                .duration(offer.getDuration())
+                .barbershopId(offer.getBarbershop().getId())
+                .build();
     }
 }

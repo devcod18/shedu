@@ -35,6 +35,7 @@ public class DataLoader implements CommandLineRunner {
             newUser.setAccountNonExpired(true);
             newUser.setAccountNonLocked(true);
             newUser.setCredentialsNonExpired(true);
+            newUser.setBarbershopId(1L);
             userRepository.save(newUser);
         }
     }

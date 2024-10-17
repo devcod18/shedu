@@ -54,8 +54,8 @@ public class FeedbackService {
 
     public ApiResponse getAllFeedbacks(int page, int size, Long barberId, Long barbershopId) {
         PageRequest pageRequest = PageRequest.of(page, size);
-
         Page<Feedback> feedbacks;
+
         if (barberId != null) {
             feedbacks = feedbackRepository.findByUserId(barberId, pageRequest);
         } else if (barbershopId != null) {
@@ -65,21 +65,27 @@ public class FeedbackService {
         }
 
         List<ResFeedback> resFeedbacks = feedbacks.getContent()
-                .stream().map(feedback -> ResFeedback.builder()
-                        .rating(feedback.getRating())
-                        .comment(feedback.getComment())
-                        .createdAt(LocalDateTime.now())
-                        .userId(feedback.getUser().getId())
-                        .barbershopId(feedback.getBarbershopId())
-                        .build()).collect(Collectors.toList());
+                .stream().map(this::toResFeedback)
+                .collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
                 .size(feedbacks.getSize())
                 .page(feedbacks.getNumber())
                 .totalPage(feedbacks.getTotalPages())
                 .totalElements(feedbacks.getTotalElements())
-                .data(resFeedbacks).build();
+                .data(resFeedbacks)
+                .build();
 
         return new ApiResponse(customPageable);
+    }
+
+    private ResFeedback toResFeedback(Feedback feedback) {
+        return ResFeedback.builder()
+                .rating(feedback.getRating())
+                .comment(feedback.getComment())
+                .createdAt(LocalDateTime.now())
+                .userId(feedback.getUser().getId())
+                .barbershopId(feedback.getBarbershopId())
+                .build();
     }
 }

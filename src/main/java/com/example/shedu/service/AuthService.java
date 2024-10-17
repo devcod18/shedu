@@ -21,8 +21,7 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public ApiResponse login(AuthLogin authLogin)
-    {
+    public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber());
         if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
@@ -38,8 +37,7 @@ public class AuthService {
     }
 
 
-    public ApiResponse register(AuthRegister auth)
-    {
+    public ApiResponse register(AuthRegister auth) {
 
         User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber());
         if (byPhoneNumber != null) {
@@ -52,8 +50,7 @@ public class AuthService {
     }
 
 
-    public ApiResponse adminSaveLibrarian(AuthRegister auth)
-    {
+    public ApiResponse adminSaveLibrarian(AuthRegister auth) {
 
         User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber());
         if (byPhoneNumber != null) {
@@ -67,8 +64,7 @@ public class AuthService {
     }
 
 
-    private void saveUser(AuthRegister auth, UserRole role)
-    {
+    private void saveUser(AuthRegister auth, UserRole role) {
         User user = User.builder()
                 .fullName(auth.getFullName())
                 .phoneNumber(auth.getPhoneNumber())

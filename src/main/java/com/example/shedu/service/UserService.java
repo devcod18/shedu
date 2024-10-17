@@ -13,7 +13,6 @@ import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
 
     public ApiResponse getOne(Long id) {
@@ -86,27 +84,20 @@ public class UserService {
 
     public ApiResponse blockUser(Long id, boolean block) {
         User user = userRepository.findById(id).orElse(null);
-        user.setEnabled(block);
-        userRepository.save(user);
-        return new ApiResponse("Success");
-    }
-
-
-    public ApiResponse searchUser(String fullName, String phoneNumber, String email) {// role qushiladi
-        List<User> users = userRepository.searchByFields(fullName, phoneNumber, email);
-        if (users.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
+        if (user != null) {
+            user.setEnabled(block);
+            userRepository.save(user);
+            return new ApiResponse("Success");
         }
-        List<ResUser> responseUsers = toResponseUserList(users);
-        return new ApiResponse(responseUsers);
+        return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
     }
 
-//    public ApiResponse getAdminUsers() {
-//        List<User> admins = userRepository.findByUserRole(UserRole.ROLE_ADMIN);
-//        if (admins.isEmpty()) {
-//            return new ApiResponse(ResponseError.NOTFOUND("Adminlar"));
+//    public ApiResponse searchUser(String fullName, String phoneNumber, String email) {
+//        List<User> users = userRepository.findUsersByFullNameOrPhoneNumberOrEmail(fullName, phoneNumber, email);
+//        if (users.isEmpty()) {
+//            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
 //        }
-//        List<ResUser> responseUsers = toResponseUserList(admins);
+//        List<ResUser> responseUsers = toResponseUserList(users);
 //        return new ApiResponse(responseUsers);
 //    }
 

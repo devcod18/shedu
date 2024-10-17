@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface OffersRepository extends JpaRepository<Offers, Long> {
 
-    Page<Offers> finAll(Pageable pageable);
+    default Page<Offers> findAll(Pageable pageable) {
+        return null;
+    }
 
 }

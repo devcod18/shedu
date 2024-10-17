@@ -15,13 +15,12 @@ import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,73 +30,63 @@ public class NotificationService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
-    public ApiResponse getCountNotification(User user)
-    {
-        Integer count = notificationRepository.countAllByUserIdAndReadFalse(user.getId());
-        return new ApiResponse(count != null ? count : 0);
+    public ApiResponse getCountNotification(User user) {
+        int count = notificationRepository.countAllByUserIdAndReadFalse(user.getId());
+        return new ApiResponse(count);
     }
 
-    public ApiResponse getNotifications(User user){
-
-        User user1 = userRepository.findById(user.getId()).orElse(null);
-        if(user1 == null){
-            return new ApiResponse(ResponseError.NOTFOUND("User"));
-        }
+    public ApiResponse getNotifications(User user) {
+        userRepository.findById(user.getId()).orElseThrow(() ->
+                new RuntimeException(String.valueOf(ResponseError.NOTFOUND("User")))
+        );
 
         List<Notification> notifications = notificationRepository.findAllByUserId(user.getId());
-        if(notifications.isEmpty()){
+        if (notifications.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Notifications list"));
         }
 
-        List<NotificationDTO> notificationDTOS = new ArrayList<>();
-        for (Notification notification : notifications) {
-            notificationDTOS.add(notificationDTO(notification));
-        }
+        List<NotificationDTO> notificationDTOS = notifications.stream()
+                .map(this::toNotificationDTO)
+                .collect(Collectors.toList());
 
         return new ApiResponse(notificationDTOS);
-
     }
 
-    public ApiResponse adminSendNotification(ResNotification resNotification, Long fileId){
+    public ApiResponse adminSendNotification(ResNotification resNotification, Long fileId) {
         List<User> users = userRepository.findAll();
-        if(users.isEmpty()){
+        if (users.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("User list"));
         }
 
-        File file = null;
+        File file = (fileId != null && fileId > 0) ?
+                fileRepository.findById(fileId).orElse(null) : null;
 
-        if (fileId != 0) {
-            file = fileRepository.findById(fileId).orElse(null);
-            if (file == null) {
-                return new ApiResponse(ResponseError.NOTFOUND("File"));
-            }
+        if (fileId != null && file == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("File"));
         }
-        for (User user : users) {
-            saveNotification(
-                    user,
-                    resNotification.getTitle(),
-                    resNotification.getContent(),
-                    file != null ? file.getId() : 0,
-                    false
-            );
-        }
+
+        users.forEach(user -> saveNotification(
+                user,
+                resNotification.getTitle(),
+                resNotification.getContent(),
+                file != null ? file.getId() : null,
+                false
+        ));
+
         return new ApiResponse("Success");
     }
 
-
-    public ApiResponse contactNotification(ResContactNotification contact){
-        User admin = userRepository.findById(1L).orElse(null);
-        saveNotification(
-                admin,
-                "Foydalanuvchi: " + contact.getName() + "Raqami: " + contact.getPhone(),
-                "Xabar: " + contact.getMessage() ,
-                0L,
-                true
+    public ApiResponse contactNotification(ResContactNotification contact) {
+        User admin = userRepository.findById(1L).orElseThrow(() ->
+                new RuntimeException(String.valueOf(ResponseError.NOTFOUND("Admin")))
         );
 
+        String title = "Foydalanuvchi: " + contact.getName() + " Raqami: " + contact.getPhone();
+        String content = "Xabar: " + contact.getMessage();
+        saveNotification(admin, title, content, null, true);
+
         return new ApiResponse("Success");
     }
-
 
     public ApiResponse isReadAllNotification(IdList idList) {
         if (idList.getIds().isEmpty()) {
@@ -105,75 +94,55 @@ public class NotificationService {
         }
 
         List<Notification> notifications = notificationRepository.findAllById(idList.getIds());
-
-        for (Notification notification : notifications) {
+        notifications.forEach(notification -> {
             notification.setRead(true);
             notificationRepository.save(notification);
-        }
+        });
 
         return new ApiResponse("Success");
     }
 
+    public ApiResponse notification(User user) {
+        User admin = userRepository.findById(1L).orElseThrow(() ->
+                new RuntimeException(String.valueOf(ResponseError.NOTFOUND("Admin")))
+        );
 
-    public ApiResponse notification(User user){
-
-        User admin = userRepository.findById(1L).orElse(null);
-
-        Notification notification = new Notification();
-        notification.setUser(admin);
-        notification.setTitle("Bildirishnoma!");
-        notification.setContent("( " + user.getFullName()+ " ) foydalanuvchi sizdan edu tizimga " +
-                "kirish uchun ruxsat so'ramozda . . ." );
-        notification.setRegistrant(user);
-        notification.setRead(false);
-        notificationRepository.save(notification);
+        String title = "Bildirishnoma!";
+        String content = "( " + user.getFullName() + " ) foydalanuvchi sizdan edu tizimga kirish uchun ruxsat so'ramozda . . .";
+        saveNotification(admin, title, content, null, false);
 
         return new ApiResponse("Success");
     }
-
 
     public ApiResponse deleteNotification(Long id) {
-        Notification notification = notificationRepository.findById(id).orElse(null);
-        if (notification == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Notification"));
-        }
+        Notification notification = notificationRepository.findById(id).orElseThrow(() ->
+                new RuntimeException(String.valueOf(ResponseError.NOTFOUND("Notification")))
+        );
 
         notificationRepository.delete(notification);
         return new ApiResponse("Success");
     }
 
+    public ApiResponse getOnlineNotification(User user) {
+        userRepository.findById(user.getId()).orElseThrow(() ->
+                new RuntimeException(String.valueOf(ResponseError.NOTFOUND("User")))
+        );
 
-
-    public ApiResponse getOnlineNotification(User user){
-        user = userRepository.findById(user.getId()).orElse(null);
-        if(user == null){
-            return new ApiResponse(ResponseError.NOTFOUND("User"));
-        }
         List<Notification> notifications = notificationRepository.findAllByUserId(user.getId());
-        if(notifications.isEmpty()){
+        if (notifications.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Notifications list"));
         }
 
-        List<NotificationDTO> notificationDTOS = new ArrayList<>();
-        int size = notifications.size();
-        if (size <= 10) {
-            Collections.reverse(notifications);
-            for (Notification notification : notifications) {
-                notificationDTOS.add(notificationDTO(notification));
-            }
-        } else {
-            List<Notification> sublist = notifications.subList(size - 10, size);
-            Collections.reverse(sublist);
-            for (Notification notification : sublist) {
-                notificationDTOS.add(notificationDTO(notification));
-            }
-        }
+        List<NotificationDTO> notificationDTOS = notifications.stream()
+                .skip(Math.max(0, notifications.size() - 10))
+                .map(this::toNotificationDTO)
+                .collect(Collectors.toList());
+
+        Collections.reverse(notificationDTOS);
         return new ApiResponse(notificationDTOS);
     }
 
-
-    public void saveNotification(User user, String title, String content, Long fileId, boolean contact)
-    {
+    private void saveNotification(User user, String title, String content, Long fileId, boolean contact) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setContent(content);
@@ -185,10 +154,7 @@ public class NotificationService {
         notificationRepository.save(notification);
     }
 
-
-
-    public NotificationDTO notificationDTO(Notification notification)
-    {
+    private NotificationDTO toNotificationDTO(Notification notification) {
         return new NotificationDTO(
                 notification.getId(),
                 notification.getTitle(),
@@ -196,7 +162,7 @@ public class NotificationService {
                 notification.isRead(),
                 notification.getCreatedAt(),
                 notification.getUser().getId(),
-                notification.getFile() != null ? notification.getFile().getId() : 0
+                Optional.ofNullable(notification.getFile()).map(File::getId).orElse(0L)
         );
     }
 }

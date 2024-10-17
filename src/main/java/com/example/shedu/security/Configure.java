@@ -28,7 +28,7 @@ public class Configure {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> (org.springframework.security.core.userdetails.UserDetails) userRepository.findByEmail(email).orElse(null);
+        return email -> userRepository.findByEmail(email).orElse(null);
     }
 
     @Bean
