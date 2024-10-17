@@ -9,13 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
 import java.util.Optional;
 
-
-public interface UserRepository extends JpaRepository<User, Long> {
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
 
     User findByPhoneNumber(String phoneNumber);
 
@@ -29,17 +30,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByActivationCode(Integer activationCode);
 
-    @Query("SELECT u FROM users u WHERE " +
-            "(:fullName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND " +
-            "(:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%')) AND " +
-            "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))")
+    @Query( value = "SELECT u FROM users u WHERE\n" +
+            "            (:fullName IS NULL OR LOWER(u.full_name) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND\n" +
+            "            (:phoneNumber IS NULL OR u.phone_number LIKE CONCAT('%', :phoneNumber, '%')) AND\n" +
+            "            (:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))", nativeQuery = true)
     List<User> searchByFields(@Param("fullName") String fullName,
                               @Param("phoneNumber") String phoneNumber,
                               @Param("email") String email);
 
     Page<User> findAllByUserRole(UserRole role, PageRequest pageRequest);
 
-    Optional<User> findById(Long id);
+//    Optional<User> findById(Long id);
 
     Optional<User> findByEmail(String email);
 
