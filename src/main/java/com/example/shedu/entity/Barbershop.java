@@ -1,5 +1,6 @@
 package com.example.shedu.entity;
 
+import com.example.shedu.entity.enums.BarbershopRegion;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,13 +38,13 @@ public class Barbershop {
     private String email;
 
     @Column(precision = 10, scale = 7, nullable = false)
-    private BigDecimal latitude;
+    private Double latitude;
 
     @Column(precision = 10, scale = 7, nullable = false)
-    private BigDecimal longitude;
+    private Double longitude;
 
-    @Column(nullable = false)
-    private String region;
+    @Enumerated(EnumType.STRING)
+    private BarbershopRegion region;
 
     @Column(nullable = false)
     private String street;
@@ -51,11 +52,6 @@ public class Barbershop {
     @Column(nullable = false)
     private String homeNumber;
 
-    @Column(nullable = false)
-    private LocalTime openTime;
-
-    @Column(nullable = false)
-    private LocalTime closeTime;
-
-//    private File barbershopPic;
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    private File barbershopPic;
 }

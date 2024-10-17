@@ -97,5 +97,4 @@ public class OffersService {
         offersRepository.delete(offers);
         return new ApiResponse("Success");
     }
-
 }
