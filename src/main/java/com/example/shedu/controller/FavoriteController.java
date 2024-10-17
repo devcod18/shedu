@@ -16,25 +16,22 @@ public class FavoriteController {
 
     @PostMapping("/addFavorite")
     public ResponseEntity<ApiResponse> addFavorite(ReqFavorite reqFavorite) {
-        return ResponseEntity.ok(favoriteService.addFavorite(reqFavorite));
+        ApiResponse apiResponse = favoriteService.addFavorite(reqFavorite);
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/getAllFavorites")
     public ResponseEntity<ApiResponse> getAllFavorites(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) {
-        return ResponseEntity.ok(favoriteService.getAllFavorites(page, size));
+        ApiResponse allFavorites = favoriteService.getAllFavorites(page, size);
+        return ResponseEntity.ok(allFavorites);
     }
-
-//
-//    @GetMapping("/getOneFavorite/{getOneId}")
-//    public ResponseEntity<ApiResponse> getOneFavorite(@PathVariable Long getOneId) {
-//        return ResponseEntity.ok(favoriteService.getOneFavorite(getOneId));
-//    }
 
     @DeleteMapping("/deleteFavorite/{deleteId}")
     public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deleteId) {
-        return ResponseEntity.ok(favoriteService.deleteFavorite(deleteId));
+        ApiResponse apiResponse = favoriteService.deleteFavorite(deleteId);
+        return ResponseEntity.ok(apiResponse);
     }
 
 

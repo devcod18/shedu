@@ -16,8 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,77 +26,51 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final UserRepository userRepository;
-    private final BarberShopRepository barbershopRepository;
+
+    private final BarberShopRepository barberShopRepository;
 
     public ApiResponse addFeedback(ReqFeedback reqFeedback) {
-        User user = userRepository.findById(reqFeedback.getUserId())
-                .orElse(null);
+        User user = userRepository.findById(reqFeedback.getUserId()).orElse(null);
         if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
 
-        Barbershop barbershop = barbershopRepository.findById(reqFeedback.getBarbershopId())
-                .orElse(null);
+        Barbershop barbershop = barberShopRepository.findById(reqFeedback.getBarbershopId()).orElse(null);
         if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-
-        if (reqFeedback.getComment() == null || reqFeedback.getComment().trim().isEmpty()) {
-            return new ApiResponse(ResponseError.VALIDATION_FAILED("Fikr bo'sh bo'lishi mumkin emas"));
-        }
-
-        if (reqFeedback.getRating() < 1 || reqFeedback.getRating() > 5) {
-            return new ApiResponse(ResponseError.VALIDATION_FAILED("Reyting 1 dan 5 gacha bo'lishi kerak"));
         }
 
         Feedback feedback = Feedback.builder()
                 .rating(reqFeedback.getRating())
                 .comment(reqFeedback.getComment())
                 .user(user)
-                .barbershop(barbershop)
+                .barbershopId(reqFeedback.getBarbershopId())
                 .build();
 
         feedbackRepository.save(feedback);
 
-        ResFeedback resFeedback = ResFeedback.builder()
-                .rating(feedback.getRating())
-                .comment(feedback.getComment())
-                .date(feedback.getDate())
-                .userId(user.getId())
-                .barbershopId(barbershop.getId())
-                .build();
-
-        return new ApiResponse(resFeedback);
+        return new ApiResponse("Success");
     }
 
-    /*public ApiResponse getOneFeedback(Long id) {
-        Feedback feedback = feedbackRepository.findById(id).orElse(null);
-        if (feedback == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
-        }
-
-        ResFeedback resFeedback = ResFeedback.builder()
-                .rating(feedback.getRating())
-                .comment(feedback.getComment())
-                .date(feedback.getDate())
-                .userId(feedback.getUser().getId())
-                .barbershopId(feedback.getBarbershop().getId())
-                .build();
-
-        return new ApiResponse(resFeedback);
-    }*/
-
-    public ApiResponse getAllFeedbacks(int page, int size) {
+    public ApiResponse getAllFeedbacks(int page, int size, Long barberId, Long barbershopId) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Feedback> feedbacks = feedbackRepository.findAll(pageRequest);
+
+        Page<Feedback> feedbacks;
+        if (barberId != null) {
+            feedbacks = feedbackRepository.findByUserId(barberId, pageRequest);
+        } else if (barbershopId != null) {
+            feedbacks = feedbackRepository.findByBarbershopId(barbershopId, pageRequest);
+        } else {
+            feedbacks = feedbackRepository.findAll(pageRequest);
+        }
 
         List<ResFeedback> resFeedbacks = feedbacks.getContent()
                 .stream().map(feedback -> ResFeedback.builder()
                         .rating(feedback.getRating())
                         .comment(feedback.getComment())
-                        .date(feedback.getDate())
+                        .createdAt(LocalDateTime.now())
                         .userId(feedback.getUser().getId())
-                        .barbershopId(feedback.getBarbershop().getId())
+                        .barbershopId(feedback.getBarbershopId())
                         .build()).collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
@@ -107,15 +81,5 @@ public class FeedbackService {
                 .data(resFeedbacks).build();
 
         return new ApiResponse(customPageable);
-    }
-
-    public ApiResponse deleteFeedback(Long id) {
-        Optional<Feedback> feedbackOptional = feedbackRepository.findById(id);
-        if (feedbackOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
-        }
-
-        feedbackRepository.delete(feedbackOptional.get());
-        return new ApiResponse("Feedback deleted successfully");
     }
 }

@@ -69,7 +69,6 @@ public class UserService {
         user.setUpdated(LocalDateTime.now());
         user.setFullName(authRegister.getFullName());
         user.setPhoneNumber(authRegister.getPhoneNumber());
-        user.setPassword(passwordEncoder.encode(authRegister.getPassword()));
 
         userRepository.save(user);
         return new ApiResponse("Foydalanuvchi muvaffaqiyatli yangilandi");
@@ -85,30 +84,15 @@ public class UserService {
                 .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
     }
 
-    public ApiResponse blockUser(Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    user.setEnabled(false);
-                    userRepository.save(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli bloklandi");
-                })
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+    public ApiResponse blockUser(Long id, boolean block) {
+        User user = userRepository.findById(id).orElse(null);
+        user.setEnabled(block);
+        userRepository.save(user);
+        return new ApiResponse("Success");
     }
 
-    public ApiResponse unLockUser(Long id) {
-        return userRepository.findById(id)
-                .map(user -> {
-                    if (user.isEnabled()) {
-                        return new ApiResponse("Ushbu foydalanuvchi bloklanmagan");
-                    }
-                    user.setEnabled(true);
-                    userRepository.save(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli ochildi");
-                })
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
-    }
 
-    public ApiResponse searchUser(String fullName, String phoneNumber, String email) {
+    public ApiResponse searchUser(String fullName, String phoneNumber, String email) {// role qushiladi
         List<User> users = userRepository.searchByFields(fullName, phoneNumber, email);
         if (users.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
@@ -117,14 +101,14 @@ public class UserService {
         return new ApiResponse(responseUsers);
     }
 
-    public ApiResponse getAdminUsers() {
-        List<User> admins = userRepository.findByUserRole(UserRole.ROLE_ADMIN);
-        if (admins.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Adminlar"));
-        }
-        List<ResUser> responseUsers = toResponseUserList(admins);
-        return new ApiResponse(responseUsers);
-    }
+//    public ApiResponse getAdminUsers() {
+//        List<User> admins = userRepository.findByUserRole(UserRole.ROLE_ADMIN);
+//        if (admins.isEmpty()) {
+//            return new ApiResponse(ResponseError.NOTFOUND("Adminlar"));
+//        }
+//        List<ResUser> responseUsers = toResponseUserList(admins);
+//        return new ApiResponse(responseUsers);
+//    }
 
     private List<ResUser> toResponseUserList(List<User> users) {
         return users.stream().map(this::toResponseUser).collect(Collectors.toList());

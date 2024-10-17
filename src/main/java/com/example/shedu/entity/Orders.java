@@ -18,7 +18,7 @@ public class Orders {
     private Long id;
 
     @ManyToOne(optional = false)
-    private Service service;
+    private Offers offers;
 
     @ManyToOne(optional = false)
     private User user;
