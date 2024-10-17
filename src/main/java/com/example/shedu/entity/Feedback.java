@@ -25,11 +25,10 @@ public class Feedback {
     private String comment;
 
     @CreationTimestamp
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private User user;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private Barbershop barbershop;
+    private Long barbershopId;
 }

@@ -16,9 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -29,63 +28,32 @@ public class FavoriteService {
     private final BarberShopRepository barbershopRepository;
 
     public ApiResponse addFavorite(ReqFavorite reqFavorite) {
-        Optional<User> userOptional = userRepository.findById(reqFavorite.getUserId());
-        if (userOptional.isEmpty()) {
+        User user = userRepository.findById(reqFavorite.getUserId()).orElse(null);
+        if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
-        User user = userOptional.get();
 
-        Optional<User> barberOptional = userRepository.findById(reqFavorite.getBarberId());
-        if (barberOptional.isEmpty()) {
+        User barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
+        if (barber == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barber"));
         }
-        User barber = barberOptional.get();
 
-        Optional<Barbershop> barbershopOptional = barbershopRepository.findById(reqFavorite.getBarbershopId());
-        if (barbershopOptional.isEmpty()) {
+        Barbershop barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
+        if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
-        Barbershop barbershop = barbershopOptional.get();
 
         Favorite favourite = Favorite.builder()
                 .user(user)
                 .barber(barber)
                 .barbershop(barbershop)
-                .date(reqFavorite.getDate())
+                .date(LocalDate.now())
                 .build();
 
         favoriteRepository.save(favourite);
 
-        ResFavorite response = ResFavorite.builder()
-                .userId(favourite.getUser().getId())
-                .userName(favourite.getUser().getFullName())
-                .barberId(favourite.getBarber().getId())
-                .barberName(favourite.getBarber().getFullName())
-                .barbershopId(favourite.getBarbershop().getId())
-                .barbershopName(favourite.getBarbershop().getTitle())
-                .date(favourite.getDate()).build();
-        return new ApiResponse(response);
+        return new ApiResponse("Success");
     }
-
-
-    /*public ApiResponse getOneFavorite(Long id) {
-        Optional<Favorite> favouriteOptional = favoriteRepository.findById(id);
-        if (favouriteOptional.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
-        }
-        Favorite favourite = favouriteOptional.get();
-
-        ResFavorite response = ResFavorite.builder()
-                .userId(favourite.getUser().getId())
-                .userName(favourite.getUser().getFullName())
-                .barberId(favourite.getBarber().getId())
-                .barberName(favourite.getBarber().getFullName())
-                .barbershopId(favourite.getBarbershop().getId())
-                .barbershopName(favourite.getBarbershop().getTitle())
-                .date(favourite.getDate()).build();
-
-        return new ApiResponse(response);
-    }*/
 
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favouritePage = favoriteRepository.findAll(PageRequest.of(page, size));
@@ -112,12 +80,12 @@ public class FavoriteService {
     }
 
     public ApiResponse deleteFavorite(Long id) {
-        Optional<Favorite> favouriteOptional = favoriteRepository.findById(id);
-        if (favouriteOptional.isEmpty()) {
+        Favorite favourite = favoriteRepository.findById(id).orElse(null);
+        if (favourite == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
 
-        favoriteRepository.delete(favouriteOptional.get());
+        favoriteRepository.delete(favourite);
         return new ApiResponse("Favorite deleted successfully");
     }
 }

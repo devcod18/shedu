@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class ResFeedback {
     private int rating;
     private String comment;
-    private LocalDateTime date;
+    private LocalDateTime createdAt;
     private Long userId;
     private Long barbershopId;
 }

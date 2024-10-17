@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -49,6 +50,12 @@ public class Barbershop {
 
     @Column(nullable = false)
     private String homeNumber;
+
+    @Column(nullable = false)
+    private LocalTime openTime;
+
+    @Column(nullable = false)
+    private LocalTime closeTime;
 
 //    private File barbershopPic;
 }
