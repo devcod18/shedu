@@ -3,6 +3,7 @@ package com.example.shedu.entity;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class Barbershop {
     @Column(nullable = false)
     private String info;
 
-    @Column(nullable = false)
+    @CreationTimestamp
     private LocalDate date;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -44,11 +45,7 @@ public class Barbershop {
     @Enumerated(EnumType.STRING)
     private BarbershopRegion region;
 
-    @Column(nullable = false)
-    private String street;
-
-    @Column(nullable = false)
-    private String homeNumber;
+    private String address;
 
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private File barbershopPic;
