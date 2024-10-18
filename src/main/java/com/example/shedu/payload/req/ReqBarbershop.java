@@ -14,13 +14,9 @@ public class ReqBarbershop {
     private String title;
     @NotBlank(message = "Info cannot be empty")
     private String info;
-    @Pattern(regexp = "\\+\\d{3}\\d{2}\\d{3}\\d{2}\\d{2}", message = "Phone number is not valid")
-    private String homeNumber;
     @NotBlank(message = "Address cannot be empty")
     private Double lat;
     private Double lng;
-    @NotBlank(message = "Region cannot be empty")
-    private String region;
-    private String email;
+    private String address;
     private Long file_id;
 }
