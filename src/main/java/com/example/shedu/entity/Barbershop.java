@@ -37,10 +37,8 @@ public class Barbershop {
     @Column(nullable = false)
     private String email;
 
-    @Column(precision = 10, nullable = false)
     private Double latitude;
 
-    @Column(precision = 10, nullable = false)
     private Double longitude;
 
     @Enumerated(EnumType.STRING)

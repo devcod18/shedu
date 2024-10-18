@@ -18,8 +18,7 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${spring.jpa.hibernate.ddl-auto}")
-    private String ddl;
+    @Value(value = "${spring.jpa.hibernate.ddl-auto}")
 
     @Override
     public void run(String... args)  {
@@ -35,7 +34,6 @@ public class DataLoader implements CommandLineRunner {
             newUser.setAccountNonExpired(true);
             newUser.setAccountNonLocked(true);
             newUser.setCredentialsNonExpired(true);
-            newUser.setBarbershopId(1L);
             userRepository.save(newUser);
         }
     }

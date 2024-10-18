@@ -2,8 +2,6 @@ package com.example.shedu.payload.req;
 
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor

@@ -33,7 +33,7 @@ public class BarbershopService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
-    public ApiResponse save(ReqBarbershop reqBarbershop) {
+    public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
         if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
         }
@@ -42,12 +42,14 @@ public class BarbershopService {
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
                 .date(LocalDate.now())
+                .owner(user)
                 .email(reqBarbershop.getEmail())
                 .latitude(reqBarbershop.getLat())
                 .longitude(reqBarbershop.getLng())
                 .homeNumber(reqBarbershop.getHomeNumber())
                 .barbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null))
-                .region(BarbershopRegion.valueOf(reqBarbershop.getRegion().toUpperCase())).build();
+                .region(region)
+                .build();
 
         barberShopRepository.save(barbershop);
         return new ApiResponse("Success");
@@ -68,24 +70,24 @@ public class BarbershopService {
         return new ApiResponse(customPageable);
     }
 
-    public ApiResponse getOne(Long id) {
-        Barbershop barbershop = barberShopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
-
-        ResBarbershop resBarbershop = ResBarbershop.builder()
-                .owner(barbershop.getOwner().getId())
-                .title(barbershop.getTitle())
-                .email(barbershop.getEmail())
-                .homeNumber(barbershop.getHomeNumber())
-                .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
-                .info(barbershop.getInfo())
-                .lat(barbershop.getLatitude())
-                .lng(barbershop.getLongitude())
-                .region(barbershop.getRegion().toString())
-                .build();
-
-        return new ApiResponse(resBarbershop);
-    }
+//    public ApiResponse getOne(Long id) {
+//        Barbershop barbershop = barberShopRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+//
+//        ResBarbershop resBarbershop = ResBarbershop.builder()
+//                .owner(barbershop.getOwner().getId())
+//                .title(barbershop.getTitle())
+//                .email(barbershop.getEmail())
+//                .homeNumber(barbershop.getHomeNumber())
+//                .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
+//                .info(barbershop.getInfo())
+//                .lat(barbershop.getLatitude())
+//                .lng(barbershop.getLongitude())
+//                .region(barbershop.getRegion().toString())
+//                .build();
+//
+//        return new ApiResponse(resBarbershop);
+//    }
 
     public ApiResponse delete(Long id) {
         Barbershop barbershop = barberShopRepository.findById(id)
@@ -95,10 +97,15 @@ public class BarbershopService {
         return new ApiResponse("Success");
     }
 
-    public ApiResponse update(Long id, ReqBarbershop reqBarbershop) {
+    public ApiResponse update(Long id, ReqBarbershop reqBarbershop, Long userId) {
         Barbershop barbershop = barberShopRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("User").getMessage()));
+        if (!barbershop.getOwner().getId().equals(user.getId())) {
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
         barbershop.setTitle(reqBarbershop.getTitle());
         barbershop.setInfo(reqBarbershop.getInfo());
         barbershop.setEmail(reqBarbershop.getEmail());
@@ -107,12 +114,14 @@ public class BarbershopService {
         barbershop.setLongitude(reqBarbershop.getLng());
         barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
         barbershop.setRegion(BarbershopRegion.valueOf(reqBarbershop.getRegion().toUpperCase()));
+        barberShopRepository.save(barbershop);
 
-        return new ApiResponse("Success");
+        return new ApiResponse("Barbershop muvaffaqiyatli yangilandi.");
     }
 
-    public ApiResponse search(String title) {
-        List<Barbershop> barbershops = barberShopRepository.findByTitleAndActive(title);
+
+    public ApiResponse search(String title, BarbershopRegion region) {
+        List<Barbershop> barbershops = barberShopRepository.findByTitleAndRegionAndActive(title, String.valueOf(region));
         barbershops.addAll(barberShopRepository.findByRegionAndIsActive(BarbershopRegion.valueOf(title.toUpperCase())));
 
         List<ResBarbershop> list = toResponseBarbershopList(barbershops);

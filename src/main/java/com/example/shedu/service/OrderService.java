@@ -1,6 +1,7 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.Offers;
 import com.example.shedu.entity.Orders;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BookingStatus;
@@ -9,17 +10,14 @@ import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOrders;
 import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
+import com.example.shedu.repository.OffersRepository;
 import com.example.shedu.repository.OrderRepository;
-import com.example.shedu.repository.ServiceRepository;
 import com.example.shedu.repository.UserRepository;
-import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,16 +26,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final ServiceRepository serviceRepository;
+    private final OffersRepository serviceRepository;
     private final UserRepository userRepository;
     private final BarberShopRepository barberShopRepository;
 
     public ApiResponse addOrder(ReqOrders reqOrders) {
-        com.example.shedu.entity.Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
+        Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
 
-        if (!isValidBookingDayTime(reqOrders.getBookingDaytime())) {
-            return new ApiResponse(ResponseError.DEFAULT_ERROR("Noto'g'ri reja!"));
-        }
         Orders orders = Orders.builder()
                 .offers(service)
                 .user(userRepository.findById(reqOrders.getUserId()).orElse(null))
@@ -93,11 +88,6 @@ public class OrderService {
 
         orderRepository.save(orders);
         return new ApiResponse("Succes");
-    }
-
-    private boolean isValidBookingDayTime(Timestamp bookingDayTime){
-            LocalDateTime now = LocalDateTime.now();
-            return bookingDayTime.toLocalDateTime().isAfter(now);
     }
 
     private ResOrders toResponse(Orders orders){

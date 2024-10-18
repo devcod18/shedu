@@ -1,10 +1,8 @@
 package com.example.shedu.repository;
 
-import com.example.shedu.entity.Feedback;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.UserRole;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,22 +10,12 @@ import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
-import java.util.Optional;
-
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByPhoneNumber(String phoneNumber);
-//
-//    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
-//
-//    int countByUserRoleAndEnabledTrue(UserRole role);
 
     User findByIdAndUserRoleAndEnabledTrue(Long id, UserRole role);
-
-//    List<User> findByUserRole(UserRole role);
-//
-//    Optional<User> findByActivationCode(Integer activationCode);
 
     @Query("SELECT u FROM users u WHERE " +
             "(:role IS NULL OR u.userRole = :role) AND " +
@@ -39,10 +27,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> searchByFieldsAndUserRole(@Param("field") String field,
                                          @Param("role") UserRole role);
 
-
     Page<User> findAllByUserRole(UserRole role, Pageable pageable);
-
-    Optional<User> findById(Long id);
-
-    Optional<User> findByEmail(String email);
 }

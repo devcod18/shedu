@@ -26,6 +26,7 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
     List<Barbershop> findAllByTitle(String title);
 
-    @Query("SELECT b FROM Barbershop b WHERE UPPER(b.title) LIKE UPPER(CONCAT('%', ?1, '%')) AND b.isActive = true")
-    List<Barbershop> findByTitleAndActive(String title);
+    @Query("SELECT b FROM Barbershop b JOIN b.region r WHERE UPPER(b.title) LIKE UPPER(CONCAT('%', ?1, '%'))AND b.isActive = true")
+    List<Barbershop> findByTitleAndRegionAndActive(String title, String barbershopRegion);
+
 }
