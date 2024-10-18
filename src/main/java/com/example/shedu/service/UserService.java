@@ -40,7 +40,7 @@ public class UserService {
 
     public ApiResponse getAllUsersByRole(int page, int size,UserRole role) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<User> users = userRepository.findAllByRole(role, pageRequest);
+        Page<User> users = userRepository.findAllByUserRole(role, pageRequest);
         List<ResUser> responseUsers = toResponseUserList(users.getContent());
 
         if (users.getTotalElements() == 0) {
