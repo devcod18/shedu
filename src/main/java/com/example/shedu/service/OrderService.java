@@ -32,10 +32,10 @@ public class OrderService {
     private final BarberShopRepository barberShopRepository;
 
     public ApiResponse addOrder(ReqOrders reqOrders) {
-        com.example.shedu.entity.Service service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
+        com.example.shedu.entity.Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
 
         Orders orders = Orders.builder()
-                .service(service)
+                .offers(service)
                 .user(userRepository.findById(reqOrders.getUserId()).orElse(null))
                 .createdAt(LocalDateTime.now())
                 .duration(reqOrders.getDuration())
@@ -80,7 +80,7 @@ public class OrderService {
         if (orders == null){
             return new ApiResponse(ResponseError.NOTFOUND("Order"));
         }
-        orders.setService(serviceRepository.findById(reqOrders.getServiceId()).orElse(null));
+        orders.setOffers(serviceRepository.findById(reqOrders.getServiceId()).orElse(null));
         orders.setUser(userRepository.findById(reqOrders.getUserId()).orElse(null));
         orders.setBookingDaytime(reqOrders.getBookingDaytime());
         orders.setSpecial(reqOrders.getSpecial());
@@ -93,7 +93,7 @@ public class OrderService {
 
     private ResOrders toResponse(Orders orders){
         ResOrders resOrders = ResOrders.builder()
-                .serviceId(orders.getService().getId())
+                .serviceId(orders.getOffers().getId())
                 .userId(orders.getUser().getId())
                 .createdAt(orders.getCreatedAt())
                 .duration(orders.getDuration())

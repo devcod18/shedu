@@ -67,6 +67,7 @@ public class AuthService {
     private void saveUser(AuthRegister auth, UserRole role) {
         User user = User.builder()
                 .fullName(auth.getFullName())
+                .email(auth.getEmail())
                 .phoneNumber(auth.getPhoneNumber())
                 .password(passwordEncoder.encode(auth.getPassword()))
                 .userRole(role)

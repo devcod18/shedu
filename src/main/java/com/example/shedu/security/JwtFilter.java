@@ -1,6 +1,7 @@
 
 package com.example.shedu.security;
 
+import com.example.shedu.security.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;

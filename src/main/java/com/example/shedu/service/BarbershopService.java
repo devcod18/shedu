@@ -122,8 +122,8 @@ public class BarbershopService {
     private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershopList) {
         List<ResBarbershop> responseList = new ArrayList<>();
         for (Barbershop barbershop : barbershopList) {
-            Optional<User> user = userRepository.findByIdAndUserRoleAndEnabledTrue
-                    (barbershop.getOwner().getId(), UserRole.ROLE_MASTER);
+            Optional<User> user = Optional.ofNullable(userRepository.findByIdAndUserRoleAndEnabledTrue
+                    (barbershop.getOwner().getId(), UserRole.ROLE_MASTER));
 
             Long ownerId = user.map(User::getId).orElse(null);
 

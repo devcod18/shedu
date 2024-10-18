@@ -1,8 +1,8 @@
 package com.example.shedu.repository;
 
 
-import com.example.shedu.entity.Service;
+import com.example.shedu.entity.Offers;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ServiceRepository extends JpaRepository<Service, Long> {
+public interface ServiceRepository extends JpaRepository<Offers, Long> {
 }
