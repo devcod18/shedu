@@ -22,29 +22,19 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> logIn(@Valid @RequestBody AuthLogin authLogin){
+    public ResponseEntity<ApiResponse> logIn(@Valid @RequestBody AuthLogin authLogin) {
         return ResponseEntity.ok(authService.login(authLogin));
     }
 
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister){
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister) {
         return ResponseEntity.ok(authService.register(authRegister));
     }
 
-    @Operation(summary = "Admin yangi librarian qoshadi")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/admin/save-admin")
-    public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth){
+    public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth) {
         return ResponseEntity.ok(authService.adminSaveLibrarian(auth));
     }
-
-
-//    @PutMapping("/activate")
-//    public ResponseEntity<ApiResponse> activate(@RequestParam Integer code){
-//        ApiResponse activate = authService.activate(code);
-//        return ResponseEntity.ok(activate);
-//    }
-
-
 }

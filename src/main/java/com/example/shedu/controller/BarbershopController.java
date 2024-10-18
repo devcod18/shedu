@@ -21,8 +21,8 @@ public class BarbershopController {
     // Barbershop qo'shish
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop,@CurrentUser User user,@RequestParam BarbershopRegion region) {
-        ApiResponse apiResponse = barbershopService.save(reqBarbershop,user,region);
+    public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop, @CurrentUser User user, @RequestParam BarbershopRegion region) {
+        ApiResponse apiResponse = barbershopService.save(reqBarbershop, user, region);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -44,8 +44,8 @@ public class BarbershopController {
 
     // Barbershopni yangilash
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateBarbershop(@RequestParam Long userId, @RequestBody ReqBarbershop reqBarbershop,@RequestParam Long barbershopId) {
-        ApiResponse apiResponse = barbershopService.update(userId, reqBarbershop,barbershopId);
+    public ResponseEntity<ApiResponse> updateBarbershop(@RequestParam Long userId, @RequestBody ReqBarbershop reqBarbershop, @RequestParam Long barbershopId) {
+        ApiResponse apiResponse = barbershopService.update(userId, reqBarbershop, barbershopId);
         return ResponseEntity.ok(apiResponse);
     }
 

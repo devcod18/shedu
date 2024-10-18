@@ -18,8 +18,7 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${spring.jpa.hibernate.ddl-auto}")
-    private String ddl;
+    @Value(value = "${spring.jpa.hibernate.ddl-auto}")
 
     @Override
     public void run(String... args)  {

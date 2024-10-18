@@ -21,7 +21,6 @@ public class AuthRegister {
     private String phoneNumber;
     private String email;
     private Long barbershopId;
-
     @Size(min = 5, max = 12)
     private String password;
 }

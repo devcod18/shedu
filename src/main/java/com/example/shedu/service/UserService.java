@@ -5,10 +5,8 @@ import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
-import com.example.shedu.payload.UserDTO;
 import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.payload.res.ResUser;
-import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,13 +23,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final FileRepository fileRepository;
 
     public ApiResponse getMe(User user) {
         return new ApiResponse(toResponseUser(user));
     }
 
-    public ApiResponse getAllUsersByRole(int page, int size,UserRole role) {
+    public ApiResponse getAllUsersByRole(int page, int size, UserRole role) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<User> users = userRepository.findAllByUserRole(role, pageRequest);
         List<ResUser> responseUsers = toResponseUserList(users.getContent());
@@ -52,7 +48,7 @@ public class UserService {
         return new ApiResponse(pageable);
     }
 
-    public ApiResponse updateUser(User user,AuthRegister authRegister) {
+    public ApiResponse updateUser(User user, AuthRegister authRegister) {
         user.setFullName(authRegister.getFullName());
         user.setPhoneNumber(authRegister.getPhoneNumber());
         user.setUpdated(LocalDateTime.now());
@@ -74,7 +70,7 @@ public class UserService {
                 .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
     }
 
-    public ApiResponse enableUser(Long id,boolean enabled) {
+    public ApiResponse enableUser(Long id, boolean enabled) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
@@ -84,7 +80,7 @@ public class UserService {
         return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
     }
 
-    public ApiResponse searchUserByRole(String field,UserRole role) {
+    public ApiResponse searchUserByRole(String field, UserRole role) {
         List<User> users = userRepository.searchByFieldsAndUserRole(field, role);
         if (users.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));

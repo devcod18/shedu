@@ -20,35 +20,35 @@ public class OrderController {
 
     @PostMapping("/addOrder")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> addOrder(@RequestBody ReqOrders reqOrders){
+    public ResponseEntity<ApiResponse> addOrder(@RequestBody ReqOrders reqOrders) {
         ApiResponse apiResponse = orderService.addOrder(reqOrders);
         return ResponseEntity.ok(apiResponse);
     }
 
     @PutMapping("/changeStatus/[{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> changeStatus(@PathVariable Long orderId, @RequestParam BookingStatus status){
+    public ResponseEntity<ApiResponse> changeStatus(@PathVariable Long orderId, @RequestParam BookingStatus status) {
         ApiResponse apiResponse = orderService.changeStatus(orderId, status);
         return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/getMyOrders")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> getUserOrders(@CurrentUser User user){
+    public ResponseEntity<ApiResponse> getUserOrders(@CurrentUser User user) {
         ApiResponse allOrdersByUser = orderService.getAllOrdersByUser(user);
         return ResponseEntity.ok(allOrdersByUser);
     }
 
     @GetMapping("/getAllOrders")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse> getAllOrders(@RequestParam int size,@RequestParam int page){
-        ApiResponse allOrders = orderService.getAllOrders(size,page);
+    public ResponseEntity<ApiResponse> getAllOrders(@RequestParam int size, @RequestParam int page) {
+        ApiResponse allOrders = orderService.getAllOrders(size, page);
         return ResponseEntity.ok(allOrders);
     }
 
     @PutMapping("/updateOrder/{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders){
+    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders) {
         ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders);
         return ResponseEntity.ok(apiResponse);
     }
