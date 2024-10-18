@@ -28,12 +28,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
 
-//    public ApiResponse getOne(Long id) {
-//        return userRepository.findById(id)
-//                .map(ApiResponse::new)
-//                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
-//    }
-
     public ApiResponse getMe(User user) {
         return new ApiResponse(toResponseUser(user));
     }
