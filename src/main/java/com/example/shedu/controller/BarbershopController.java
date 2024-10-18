@@ -44,8 +44,11 @@ public class BarbershopController {
 
     // Barbershopni yangilash
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateBarbershop(@RequestParam Long userId, @RequestBody ReqBarbershop reqBarbershop, @RequestParam Long barbershopId) {
-        ApiResponse apiResponse = barbershopService.update(userId, reqBarbershop, barbershopId);
+    public ResponseEntity<ApiResponse> updateBarbershop(@RequestParam Long userId,
+                                                        @RequestBody ReqBarbershop reqBarbershop,
+                                                        @RequestParam Long barbershopId,
+                                                        @RequestParam BarbershopRegion region) {
+        ApiResponse apiResponse = barbershopService.update(userId, reqBarbershop, barbershopId, region);
         return ResponseEntity.ok(apiResponse);
     }
 

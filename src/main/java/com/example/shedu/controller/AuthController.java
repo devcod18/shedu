@@ -4,7 +4,6 @@ import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.auth.AuthLogin;
 import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.service.AuthService;
-import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
