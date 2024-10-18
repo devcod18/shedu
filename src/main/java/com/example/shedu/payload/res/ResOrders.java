@@ -1,8 +1,10 @@
 package com.example.shedu.payload.res;
 
+import com.example.shedu.entity.enums.BookingStatus;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,10 +14,10 @@ import java.sql.Timestamp;
 public class ResOrders {
     private Long serviceId;
     private Long userId;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     private Long barbershopId;
     private Timestamp bookingDaytime;
     private Long duration;
-    private String status;
+    private BookingStatus status;
     private String special;
 }

@@ -1,5 +1,6 @@
 package com.example.shedu.entity;
 
+import com.example.shedu.entity.enums.BarberRole;
 import com.example.shedu.entity.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,6 +42,9 @@ public class User implements UserDetails {
 
     @ManyToOne
     private Barbershop barbershop;
+
+    @Enumerated
+    private BarberRole specials;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package com.example.shedu.payload.req;
 
+import com.example.shedu.entity.enums.BookingStatus;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -10,13 +11,10 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Builder
 public class ReqOrders {
-    private Long id;
     private Long serviceId;
     private Long userId;
-    private Timestamp createdAt;
-    private Long barbershopId;
     private Timestamp bookingDaytime;
     private Long duration;
-    private String status;
+    private BookingStatus status;
     private String special;
 }

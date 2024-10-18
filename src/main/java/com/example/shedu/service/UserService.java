@@ -58,17 +58,14 @@ public class UserService {
         return new ApiResponse(pageable);
     }
 
-    public ApiResponse updateUser(Long id, AuthRegister authRegister, UserDTO userDTO) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
-        }
-
-        user.setFile(fileRepository.findById(userDTO.getFileId()).orElse(null));
-        user.setUpdated(LocalDateTime.now());
+    public ApiResponse updateUser(User user,AuthRegister authRegister) {
         user.setFullName(authRegister.getFullName());
         user.setPhoneNumber(authRegister.getPhoneNumber());
-        user.setPassword(passwordEncoder.encode(authRegister.getPassword()));
+        user.setUpdated(LocalDateTime.now());
+
+        if (authRegister.getPassword() != null && !authRegister.getPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(authRegister.getPassword()));
+        }
 
         userRepository.save(user);
         return new ApiResponse("Foydalanuvchi muvaffaqiyatli yangilandi");
@@ -93,8 +90,8 @@ public class UserService {
         return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
     }
 
-    public ApiResponse searchUserByRole(String fullName, String phoneNumber, String email,UserRole role) {
-        List<User> users = userRepository.searchByFieldsAndUserRole(fullName, role, email,phoneNumber);
+    public ApiResponse searchUserByRole(String field,UserRole role) {
+        List<User> users = userRepository.searchByFieldsAndUserRole(field, role);
         if (users.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
         }
