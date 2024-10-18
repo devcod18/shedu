@@ -28,13 +28,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByActivationCode(Integer activationCode);
 
     @Query("SELECT u FROM users u WHERE " +
-            "(:fullName IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :fullName, '%'))) AND " +
-            "(:phoneNumber IS NULL OR u.phoneNumber LIKE CONCAT('%', :phoneNumber, '%')) AND " +
-            "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%')))")
-    List<User> searchByFieldsAndUserRole(@Param("fullName") String fullName,
-                              @Param("role") UserRole role,
-                              @Param("phoneNumber") String phoneNumber,
-                              @Param("email") String email);
+            "(:role IS NULL OR u.userRole = :role) AND " +
+            "(" +
+            "(:field IS NULL OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :field, '%'))) OR " +
+            "(:field IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :field, '%'))) OR " +
+            "(:field IS NULL OR u.phoneNumber LIKE CONCAT('%', :field, '%'))" +
+            ")")
+    List<User> searchByFieldsAndUserRole(@Param("field") String field,
+                                         @Param("role") UserRole role);
+
 
     Page<User> findAllByUserRole(UserRole role, PageRequest pageRequest);
 
