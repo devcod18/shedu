@@ -1,9 +1,11 @@
 package com.example.shedu.entity;
 
+import com.example.shedu.entity.enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -24,7 +26,7 @@ public class Orders {
     private User user;
 
     @Column(nullable = false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne(optional = false)
     private Barbershop barbershop;
@@ -35,8 +37,8 @@ public class Orders {
     @Column(nullable = false)
     private Long duration;
 
-    @Column(nullable = false)
-    private String status;
+    @Enumerated
+    private BookingStatus status;
 
     @Column(nullable = false)
     private String special;
