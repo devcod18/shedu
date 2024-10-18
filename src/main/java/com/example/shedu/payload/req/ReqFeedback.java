@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ReqFeedback {
-    private Long id;
     @Size(min = 1, max = 5)
     private int rating;
     @NotBlank

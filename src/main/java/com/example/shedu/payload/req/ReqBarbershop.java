@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ReqBarbershop {
-    private Long id;
     @NotBlank(message = "Title cannot be empty")
     private String title;
     @NotBlank(message = "Info cannot be empty")

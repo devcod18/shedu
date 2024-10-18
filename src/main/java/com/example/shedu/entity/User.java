@@ -41,7 +41,6 @@ public class User implements UserDetails {
 
     private LocalDateTime updated;
 
-    @Column(nullable = false)
     private Long barbershopId;
 
     @Enumerated

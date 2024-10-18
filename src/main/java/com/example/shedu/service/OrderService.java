@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +35,9 @@ public class OrderService {
     public ApiResponse addOrder(ReqOrders reqOrders) {
         com.example.shedu.entity.Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
 
+        if (!isValidBookingDayTime(reqOrders.getBookingDaytime())) {
+            return new ApiResponse(ResponseError.DEFAULT_ERROR("Noto'g'ri reja!"));
+        }
         Orders orders = Orders.builder()
                 .offers(service)
                 .user(userRepository.findById(reqOrders.getUserId()).orElse(null))
@@ -89,6 +93,11 @@ public class OrderService {
 
         orderRepository.save(orders);
         return new ApiResponse("Succes");
+    }
+
+    private boolean isValidBookingDayTime(Timestamp bookingDayTime){
+            LocalDateTime now = LocalDateTime.now();
+            return bookingDayTime.toLocalDateTime().isAfter(now);
     }
 
     private ResOrders toResponse(Orders orders){

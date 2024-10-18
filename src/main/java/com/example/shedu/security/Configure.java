@@ -28,7 +28,7 @@ public class Configure {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return email -> userRepository.findByEmail(email).orElse(null);
+        return userRepository::findByPhoneNumber;
     }
 
     @Bean

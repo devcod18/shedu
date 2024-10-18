@@ -36,7 +36,6 @@ public class AuthService {
         return new ApiResponse(ResponseError.PASSWORD_DID_NOT_MATCH());
     }
 
-
     public ApiResponse register(AuthRegister auth) {
 
         User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber());
@@ -71,6 +70,7 @@ public class AuthService {
                 .phoneNumber(auth.getPhoneNumber())
                 .password(passwordEncoder.encode(auth.getPassword()))
                 .userRole(role)
+                .barbershopId(auth.getBarbershopId())
                 .enabled(true)
                 .accountNonExpired(true)
                 .accountNonLocked(true)

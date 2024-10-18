@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ReqOffers {
-    private Long id;
     private Long barbershopId;
     private String title;
     private String info;

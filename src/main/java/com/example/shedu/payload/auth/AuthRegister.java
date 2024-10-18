@@ -20,6 +20,7 @@ public class AuthRegister {
             message = "Invalid Uzbekistan phone number")
     private String phoneNumber;
     private String email;
+    private Long barbershopId;
 
     @Size(min = 5, max = 12)
     private String password;
