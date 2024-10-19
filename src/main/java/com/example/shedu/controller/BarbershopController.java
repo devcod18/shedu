@@ -21,7 +21,9 @@ public class BarbershopController {
     // Barbershop qo'shish
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/save")
-    public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop, @CurrentUser User user, @RequestParam BarbershopRegion region) {
+    public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop,
+                                                      @CurrentUser User user,
+                                                      @RequestParam BarbershopRegion region) {
         ApiResponse apiResponse = barbershopService.save(reqBarbershop, user, region);
         return ResponseEntity.ok(apiResponse);
     }

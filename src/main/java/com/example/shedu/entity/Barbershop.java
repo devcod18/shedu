@@ -47,6 +47,6 @@ public class Barbershop {
 
     private String address;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     private File barbershopPic;
 }

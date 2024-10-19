@@ -18,8 +18,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,8 +49,10 @@ public class BarbershopService {
                 .build();
 
         barberShopRepository.save(barbershop);
+
         return new ApiResponse("Success");
     }
+
 
     public ApiResponse getAll(int size, int page) {
         Page<Barbershop> barbershopPage = barberShopRepository.findAll(PageRequest.of(page, size));
@@ -69,25 +69,6 @@ public class BarbershopService {
         return new ApiResponse(customPageable);
     }
 
-//    public ApiResponse getOne(Long id) {
-//        Barbershop barbershop = barberShopRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
-//
-//        ResBarbershop resBarbershop = ResBarbershop.builder()
-//                .owner(barbershop.getOwner().getId())
-//                .title(barbershop.getTitle())
-//                .email(barbershop.getEmail())
-//                .homeNumber(barbershop.getHomeNumber())
-//                .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
-//                .info(barbershop.getInfo())
-//                .lat(barbershop.getLatitude())
-//                .lng(barbershop.getLongitude())
-//                .region(barbershop.getRegion().toString())
-//                .build();
-//
-//        return new ApiResponse(resBarbershop);
-//    }
-
     public ApiResponse delete(Long id) {
         Barbershop barbershop = barberShopRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
@@ -101,7 +82,7 @@ public class BarbershopService {
         Barbershop barbershop = barberShopRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
 
-        if (!barbershop.getOwner().getId().equals(user.getId())) {
+        if (!barbershop.getOwner().getId().equals(user.getBarbershopId())) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
         barbershop.setTitle(reqBarbershop.getTitle());
