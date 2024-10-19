@@ -1,6 +1,7 @@
 package com.example.shedu.repository;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +22,8 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
     List<Barbershop> findAllByMaster(String userRole);
 
     Optional<Barbershop> findById(Long id);
-
-    Barbershop findByTitle(String title);
+    @Query("SELECT b FROM Barbershop b Where b.title = ?1 AND b.isActive = true and b.owner= ?2")
+    Barbershop findAllByTitleAndActiveTrueAndOwner(String title, User owner);
 
     boolean existsById(Long id);
 

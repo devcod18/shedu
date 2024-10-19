@@ -29,7 +29,7 @@ public class BarbershopController {
     }
 
     // Barcha barbershoplarni olish
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page,
                                                          @RequestParam int size) {

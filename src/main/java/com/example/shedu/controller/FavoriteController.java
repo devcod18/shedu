@@ -5,6 +5,7 @@ import com.example.shedu.payload.req.ReqFavorite;
 import com.example.shedu.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/addFavorite")
     public ResponseEntity<ApiResponse> addFavorite(ReqFavorite reqFavorite) {
         ApiResponse apiResponse = favoriteService.addFavorite(reqFavorite);

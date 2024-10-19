@@ -1,21 +1,17 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.Days;
 import com.example.shedu.entity.User;
-import com.example.shedu.entity.WorkDays;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
-import com.example.shedu.payload.req.ReqWorkDays;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
-import com.example.shedu.repository.WorkDaysRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -34,10 +30,9 @@ public class BarbershopService {
     private final BarberShopRepository barberShopRepository;
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
-    private final WorkDaysRepository workDaysRepository;
 
     public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
-        if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
+        if (barberShopRepository.findAllByTitleAndActiveTrueAndOwner(reqBarbershop.getTitle(),user) != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
         }
 
