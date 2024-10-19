@@ -86,6 +86,7 @@ public class FavoriteService {
 
     private ResFavorite toResFavorite(Favorite favorite) {
         return ResFavorite.builder()
+                .id(favorite.getId())
                 .userId(favorite.getUser().getId())
                 .userName(favorite.getUser().getFullName())
                 .barberId(favorite.getBarber().getId())
@@ -96,3 +97,5 @@ public class FavoriteService {
                 .build();
     }
 }
+
+

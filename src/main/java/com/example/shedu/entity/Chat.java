@@ -33,3 +33,5 @@ public class Chat {
     @Column(nullable = false)
     private List<Message> messages;
 }
+
+

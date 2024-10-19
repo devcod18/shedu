@@ -24,3 +24,5 @@ public class AuthRegister {
     @Size(min = 5, max = 12)
     private String password;
 }
+
+

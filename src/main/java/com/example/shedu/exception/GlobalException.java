@@ -29,3 +29,5 @@ public class GlobalException {
         return ResponseEntity.ok(new ApiResponse(ResponseError.VALIDATION_FAILED(message)));
     }
 }
+
+

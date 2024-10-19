@@ -7,3 +7,5 @@ public enum UserRole {
     ROLE_BARBER,
     ROLE_SUPER_ADMIN
 }
+
+

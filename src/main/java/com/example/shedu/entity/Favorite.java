@@ -30,3 +30,5 @@ public class Favorite {
     @CreationTimestamp
     private LocalDate date;
 }
+
+

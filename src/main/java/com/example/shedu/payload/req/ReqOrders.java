@@ -16,3 +16,5 @@ public class ReqOrders {
     private Long duration;
     private Long barbershopId;
 }
+
+

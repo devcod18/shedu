@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class ResFavorite {
+    private Long id;
     private Long userId;
     private String userName;
     private Long barberId;
@@ -18,3 +19,5 @@ public class ResFavorite {
     private String barbershopName;
     private LocalDate date;
 }
+
+

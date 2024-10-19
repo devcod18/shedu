@@ -14,3 +14,5 @@ public class ResOffers {
     private Double price;
     private Long duration;
 }
+
+

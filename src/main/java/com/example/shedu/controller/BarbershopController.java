@@ -31,7 +31,8 @@ public class BarbershopController {
     // Barcha barbershoplarni olish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page, @RequestParam int size) {
+    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page,
+                                                         @RequestParam int size) {
         ApiResponse apiResponse = barbershopService.getAll(size, page);
         return ResponseEntity.ok(apiResponse);
     }
@@ -45,8 +46,8 @@ public class BarbershopController {
     }
 
     // Barbershopni yangilash
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateBarbershop(@RequestParam Long userId,
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<ApiResponse> updateBarbershop(@PathVariable Long userId,
                                                         @RequestBody ReqBarbershop reqBarbershop,
                                                         @RequestParam Long barbershopId,
                                                         @RequestParam BarbershopRegion region) {
@@ -58,8 +59,11 @@ public class BarbershopController {
     @PreAuthorize("hasAnyRole('ROLE_SUPEER_ADMIN','ROLE_ADMIN','ROLE_USER','ROLE_MASTER')")
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title, @RequestParam BarbershopRegion region) {
+    public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
+                                                         @RequestParam BarbershopRegion region) {
         ApiResponse apiResponse = barbershopService.search(title, region);
         return ResponseEntity.ok(apiResponse);
     }
 }
+
+

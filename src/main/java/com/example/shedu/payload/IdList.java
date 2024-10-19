@@ -12,3 +12,5 @@ import java.util.List;
 public class IdList {
     private List<Long> ids;
 }
+
+

@@ -7,3 +7,5 @@ public enum BarberRole {
     SHAVE_SPECIALIST,
     APPRENTICE
 }
+
+

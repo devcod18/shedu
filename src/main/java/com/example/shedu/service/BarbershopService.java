@@ -32,7 +32,6 @@ public class BarbershopService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
-    @Transactional
     public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
         if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
@@ -52,9 +51,8 @@ public class BarbershopService {
                 .region(region)
                 .build();
 
-        Barbershop save = barberShopRepository.save(barbershop);
-        System.out.println(save);
-        return new ApiResponse("Barbershop muvaffaqiyatli saqlandi.");
+        barberShopRepository.save(barbershop);
+        return new ApiResponse("Success");
     }
 
     public ApiResponse getAll(int size, int page) {
@@ -85,7 +83,7 @@ public class BarbershopService {
         Barbershop barbershop = barberShopRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
 
-        if (!barbershop.getOwner().getId().equals(user.getId())) {
+        if (!barbershop.getOwner().getId().equals(user.getBarbershopId())) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
@@ -114,11 +112,13 @@ public class BarbershopService {
     private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershopList) {
         List<ResBarbershop> responseList = new ArrayList<>();
         for (Barbershop barbershop : barbershopList) {
-            Long ownerId = Optional.ofNullable(userRepository.findByIdAndUserRoleAndEnabledTrue(barbershop.getOwner().getId(), UserRole.ROLE_MASTER))
-                    .map(User::getId)
-                    .orElse(null);
+            Optional<User> user = Optional.ofNullable(userRepository.findByIdAndUserRoleAndEnabledTrue
+                    (barbershop.getOwner().getId(), UserRole.ROLE_MASTER));
+
+            Long ownerId = user.map(User::getId).orElse(null);
 
             ResBarbershop resBarbershop = ResBarbershop.builder()
+                    .id(barbershop.getId())
                     .title(barbershop.getTitle())
                     .owner(ownerId)
                     .lat(barbershop.getLatitude())
