@@ -1,7 +1,9 @@
 package com.example.shedu.controller;
 
+import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqFavorite;
+import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,10 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PostMapping("/addFavorite")
-    public ResponseEntity<ApiResponse> addFavorite(ReqFavorite reqFavorite) {
-        ApiResponse apiResponse = favoriteService.addFavorite(reqFavorite);
+    public ResponseEntity<ApiResponse> addFavorite(@RequestParam(required = false) Long barberId,
+                                                   @RequestParam(required = false) Long barbershopId,
+                                                   @CurrentUser User user) {
+        ApiResponse apiResponse = favoriteService.addFavorite(barberId,barbershopId,user);
         return ResponseEntity.ok(apiResponse);
     }
 
