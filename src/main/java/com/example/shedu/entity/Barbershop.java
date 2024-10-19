@@ -16,6 +16,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class Barbershop {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,10 +30,10 @@ public class Barbershop {
     @CreationTimestamp
     private LocalDate date;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User owner;
 
-    private boolean isActive=true;
+    private boolean isActive;
 
     @Column(nullable = false)
     private String email;
@@ -46,7 +47,6 @@ public class Barbershop {
 
     private String address;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private File barbershopPic;
 }
-
