@@ -29,8 +29,7 @@ public class FeedbackService {
 
     private final BarberShopRepository barberShopRepository;
 
-    public ApiResponse addFeedback(ReqFeedback reqFeedback) {
-        User user = userRepository.findById(reqFeedback.getUserId()).orElse(null);
+    public ApiResponse addFeedback(ReqFeedback reqFeedback,User user) {
         if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
         }

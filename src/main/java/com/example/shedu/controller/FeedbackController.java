@@ -1,8 +1,10 @@
 package com.example.shedu.controller;
 
+import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.RatingCategory;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqFeedback;
+import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +20,8 @@ public class FeedbackController {
 
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PostMapping("/addFeedback")
-    public ResponseEntity<ApiResponse> addFeedback(@RequestBody ReqFeedback reqFeedback) {
-        ApiResponse apiResponse = feedbackService.addFeedback(reqFeedback);
+    public ResponseEntity<ApiResponse> addFeedback(@RequestBody ReqFeedback reqFeedback, @CurrentUser User user) {
+        ApiResponse apiResponse = feedbackService.addFeedback(reqFeedback,user);
         return ResponseEntity.ok(apiResponse);
     }
 

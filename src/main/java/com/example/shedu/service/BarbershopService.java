@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,8 @@ public class BarbershopService {
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
                 .owner(user)
+                .date(LocalDate.now())
+                .isActive(true)
                 .address(reqBarbershop.getAddress())
                 .email(user.getEmail())
                 .latitude(reqBarbershop.getLat())
@@ -49,7 +52,6 @@ public class BarbershopService {
                 .build();
 
         barberShopRepository.save(barbershop);
-
         return new ApiResponse("Success");
     }
 
@@ -84,6 +86,7 @@ public class BarbershopService {
         if (!barbershop.getOwner().getId().equals(user.getBarbershopId())) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
+
         barbershop.setTitle(reqBarbershop.getTitle());
         barbershop.setInfo(reqBarbershop.getInfo());
         barbershop.setEmail(user.getEmail());
@@ -92,8 +95,8 @@ public class BarbershopService {
         barbershop.setLongitude(reqBarbershop.getLng());
         barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
         barbershop.setRegion(region);
-        barberShopRepository.save(barbershop);
 
+        barberShopRepository.save(barbershop);
         return new ApiResponse("Barbershop muvaffaqiyatli yangilandi.");
     }
 
@@ -130,5 +133,22 @@ public class BarbershopService {
         }
         return responseList;
     }
-}
 
+    public ApiResponse getBarbershopById(Long id) {
+        Barbershop barbershop = barberShopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+
+        ResBarbershop resBarbershop = ResBarbershop.builder()
+                .owner(barbershop.getOwner().getId())
+                .title(barbershop.getTitle())
+                .email(barbershop.getEmail())
+                .lat(barbershop.getLatitude())
+                .lng(barbershop.getLongitude())
+                .info(barbershop.getInfo())
+                .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
+                .region(barbershop.getRegion().toString())
+                .build();
+
+        return new ApiResponse(resBarbershop);
+    }
+}

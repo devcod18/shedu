@@ -12,11 +12,9 @@ import java.sql.Timestamp;
 @Builder
 public class ReqOrders {
     private Long serviceId;
-    private Long userId;
     private Timestamp bookingDaytime;
     private Long duration;
-    private BookingStatus status;
-    private String special;
+    private Long barbershopId;
 }
 
 
