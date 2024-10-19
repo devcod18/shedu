@@ -1,5 +1,4 @@
 package com.example.shedu.security;
-
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.lang.annotation.*;

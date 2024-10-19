@@ -19,7 +19,7 @@ public class BarbershopController {
     private final BarbershopService barbershopService;
 
     // Barbershop qo'shish
-    @PreAuthorize("hasAnyRole('ROLE_MASTER')")
+    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop,
                                                       @CurrentUser User user,

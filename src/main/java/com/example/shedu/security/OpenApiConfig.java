@@ -1,5 +1,6 @@
 package com.example.shedu.security;
 
+
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -11,9 +12,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "BARBERSHOP", version = "v1",
-                description = "This API just for learning Spring boot features",
-                contact = @Contact(name = "It city academy", url = "http://itcityacademy.uz", email = "admin@gmail.com"),
+        info = @Info(title = "PAXTA TERIM", version = "v1",
+                contact = @Contact(name = "SFERA ACADEMY",
+                        url = "http://itcityacademy.uz",
+                        email = "admin@gmail.com"
+                ),
                 license = @License(name = "Apache Foundation", url = "https://apache.org/")
         ),
         security = {
