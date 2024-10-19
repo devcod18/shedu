@@ -28,7 +28,7 @@ public class Orders {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private Barbershop barbershop;
 
     @Column(nullable = false)
@@ -39,4 +39,8 @@ public class Orders {
 
     @Enumerated
     private BookingStatus status;
+
+    @Column(nullable = false)
+    private String special;
 }
+
