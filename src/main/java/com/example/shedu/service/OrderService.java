@@ -30,17 +30,18 @@ public class OrderService {
     private final UserRepository userRepository;
     private final BarberShopRepository barberShopRepository;
 
-    public ApiResponse addOrder(ReqOrders reqOrders) {
+    public ApiResponse addOrder(ReqOrders reqOrders,User user) {
         Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
-
+        if (service == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Ofer"));
+        }
         Orders orders = Orders.builder()
                 .offers(service)
-                .user(userRepository.findById(reqOrders.getUserId()).orElse(null))
+                .user(user)
                 .createdAt(LocalDateTime.now())
                 .duration(reqOrders.getDuration())
                 .status(BookingStatus.PENDING)
-                .barbershop(service.getBarbershop())
-                .special(reqOrders.getSpecial())
+                .barbershop(barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null))
                 .bookingDaytime(reqOrders.getBookingDaytime())
                 .build();
 
@@ -74,15 +75,14 @@ public class OrderService {
         return new ApiResponse("Succes");
     }
 
-    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders) {
+    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders,User user) {
         Orders orders = orderRepository.findById(orderId).orElse(null);
         if (orders == null){
             return new ApiResponse(ResponseError.NOTFOUND("Order"));
         }
         orders.setOffers(serviceRepository.findById(reqOrders.getServiceId()).orElse(null));
-        orders.setUser(userRepository.findById(reqOrders.getUserId()).orElse(null));
+        orders.setUser(user);
         orders.setBookingDaytime(reqOrders.getBookingDaytime());
-        orders.setSpecial(reqOrders.getSpecial());
         orders.setDuration(reqOrders.getDuration());
         orders.setStatus(BookingStatus.PENDING);
 
@@ -97,7 +97,6 @@ public class OrderService {
                 .createdAt(orders.getCreatedAt())
                 .duration(orders.getDuration())
                 .status(orders.getStatus())
-                .special(orders.getSpecial())
                 .bookingDaytime(orders.getBookingDaytime())
                 .build();
 

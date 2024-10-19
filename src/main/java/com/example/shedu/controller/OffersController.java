@@ -5,6 +5,7 @@ import com.example.shedu.payload.req.ReqOffers;
 import com.example.shedu.service.OffersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ public class OffersController {
 
     private final OffersService offersService;
 
+    @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/addOffers")
     public ResponseEntity<ApiResponse> addOffers(@RequestBody ReqOffers reqOffers) {
         ApiResponse apiResponse = offersService.addService(reqOffers);
@@ -28,12 +30,14 @@ public class OffersController {
         return ResponseEntity.ok(allOffers);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PutMapping("/updateOffers/{OffersId}")
     public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long OffersId, @RequestBody ReqOffers reqOffers) {
         ApiResponse apiResponse = offersService.updateOffer(OffersId, reqOffers);
         return ResponseEntity.ok(apiResponse);
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @DeleteMapping("/deleteOffers/{OffersId}")
     public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long OffersId) {
         ApiResponse apiResponse = offersService.deleteOffer(OffersId);
