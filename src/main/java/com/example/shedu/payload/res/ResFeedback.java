@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ResFeedback {
+    private Long id;
     private int rating;
     private String comment;
     private LocalDateTime createdAt;

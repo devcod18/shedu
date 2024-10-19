@@ -1,5 +1,6 @@
 package com.example.shedu.controller;
 
+import com.example.shedu.entity.enums.RatingCategory;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqFeedback;
 import com.example.shedu.service.FeedbackService;
@@ -23,15 +24,15 @@ public class FeedbackController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
-    @GetMapping("/getAllFeedbacks")
-    public ResponseEntity<ApiResponse> getAllFeedbacks(
+    @GetMapping("/feedbacks/rating")
+    public ApiResponse getFeedbacksByRatingCategory(
+            @RequestParam Long barbershopId,
+            @RequestParam RatingCategory category,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Long barberId,
-            @RequestParam(required = false) Long barbershopId) {
-        ApiResponse apiResponse = feedbackService.getAllFeedbacks(page, size, barberId, barbershopId);
-        return ResponseEntity.ok(apiResponse);
+            @RequestParam(defaultValue = "10") int size) {
+        return feedbackService.getFeedbackByRatingCategory(barbershopId, category, page, size);
     }
+
 
 }
 

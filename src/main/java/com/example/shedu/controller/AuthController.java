@@ -1,5 +1,6 @@
 package com.example.shedu.controller;
 
+import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.auth.AuthLogin;
 import com.example.shedu.payload.auth.AuthRegister;
@@ -27,8 +28,9 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister) {
-        return ResponseEntity.ok(authService.register(authRegister));
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister,
+                                                @RequestParam UserRole role) {
+        return ResponseEntity.ok(authService.register(authRegister,role));
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
