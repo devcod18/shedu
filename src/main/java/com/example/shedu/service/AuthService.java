@@ -1,6 +1,7 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.enums.BarberRole;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.ResponseError;
@@ -36,14 +37,14 @@ public class AuthService {
         return new ApiResponse(ResponseError.PASSWORD_DID_NOT_MATCH());
     }
 
-    public ApiResponse register(AuthRegister auth) {
+    public ApiResponse register(AuthRegister auth, UserRole role) {
 
         User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
         if (byPhoneNumber != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        saveUser(auth, UserRole.ROLE_USER);
+        saveUser(auth, role);
 
         return new ApiResponse("Success");
     }
