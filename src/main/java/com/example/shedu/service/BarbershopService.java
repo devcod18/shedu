@@ -83,7 +83,7 @@ public class BarbershopService {
         return new ApiResponse("Success");
     }
 
-    public ApiResponse update(Long id, ReqBarbershop reqBarbershop, Long userId,BarbershopRegion region) {
+    public ApiResponse update(Long id, ReqBarbershop reqBarbershop, Long userId, BarbershopRegion region) {
         User user = userRepository.findById(userId).orElse(null);
         Barbershop barbershop = barberShopRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
@@ -129,6 +129,7 @@ public class BarbershopService {
             Long ownerId = user.map(User::getId).orElse(null);
 
             ResBarbershop resBarbershop = ResBarbershop.builder()
+                    .id(barbershop.getId())
                     .title(barbershop.getTitle())
                     .owner(ownerId)
                     .lat(barbershop.getLatitude())
