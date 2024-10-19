@@ -1,6 +1,7 @@
 package com.example.shedu.controller;
 
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.enums.RatingCategory;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqFeedback;
 import com.example.shedu.security.CurrentUser;
