@@ -50,19 +50,12 @@ public class FeedbackService {
     }
 
     public ApiResponse getFeedbackByRatingCategory(Long barbershopId, RatingCategory category, int page, int size) {
-        if (!barberShopRepository.existsById(barbershopId)) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Feedback> feedbacks;
-
-        switch (category) {
-            case LOW -> feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqual(barbershopId, 2, pageRequest);
-            case MEDIUM -> feedbacks = feedbackRepository.findByBarbershopIdAndRating(barbershopId, 3, pageRequest);
-            case HIGH -> feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqual(barbershopId, 4, pageRequest);
-            case ALL -> feedbacks = feedbackRepository.findByBarbershopId(barbershopId, pageRequest);
-            default -> throw new IllegalArgumentException("Unknown rating category: " + category);
-        }
+        Page<Feedback> feedbacks = switch (category) {
+            case LOW -> feedbackRepository.findByBarbershopIdAndRatingLessThanEqual(barbershopId, 2, pageRequest);
+            case MEDIUM -> feedbackRepository.findByBarbershopIdAndRating(barbershopId, 3, pageRequest);
+            case HIGH -> feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqual(barbershopId, 4, pageRequest);
+        };
 
         List<ResFeedback> resFeedbacks = feedbacks.getContent()
                 .stream().map(this::toResFeedback)
@@ -77,16 +70,6 @@ public class FeedbackService {
                 .build();
 
         return new ApiResponse(customPageable);
-    }
-
-    public ApiResponse deleteFeedback(Long id) {
-        Feedback feedback = feedbackRepository.findById(id).orElse(null);
-        if (feedback == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
-        }
-
-        feedbackRepository.delete(feedback);
-        return new ApiResponse("success");
     }
 
     private ResFeedback toResFeedback(Feedback feedback) {
