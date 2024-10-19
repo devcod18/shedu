@@ -3,6 +3,7 @@ package com.example.shedu.service;
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Favorite;
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
@@ -28,40 +29,25 @@ public class FavoriteService {
     private final UserRepository userRepository;
     private final BarberShopRepository barbershopRepository;
 
-    public ApiResponse addFavorite(ReqFavorite reqFavorite) {
-        User user = userRepository.findById(reqFavorite.getUserId()).orElse(null);
-        if (user == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("User"));
-        }
+    public ApiResponse addFavorite(Long barberId,Long barbershopId, User user) {
 
-        User barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
-        if (barber == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barber"));
-        }
-
-        Barbershop barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
-        if (barbershop == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-
-        Favorite favourite = Favorite.builder()
+        Favorite favorite = Favorite.builder()
                 .user(user)
-                .barber(barber)
-                .barbershop(barbershop)
+                .barberId(barberId != null ? barberId:null)
                 .date(LocalDate.now())
+                .barbershop(barbershopId != null ? barbershopId:null)
                 .build();
-
-        favoriteRepository.save(favourite);
-
-        return new ApiResponse("Success");
+        favoriteRepository.save(favorite);
+        return new ApiResponse("Successfully saved favourite");
     }
 
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAll(PageRequest.of(page, size));
 
         List<ResFavorite> responseList = favoritePage.getContent().stream()
-                .map(this::toResFavorite)
+                .map(favorite -> favorite != null ? toResFavorite(favorite) : null)
                 .collect(Collectors.toList());
+
 
         CustomPageable customPageable = CustomPageable.builder()
                 .size(favoritePage.getSize())
@@ -89,10 +75,8 @@ public class FavoriteService {
                 .id(favorite.getId())
                 .userId(favorite.getUser().getId())
                 .userName(favorite.getUser().getFullName())
-                .barberId(favorite.getBarber().getId())
-                .barberName(favorite.getBarber().getFullName())
-                .barbershopId(favorite.getBarbershop().getId())
-                .barbershopName(favorite.getBarbershop().getTitle())
+                .barberId(favorite != null ? favorite.getBarberId() : null)
+                .barbershopId(favorite != null ? favorite.getBarbershop() : null)
                 .date(favorite.getDate())
                 .build();
     }

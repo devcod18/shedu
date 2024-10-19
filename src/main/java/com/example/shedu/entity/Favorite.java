@@ -18,14 +18,12 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     private User user;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private User barber;
+    private Long barberId;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private Barbershop barbershop;
+    private Long barbershop;
 
     @CreationTimestamp
     private LocalDate date;
