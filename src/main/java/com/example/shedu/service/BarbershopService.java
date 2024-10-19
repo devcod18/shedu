@@ -1,17 +1,21 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.Days;
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.WorkDays;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
+import com.example.shedu.payload.req.ReqWorkDays;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
+import com.example.shedu.repository.WorkDaysRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,6 +34,7 @@ public class BarbershopService {
     private final BarberShopRepository barberShopRepository;
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
+    private final WorkDaysRepository workDaysRepository;
 
     public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
         if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
@@ -50,12 +55,13 @@ public class BarbershopService {
 
         barberShopRepository.save(barbershop);
 
+
         return new ApiResponse("Success");
     }
 
 
     public ApiResponse getAll(int size, int page) {
-        Page<Barbershop> barbershopPage = barberShopRepository.findAll(PageRequest.of(page, size));
+        Page<Barbershop> barbershopPage = barberShopRepository.FindAllByActive(PageRequest.of(page, size));
         List<ResBarbershop> list = toResponseBarbershopList(barbershopPage.getContent());
 
         CustomPageable customPageable = CustomPageable.builder()
@@ -105,7 +111,14 @@ public class BarbershopService {
 
         List<ResBarbershop> list = toResponseBarbershopList(barbershops);
         return new ApiResponse(list);
+
     }
+    public ApiResponse GetByOwner(Long id) {
+        Barbershop barbershop = barberShopRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+        return new ApiResponse(barbershop);
+    }
+
 
     private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershopList) {
         List<ResBarbershop> responseList = new ArrayList<>();
