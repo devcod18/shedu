@@ -20,8 +20,8 @@ public class OrderController {
 
     @PostMapping("/addOrder")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> addOrder(@RequestBody ReqOrders reqOrders) {
-        ApiResponse apiResponse = orderService.addOrder(reqOrders);
+    public ResponseEntity<ApiResponse> addOrder(@RequestBody ReqOrders reqOrders,@CurrentUser User user) {
+        ApiResponse apiResponse = orderService.addOrder(reqOrders,user);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -48,8 +48,8 @@ public class OrderController {
 
     @PutMapping("/updateOrder/{orderId}")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders) {
-        ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders);
+    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders,@CurrentUser User user) {
+        ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders,user);
         return ResponseEntity.ok(apiResponse);
     }
 }

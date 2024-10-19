@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("getAllUsers")
-    @PreAuthorize("hasAnyRole()('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     public ResponseEntity<ApiResponse> getAllUsers(@RequestParam int page, @RequestParam int size, @RequestParam UserRole role) {
         ApiResponse allUsersByRole = userService.getAllUsersByRole(page, size, role);
         return ResponseEntity.ok(allUsersByRole);
