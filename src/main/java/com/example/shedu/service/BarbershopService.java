@@ -54,7 +54,6 @@ public class BarbershopService {
         return new ApiResponse("Success");
     }
 
-
     public ApiResponse getAll(int size, int page) {
         Page<Barbershop> barbershopPage = barberShopRepository.FindAllByActive(PageRequest.of(page, size));
         List<ResBarbershop> list = toResponseBarbershopList(barbershopPage.getContent());
