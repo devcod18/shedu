@@ -119,6 +119,7 @@ public class BarbershopService {
                     .orElse(null);
 
             ResBarbershop resBarbershop = ResBarbershop.builder()
+                    .id(barbershop.getId())
                     .title(barbershop.getTitle())
                     .owner(ownerId)
                     .lat(barbershop.getLatitude())
