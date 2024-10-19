@@ -18,3 +18,5 @@ public class ResFavorite {
     private String barbershopName;
     private LocalDate date;
 }
+
+

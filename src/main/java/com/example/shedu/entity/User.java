@@ -20,7 +20,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity(name = "users")
-public class User implements UserDetails {
+public class
+
+User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -94,3 +96,5 @@ public class User implements UserDetails {
         return enabled;
     }
 }
+
+

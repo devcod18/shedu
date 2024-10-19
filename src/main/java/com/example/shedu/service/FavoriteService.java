@@ -96,3 +96,5 @@ public class FavoriteService {
                 .build();
     }
 }
+
+

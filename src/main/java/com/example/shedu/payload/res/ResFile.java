@@ -12,3 +12,5 @@ public class ResFile {
     private Resource resource;
     private String fillName;
 }
+
+

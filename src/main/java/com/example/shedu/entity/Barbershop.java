@@ -50,3 +50,4 @@ public class Barbershop {
     @ManyToOne(cascade = CascadeType.ALL)
     private File barbershopPic;
 }
+

@@ -22,3 +22,5 @@ public class ReqFeedback {
     private Long userId;
     private Long barbershopId;
 }
+
+

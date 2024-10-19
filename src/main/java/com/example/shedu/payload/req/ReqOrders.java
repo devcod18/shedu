@@ -18,3 +18,5 @@ public class ReqOrders {
     private BookingStatus status;
     private String special;
 }
+
+
