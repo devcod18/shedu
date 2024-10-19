@@ -5,9 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -34,15 +32,15 @@ public class Orders {
     private Barbershop barbershop;
 
     @Column(nullable = false)
-    private LocalDate bookingDay;
-
-    @Column(nullable = false)
-    private LocalTime bookingTime;
+    private Timestamp bookingDaytime;
 
     @Column(nullable = false)
     private Long duration;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated
     private BookingStatus status;
+
+    @Column(nullable = false)
+    private String special;
 }
 

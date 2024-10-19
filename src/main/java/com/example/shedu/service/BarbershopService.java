@@ -153,3 +153,4 @@ public class BarbershopService {
         return new ApiResponse(resBarbershop);
     }
 }
+
