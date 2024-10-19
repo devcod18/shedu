@@ -2,6 +2,8 @@ package com.example.shedu.repository;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.enums.BarbershopRegion;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -26,8 +28,14 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
     List<Barbershop> findAllByTitle(String title);
 
-    @Query("SELECT b FROM Barbershop b JOIN b.region r WHERE UPPER(b.title) LIKE UPPER(CONCAT('%', ?1, '%'))AND b.isActive = true")
+    @Query("SELECT b FROM Barbershop b JOIN b.region r WHERE b.title LIKE CONCAT('%', UPPER(?1), '%', LOWER(?1), '%') AND b.isActive = true")
     List<Barbershop> findByTitleAndRegionAndActive(String title, String barbershopRegion);
+
+    @Query("select b from Barbershop b where b.isActive = true")
+    Page<Barbershop> FindAllByActive(Pageable pageable);
+
+    @Query("select b from Barbershop b where b.id = ?1 and b.isActive = true")
+    Barbershop FindByIdAndActive(Long id);
 
 }
 
