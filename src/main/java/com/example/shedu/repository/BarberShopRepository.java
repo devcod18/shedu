@@ -30,3 +30,5 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
     List<Barbershop> findByTitleAndRegionAndActive(String title, String barbershopRegion);
 
 }
+
+

@@ -15,3 +15,5 @@ public class ResContactNotification {
     private String phone;
     private String message;
 }
+
+

@@ -21,3 +21,5 @@ public class ResOrders {
     private BookingStatus status;
     private String special;
 }
+
+

@@ -14,3 +14,4 @@ public class ReqOffers {
     private Double price;
     private Long duration;
 }
+

@@ -13,3 +13,5 @@ public class ResNotification {
 
     private String content;
 }
+
+

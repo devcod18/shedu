@@ -16,3 +16,5 @@ public class ResFeedback {
     private Long userId;
     private Long barbershopId;
 }
+
+

@@ -13,3 +13,5 @@ public class ReqFavorite {
     private Long barbershopId;
 
 }
+
+
