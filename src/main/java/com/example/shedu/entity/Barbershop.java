@@ -30,7 +30,7 @@ public class Barbershop {
     @CreationTimestamp
     private LocalDate date;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private User owner;
 
     private boolean isActive;
@@ -47,7 +47,7 @@ public class Barbershop {
 
     private String address;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private File barbershopPic;
 }
 
