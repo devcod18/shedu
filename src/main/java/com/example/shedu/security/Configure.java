@@ -1,8 +1,6 @@
-
 package com.example.shedu.security;
 
 import com.example.shedu.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,14 +10,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 
 @Configuration
-@RequiredArgsConstructor
 public class Configure {
     private final UserRepository userRepository;
 
-
+    public Configure(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,7 +28,7 @@ public class Configure {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return userRepository::findByPhoneNumber;
+        return phoneNumber -> userRepository.findByPhoneNumber(phoneNumber).orElseThrow(RuntimeException::new);
     }
 
     @Bean
@@ -43,5 +43,10 @@ public class Configure {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public RestTemplate restTemplate(){
+        return new RestTemplate();
     }
 }

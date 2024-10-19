@@ -22,7 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public ApiResponse login(AuthLogin authLogin) {
-        User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber());
+        User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
         if (user == null) {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
@@ -38,7 +38,7 @@ public class AuthService {
 
     public ApiResponse register(AuthRegister auth) {
 
-        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber());
+        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
         if (byPhoneNumber != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
@@ -51,7 +51,7 @@ public class AuthService {
 
     public ApiResponse adminSaveLibrarian(AuthRegister auth) {
 
-        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber());
+        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
         if (byPhoneNumber != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }

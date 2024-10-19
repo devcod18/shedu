@@ -33,6 +33,7 @@ public class BarbershopService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
 
+    @Transactional
     public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
         if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
@@ -42,6 +43,8 @@ public class BarbershopService {
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
                 .owner(user)
+                .date(LocalDate.now())
+                .isActive(true)
                 .address(reqBarbershop.getAddress())
                 .email(user.getEmail())
                 .latitude(reqBarbershop.getLat())
@@ -50,7 +53,8 @@ public class BarbershopService {
                 .region(region)
                 .build();
 
-        barberShopRepository.save(barbershop);
+        Barbershop save = barberShopRepository.save(barbershop);
+        System.out.println(save);
         return new ApiResponse("Success");
     }
 

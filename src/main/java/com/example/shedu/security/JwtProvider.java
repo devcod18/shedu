@@ -15,10 +15,10 @@ public class JwtProvider implements AuthenticationProvider {
     @Value("${jwt.token.key}")
     private String key;
     @Value("${jwt.token.ttl}")
-    private Long ttl;
+    private Long ttl ;
 
 
-    public String generateToken(String phoneNumber) {
+    public String generateToken(String  phoneNumber){
         return Jwts.builder()
                 .setSubject(phoneNumber)
                 .setIssuedAt(new Date())
@@ -27,7 +27,7 @@ public class JwtProvider implements AuthenticationProvider {
                 .compact();
     }
 
-    public String getPhoneNumberFromToken(String token) {
+    public String getPhoneNumberFromToken(String token){
         return Jwts.parser()
                 .setSigningKey(key)
                 .parseClaimsJws(token)

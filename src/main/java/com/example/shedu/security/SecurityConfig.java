@@ -12,15 +12,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-
     private final JwtProvider jwtProvider;
 
     private final UserDetailsService userDetailsService;
+
+    public static final String[] WHITE_LIST = {
+            "/auth/login",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/v3/api-docs/**"
+    };
 
 
     @Bean
@@ -29,7 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(SecurityConstants.WHITE_LIST)
+                        .requestMatchers(WHITE_LIST)
                         .permitAll()
                         .anyRequest()
                         .authenticated()).sessionManagement(session -> {
@@ -41,6 +48,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-
 }
