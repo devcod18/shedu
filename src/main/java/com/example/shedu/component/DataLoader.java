@@ -39,6 +39,19 @@ public class DataLoader implements CommandLineRunner {
             newUser.setAccountNonLocked(true);
             newUser.setCredentialsNonExpired(true);
             userRepository.save(newUser);
+           User user = User.builder()
+                   .fullName("Asilbek")
+                   .password(passwordEncoder.encode("asilbek"))
+                   .userRole(UserRole.ROLE_MASTER)
+                   .phoneNumber("998901234569")
+                   .email("asil@gmail.com")
+                   .created(LocalDateTime.now())
+                   .enabled(true)
+                   .accountNonExpired(true)
+                   .accountNonLocked(true)
+                   .credentialsNonExpired(true)
+                   .build();
+           userRepository.save(user);
 
 
             Days days = new Days();
