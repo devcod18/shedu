@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ReqFavorite {
-    private Long userId;
     private Long barberId;
     private Long barbershopId;
 

@@ -25,7 +25,7 @@ public class FeedbackController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/feedbacks/rating")
     public ApiResponse getFeedbacksByRatingCategory(
             @RequestParam Long barbershopId,
@@ -35,7 +35,12 @@ public class FeedbackController {
         return feedbackService.getFeedbackByRatingCategory(barbershopId, category, page, size);
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_USER')")
+    @DeleteMapping("/deleteFeedback/{feedbackId}")
+    public ResponseEntity<ApiResponse> deleteFeedback(@PathVariable Long feedbackId) {
+        ApiResponse apiResponse = feedbackService.deleteFeedback(feedbackId);
+        return ResponseEntity.ok(apiResponse);
+    }
 }
 
 

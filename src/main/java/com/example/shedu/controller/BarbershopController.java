@@ -31,8 +31,9 @@ public class BarbershopController {
     // Barcha barbershoplarni olish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page,
-                                                         @RequestParam int size) {
+    public ResponseEntity<ApiResponse> getAllBarbershops(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "5") int size) {
         ApiResponse apiResponse = barbershopService.getAll(size, page);
         return ResponseEntity.ok(apiResponse);
     }
@@ -57,7 +58,6 @@ public class BarbershopController {
 
     // Barbershopni nomi va region bo'yicha qidirish
     @PreAuthorize("hasAnyRole('ROLE_SUPEER_ADMIN','ROLE_ADMIN','ROLE_USER','ROLE_MASTER')")
-
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
                                                          @RequestParam BarbershopRegion region) {
