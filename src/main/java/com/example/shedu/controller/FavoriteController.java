@@ -18,13 +18,15 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/addFavorite")
-    public ResponseEntity<ApiResponse> addFavorite(@RequestParam(required = false) Long barberId,
-                                                   @RequestParam(required = false) Long barbershopId,
-                                                   @CurrentUser User user) {
-        ApiResponse apiResponse = favoriteService.addFavorite(barberId,barbershopId,user);
-        return ResponseEntity.ok(apiResponse);
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> addFavorite(
+            @RequestBody ReqFavorite reqFavorite,
+            @CurrentUser User user) {
+
+        ApiResponse response = favoriteService.addFavorite(reqFavorite, user);
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/getAllFavorites")
     public ResponseEntity<ApiResponse> getAllFavorites(
@@ -34,11 +36,13 @@ public class FavoriteController {
         return ResponseEntity.ok(allFavorites);
     }
 
-    @DeleteMapping("/deleteFavorite/{deleteId}")
-    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deleteId) {
-        ApiResponse apiResponse = favoriteService.deleteFavorite(deleteId);
-        return ResponseEntity.ok(apiResponse);
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/delete/{deletedId}")
+    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deletedId) {
+        ApiResponse response = favoriteService.deleteFavorite(deletedId);
+        return ResponseEntity.ok(response);
     }
+
 }
 
 

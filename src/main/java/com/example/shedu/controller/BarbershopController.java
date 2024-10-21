@@ -58,7 +58,6 @@ public class BarbershopController {
 
     // Barbershopni nomi va region bo'yicha qidirish
     @PreAuthorize("hasAnyRole('ROLE_SUPEER_ADMIN','ROLE_ADMIN','ROLE_USER','ROLE_MASTER')")
-
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
                                                          @RequestParam BarbershopRegion region) {
