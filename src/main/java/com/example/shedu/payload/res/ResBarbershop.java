@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ResBarbershop {
-    private Long id;
+     private  Long id;
     private String title;
     private String info;
     private String email;
@@ -18,4 +18,9 @@ public class ResBarbershop {
     private String homeNumber;
     private Long file_id ;
     private String region;
+
+
+
+
+
 }
