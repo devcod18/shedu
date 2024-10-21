@@ -20,7 +20,7 @@ public class WorkDays {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-   @OneToOne
+   @OneToOne(cascade = CascadeType.MERGE)
     private Barbershop barbershopId;
     private Timestamp open;
     private Timestamp close;

@@ -1,6 +1,7 @@
 package com.example.shedu.repository;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,33 +10,34 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
-    @Query("SELECT b FROM Barbershop b WHERE b.region = ?1 AND b.isActive = true")
-    List<Barbershop> findByRegionAndIsActive(BarbershopRegion region);
 
-    @Query("SELECT b FROM Barbershop b JOIN b.owner u WHERE u.userRole = ?1 AND b.isActive = true")
-    List<Barbershop> findAllByMaster(String userRole);
 
-    Optional<Barbershop> findById(Long id);
+    @Query("select b from Barbershop b where b.owner.id = ?1 and b.isActive = true and b.title= ?2 ")
+    List<Barbershop> findBarbershopByOwner(Long ownerId,String title);
 
-    Barbershop findByTitle(String title);
+    @Query("select b from Barbershop b where b.owner.id= ?1 and b.id=?2 and b.isActive= true ")
+    Barbershop findByIdAndOwnerAndActiveTrue(Long id,Long barber_id);
 
-    boolean existsById(Long id);
 
-    List<Barbershop> findAllByTitle(String title);
-
-    @Query("SELECT b FROM Barbershop b JOIN b.region r WHERE b.title LIKE CONCAT('%', UPPER(?1), '%', LOWER(?1), '%') AND b.isActive = true")
-    List<Barbershop> findByTitleAndRegionAndActive(String title, String barbershopRegion);
-
-    @Query("select b from Barbershop b where b.isActive = true")
+    @Query("""
+       select b from Barbershop b
+       where LOWER(b.title) like LOWER(concat('%', ?1, '%'))
+       and b.isActive = true and b.region=?2
+       """)
+    List<Barbershop> findByTitleContainingIgnoreCase(String title,BarbershopRegion region);
+// search uchun
+    @Query("select b from Barbershop b where b.isActive = true order by b.id desc ")
     Page<Barbershop> FindAllByActive(Pageable pageable);
 
-    @Query("select b from Barbershop b where b.id = ?1 and b.isActive = true")
-    Barbershop FindByIdAndActive(Long id);
+    @Query("select b from Barbershop b where b.owner.id= ?1 and b.isActive=true ")
+    Barbershop findByOwner(Long id);
+
+
+
 
 }
 

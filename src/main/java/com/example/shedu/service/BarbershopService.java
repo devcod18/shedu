@@ -1,16 +1,13 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.Days;
 import com.example.shedu.entity.User;
-import com.example.shedu.entity.WorkDays;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
-import com.example.shedu.payload.req.ReqWorkDays;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
@@ -37,8 +34,9 @@ public class BarbershopService {
     private final WorkDaysRepository workDaysRepository;
 
     public ApiResponse save(ReqBarbershop reqBarbershop, User user, BarbershopRegion region) {
-        if (barberShopRepository.findByTitle(reqBarbershop.getTitle()) != null) {
-            return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
+        List<Barbershop> barbershops= barberShopRepository.findBarbershopByOwner(user.getId(),reqBarbershop.getTitle());
+        if(barbershops!=null){
+            return new ApiResponse(ResponseError.ALREADY_EXIST(user.getFullName()));
         }
 
         Barbershop barbershop = Barbershop.builder()
@@ -83,39 +81,32 @@ public class BarbershopService {
         return new ApiResponse("Success");
     }
 
-    public ApiResponse update(Long id, ReqBarbershop reqBarbershop, Long userId,BarbershopRegion region) {
-        User user = userRepository.findById(userId).orElse(null);
-        Barbershop barbershop = barberShopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
-
-        if (!barbershop.getOwner().getId().equals(user.getBarbershopId())) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-        barbershop.setTitle(reqBarbershop.getTitle());
-        barbershop.setInfo(reqBarbershop.getInfo());
-        barbershop.setEmail(user.getEmail());
-        barbershop.setAddress(reqBarbershop.getAddress());
-        barbershop.setLatitude(reqBarbershop.getLat());
-        barbershop.setLongitude(reqBarbershop.getLng());
-        barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
-        barbershop.setRegion(region);
-        barberShopRepository.save(barbershop);
-
+    public ApiResponse update(Long userId, ReqBarbershop reqBarbershop, Long barberId,BarbershopRegion region) {
+          Barbershop barbershop= barberShopRepository.findByIdAndOwnerAndActiveTrue(userId,barberId);
+          if (barbershop==null) return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+          barbershop.setInfo(reqBarbershop.getInfo());
+          barbershop.setLatitude(reqBarbershop.getLat());
+          barbershop.setLongitude(reqBarbershop.getLng());
+          barbershop.setAddress(reqBarbershop.getAddress());
+          barbershop.setTitle(reqBarbershop.getTitle());
+          barbershop.setRegion(region);
         return new ApiResponse("Barbershop muvaffaqiyatli yangilandi.");
     }
 
 
-    public ApiResponse search(String title, BarbershopRegion region) {
-        List<Barbershop> barbershops = barberShopRepository.findByTitleAndRegionAndActive(title, String.valueOf(region));
-        barbershops.addAll(barberShopRepository.findByRegionAndIsActive(BarbershopRegion.valueOf(title.toUpperCase())));
-
-        List<ResBarbershop> list = toResponseBarbershopList(barbershops);
-        return new ApiResponse(list);
-
+    public ApiResponse search(String title,BarbershopRegion region) {
+        List<Barbershop> barbershops = barberShopRepository.findByTitleContainingIgnoreCase(title,region);
+        if(barbershops!=null){
+            List<ResBarbershop> list= toResponseBarbershopList(barbershops);
+            return new ApiResponse(list);
+        }
+        return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
     }
-    public ApiResponse GetByOwner(Long id) {
-        Barbershop barbershop = barberShopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+    public ApiResponse GetByOwner( Long user) {
+        Barbershop barbershop = barberShopRepository.findByOwner(user);
+        if (barbershop==null){
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
         return new ApiResponse(barbershop);
     }
 
@@ -129,6 +120,7 @@ public class BarbershopService {
             Long ownerId = user.map(User::getId).orElse(null);
 
             ResBarbershop resBarbershop = ResBarbershop.builder()
+                    .id(barbershop.getId())
                     .title(barbershop.getTitle())
                     .owner(ownerId)
                     .lat(barbershop.getLatitude())
