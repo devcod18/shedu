@@ -11,8 +11,11 @@ import com.example.shedu.payload.auth.ResponseLogin;
 import com.example.shedu.repository.UserRepository;
 import com.example.shedu.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final EmailSenderService emailSenderService;
 
     public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
@@ -45,6 +49,7 @@ public class AuthService {
         }
 
         saveUser(auth, role);
+        emailSenderService.sendEmail(auth.getEmail(), "Your activation code:",generateFiveDigitNumber().toString());
 
         return new ApiResponse("Success");
     }
@@ -72,7 +77,8 @@ public class AuthService {
                 .password(passwordEncoder.encode(auth.getPassword()))
                 .userRole(role)
                 .barbershopId(auth.getBarbershopId())
-                .enabled(true)
+                .enabled(false)
+                .activationCode(generateFiveDigitNumber())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
@@ -80,6 +86,26 @@ public class AuthService {
 
         userRepository.save(user);
 
+    }
+
+    public ApiResponse checkCode(Integer code) {
+        User userOptional = userRepository.findByActivationCode(code);
+        if (userOptional == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("User"));
+        }
+
+        if (userOptional.getActivationCode().equals(code)) {
+            userOptional.setActivationCode(null);
+            userOptional.setEnabled(true);
+            userRepository.save(userOptional);
+            return new ApiResponse("Succes");
+        }
+        return new ApiResponse(ResponseError.PASSWORD_DID_NOT_MATCH());
+    }
+
+    public Integer generateFiveDigitNumber() {
+        Random rand = new Random();
+        return rand.nextInt(90000) + 10000;
     }
 }
 
