@@ -93,13 +93,6 @@ public class UserService {
         return users.stream().map(this::toResponseUser).collect(Collectors.toList());
     }
 
-    private ResUser toResponseUser(User user) {
-        return ResUser.builder()
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .phoneNumber(user.getPhoneNumber())
-                .role(String.valueOf(user.getUserRole()))
-                .build();
-    }
+
 }
 
