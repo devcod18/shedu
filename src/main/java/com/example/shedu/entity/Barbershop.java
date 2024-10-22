@@ -20,19 +20,19 @@ public class Barbershop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String title;
 
     @Column(nullable = false)
     private String info;
 
     @CreationTimestamp
-    private LocalDate date;
+    private LocalDate created;
 
-    @OneToOne
+    @ManyToOne
     private User owner;
 
-    private boolean isActive=true;
+    private boolean isActive;
 
     @Column(nullable = false)
     private String email;
@@ -40,10 +40,10 @@ public class Barbershop {
     private Double latitude;
 
     private Double longitude;
-
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private BarbershopRegion region;
-
+    @Column(nullable = false,unique = true)
     private String address;
 
     @ManyToOne
