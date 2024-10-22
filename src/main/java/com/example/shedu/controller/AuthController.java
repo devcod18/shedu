@@ -26,17 +26,21 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(authLogin));
     }
 
-
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister,
                                                 @RequestParam UserRole role) {
         return ResponseEntity.ok(authService.register(authRegister,role));
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping("/admin/save-admin")
     public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth) {
         return ResponseEntity.ok(authService.adminSaveLibrarian(auth));
+    }
+
+    @PutMapping("/check-code")
+    public ResponseEntity<ApiResponse> checkCode(@RequestParam Integer code){
+        return ResponseEntity.ok(authService.checkCode(code));
     }
 }
 

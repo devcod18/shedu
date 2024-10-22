@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -18,17 +18,15 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     private User user;
 
-    @ManyToOne
-    private User barber;
+    private Long barberId;
 
-    @ManyToOne
-    private Barbershop barbershop;
+    private Long barbershop;
 
     @CreationTimestamp
-    private LocalDateTime date;
-
-    private boolean isDeleted = false;
+    private LocalDate date;
 }
+
+

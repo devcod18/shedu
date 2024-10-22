@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -32,7 +34,10 @@ public class Orders {
     private Barbershop barbershop;
 
     @Column(nullable = false)
-    private Timestamp bookingDaytime;
+    private LocalDate bookingDay;
+
+    @Column(nullable = false)
+    private LocalTime bookingTime;
 
     @Column(nullable = false)
     private Long duration;

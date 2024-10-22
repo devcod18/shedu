@@ -29,17 +29,16 @@ public class BarbershopController {
     }
 
     // Barcha barbershoplarni olish
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_MASTER','ROLE_ADMIN')")
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllBarbershops(
-            @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size) {
+    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page,
+                                                         @RequestParam int size) {
         ApiResponse apiResponse = barbershopService.getAll(size, page);
         return ResponseEntity.ok(apiResponse);
     }
 
     // Barbershopni o'chirish
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteBarbershop(@PathVariable Long id) {
         ApiResponse apiResponse = barbershopService.delete(id);
@@ -62,6 +61,11 @@ public class BarbershopController {
     public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
                                                          @RequestParam BarbershopRegion region) {
         ApiResponse apiResponse = barbershopService.search(title, region);
+        return ResponseEntity.ok(apiResponse);
+    }
+    @GetMapping("/getByOwner/{id}")
+    public ResponseEntity<ApiResponse> getBarbershopByOwner(@PathVariable Long id) {
+        ApiResponse apiResponse = barbershopService.GetByOwner(id);
         return ResponseEntity.ok(apiResponse);
     }
 }
