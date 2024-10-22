@@ -9,14 +9,12 @@ import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,23 +27,16 @@ public class UserService {
     }
 
     public ApiResponse getAllUsersByRole(int page, int size, UserRole role) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<User> users = userRepository.findAllByUserRole(role, pageRequest);
-        List<ResUser> responseUsers = toResponseUserList(users.getContent());
-
-        if (users.getTotalElements() == 0) {
-            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchilar"));
-        }
-
-        CustomPageable pageable = CustomPageable.builder()
-                .page(users.getNumber())
-                .size(users.getSize())
-                .totalPage(users.getTotalPages())
-                .totalElements(users.getTotalElements())
-                .data(responseUsers)
-                .build();
-
-        return new ApiResponse(pageable);
+        var users = userRepository.findAllByUserRole(role, PageRequest.of(page, size));
+        return users.getTotalElements() == 0 ?
+                new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchilar")) :
+                new ApiResponse(CustomPageable.builder()
+                        .page(users.getNumber())
+                        .size(users.getSize())
+                        .totalPage(users.getTotalPages())
+                        .totalElements(users.getTotalElements())
+                        .data(users.map(this::toResponseUser).toList())
+                        .build());
     }
 
     public ApiResponse updateUser(User user, AuthRegister authRegister) {
@@ -53,7 +44,7 @@ public class UserService {
         user.setPhoneNumber(authRegister.getPhoneNumber());
         user.setUpdated(LocalDateTime.now());
 
-        if (authRegister.getPassword() != null && !authRegister.getPassword().isEmpty()) {
+        if (authRegister.getPassword() != null && !authRegister.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(authRegister.getPassword()));
         }
 
@@ -67,32 +58,32 @@ public class UserService {
                     userRepository.delete(user);
                     return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'chirildi");
                 })
-                .orElse(new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
     }
 
     public ApiResponse enableUser(Long id, boolean enabled) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
-        }
-        user.setEnabled(enabled);
-        userRepository.save(user);
-        return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setEnabled(enabled);
+                    userRepository.save(user);
+                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
+                })
+                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
     }
 
     public ApiResponse searchUserByRole(String field, UserRole role) {
         List<User> users = userRepository.searchByFieldsAndUserRole(field, role);
-        if (users.isEmpty()) {
-            return new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi"));
-        }
-        List<ResUser> responseUsers = toResponseUserList(users);
-        return new ApiResponse(responseUsers);
+        return users.isEmpty() ?
+                new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")) :
+                new ApiResponse(users.stream().map(this::toResponseUser).toList());
     }
 
-    private List<ResUser> toResponseUserList(List<User> users) {
-        return users.stream().map(this::toResponseUser).collect(Collectors.toList());
+    private ResUser toResponseUser(User user) {
+        return ResUser.builder()
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .role(user.getUserRole().name())
+                .build();
     }
-
-
 }
-

@@ -1,3 +1,4 @@
+
 package com.example.shedu.controller;
 
 import com.example.shedu.payload.ApiResponse;
@@ -25,8 +26,9 @@ public class OffersController {
     @GetMapping("/getAllOffers")
     public ResponseEntity<ApiResponse> getAllOffers(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse allOffers = offersService.getAllOffers(page, size);
+            @RequestParam(name = "size", defaultValue = "5") int size,
+            @RequestParam boolean isDeleted) {
+        ApiResponse allOffers = offersService.getAllOffers(page, size, isDeleted);
         return ResponseEntity.ok(allOffers);
     }
 
@@ -44,5 +46,3 @@ public class OffersController {
         return ResponseEntity.ok(apiResponse);
     }
 }
-
-
