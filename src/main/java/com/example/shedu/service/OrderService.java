@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OffersRepository serviceRepository;
-    private final UserRepository userRepository;
     private final BarberShopRepository barberShopRepository;
 
     public ApiResponse addOrder(ReqOrders reqOrders,User user) {
