@@ -33,7 +33,7 @@ public class Barbershop {
     @OneToOne
     private User owner;
 
-    private boolean isActive;
+    private boolean isActive = true;
 
     @Column(nullable = false)
     private String email;

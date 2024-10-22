@@ -42,10 +42,7 @@ public class Orders {
     @Column(nullable = false)
     private Long duration;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private BookingStatus status;
-
-    @Column(nullable = false)
-    private String special;
 }
 

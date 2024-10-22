@@ -32,5 +32,3 @@ public class Favorite {
 
     private boolean isDeleted = false;
 }
-
-

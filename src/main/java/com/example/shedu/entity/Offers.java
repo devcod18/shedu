@@ -29,6 +29,8 @@ public class Offers {
 
     @Column(nullable = false)
     private Long duration;
+
+    private boolean isDeleted;
 }
 
 
