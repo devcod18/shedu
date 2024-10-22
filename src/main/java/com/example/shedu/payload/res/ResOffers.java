@@ -8,11 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class ResOffers {
+    private Long id;
     private Long barbershopId;
     private String title;
     private String info;
     private Double price;
     private Long duration;
+    private boolean isDeleted;
 }
-
-

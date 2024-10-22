@@ -1,5 +1,8 @@
 package com.example.shedu.payload.res;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,11 +14,13 @@ import java.time.LocalDateTime;
 @Builder
 public class ResFeedback {
     private Long id;
+    @Min(1)
+    @Max(5)
     private int rating;
+    @NotBlank
     private String comment;
     private LocalDateTime createdAt;
-    private Long userId;
     private Long barbershopId;
+    private Long userId;
+    private boolean isDeleted;
 }
-
-

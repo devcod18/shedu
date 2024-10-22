@@ -1,3 +1,4 @@
+
 package com.example.shedu.entity;
 
 import jakarta.persistence.*;
@@ -29,6 +30,6 @@ public class Offers {
 
     @Column(nullable = false)
     private Long duration;
+
+    private boolean isDeleted;
 }
-
-
