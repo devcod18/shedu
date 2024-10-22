@@ -1,17 +1,24 @@
 package com.example.shedu.payload.req;
 
-import com.example.shedu.entity.Days;
-import lombok.*;
 
-import java.sql.Timestamp;
+
+import com.example.shedu.entity.Days;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalTime;
 import java.util.List;
-@Getter
-@Setter
-@NoArgsConstructor
+
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ReqWorkDays {
+    private List<Integer> dayOfWeekId;
+    private String openTime;
+    private String closeTime;
     private Long barbershopId;
-    private Timestamp open;
-    private Timestamp close;
-    private List<Days> daysList;
+
 }

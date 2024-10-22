@@ -1,14 +1,21 @@
 package com.example.shedu.repository;
 
-import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.WorkDays;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.example.shedu.entity.WorkDays;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
+
 
 public interface WorkDaysRepository extends JpaRepository<WorkDays, Long> {
-   List<WorkDays> findAllByBarbershopId(Barbershop barbershop);
+
+
+   boolean existsByBarbershopId_Id(Long id);
+
+
+   Optional<WorkDays> findByBarbershopId_Id(Long barbershopId);
+
+
 
 }
