@@ -38,7 +38,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.adminSaveLibrarian(auth));
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/check-code")
     public ResponseEntity<ApiResponse> checkCode(@RequestParam Integer code){
         return ResponseEntity.ok(authService.checkCode(code));
