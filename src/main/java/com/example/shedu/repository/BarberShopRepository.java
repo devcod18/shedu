@@ -10,14 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
 
 
-    @Query("select b from Barbershop b where b.owner.id = ?1 and b.isActive = true and b.title= ?2 ")
-    List<Barbershop> findBarbershopByOwner(Long ownerId,String title);
+    Optional<Barbershop> findByTitle(String title);// save qilish uchun
 
     @Query("select b from Barbershop b where b.owner.id= ?1 and b.id=?2 and b.isActive= true ")
     Barbershop findByIdAndOwnerAndActiveTrue(Long id,Long barber_id);
@@ -34,7 +34,7 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
     Page<Barbershop> FindAllByActive(Pageable pageable);
 
     @Query("select b from Barbershop b where b.owner.id= ?1 and b.isActive=true ")
-    Barbershop findByOwner(Long id);
+    List<Barbershop> findByOwner(Long id);
 
 
 
