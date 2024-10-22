@@ -87,7 +87,9 @@ public class BarbershopService {
     }
 
     public ApiResponse update(User user, ReqBarbershop reqBarbershop, Long barberId,BarbershopRegion region) {
-          Barbershop barbershop= barberShopRepository.findByIdAndOwnerAndActiveTrue(barberId,user.getId());
+        boolean barbershopExist = barberShopRepository.existsByTitleAndIdNot(reqBarbershop.getTitle(), barberId);
+        if (barbershopExist) return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
+          Barbershop barbershop= barberShopRepository.findByIdAndOwnerId(barberId,user.getId());
           if (barbershop==null) return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
           barbershop.setInfo(reqBarbershop.getInfo());
           barbershop.setLatitude(reqBarbershop.getLat());
