@@ -46,7 +46,7 @@ public class FeedbackService {
 
         feedbackRepository.save(feedback);
 
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse getFeedbackByRatingCategory(Long barbershopId, RatingCategory category, int page, int size) {
@@ -89,7 +89,6 @@ public class FeedbackService {
         feedbackRepository.save(feedback);
         return new ApiResponse("success");
     }
-
 
     private ResFeedback toResFeedback(Feedback feedback) {
         return ResFeedback.builder()
