@@ -18,9 +18,9 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
 
     Optional<Barbershop> findByTitle(String title);// save qilish uchun
-
-    @Query("select b from Barbershop b where b.owner.id= ?1 and b.id=?2 and b.isActive= true ")
-    Barbershop findByIdAndOwnerAndActiveTrue(Long id,Long barber_id);
+    boolean existsByTitle(String title);
+    boolean existsByTitleAndIdNot(String title,Long id);
+    Barbershop findByIdAndOwnerId(Long id,Long ownerId);
 
 
     @Query("""
