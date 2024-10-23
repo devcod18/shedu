@@ -27,15 +27,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister,
-                                                @RequestParam UserRole role) {
-        return ResponseEntity.ok(authService.register(authRegister,role));
+    public ResponseEntity<ApiResponse> register(@Valid @RequestBody AuthRegister authRegister) {
+        return ResponseEntity.ok(authService.register(authRegister));
     }
 
     @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @PostMapping("/admin/save-admin")
-    public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth) {
-        return ResponseEntity.ok(authService.adminSaveLibrarian(auth));
+    public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth,
+                                                        @RequestParam UserRole role) {
+        return ResponseEntity.ok(authService.adminSaveLibrarian(auth,role));
     }
 
     @PutMapping("/check-code")
