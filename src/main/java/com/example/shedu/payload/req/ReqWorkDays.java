@@ -20,5 +20,4 @@ public class ReqWorkDays {
     private String openTime;
     private String closeTime;
     private Long barbershopId;
-
 }

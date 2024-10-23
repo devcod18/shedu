@@ -78,7 +78,5 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-
     }
 }
-

@@ -4,10 +4,7 @@ import com.example.shedu.entity.enums.BarbershopRegion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -49,4 +46,3 @@ public class Barbershop {
     @ManyToOne
     private File barbershopPic;
 }
-
