@@ -46,7 +46,7 @@ public class FeedbackService {
 
         feedbackRepository.save(feedback);
 
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse getFeedbackByRatingCategory(Long barbershopId, RatingCategory category, int page, int size) {
@@ -57,10 +57,13 @@ public class FeedbackService {
         Page<Feedback> feedbacks;
 
         switch (category) {
-            case LOW -> feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqual(barbershopId, 2, pageRequest);
-            case MEDIUM -> feedbacks = feedbackRepository.findByBarbershopIdAndRating(barbershopId, 3, pageRequest);
-            case HIGH -> feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqual(barbershopId, 4, pageRequest);
-            case ALL -> feedbacks = feedbackRepository.findByBarbershopId(barbershopId, pageRequest);
+            case LOW ->
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqualAndIsDeletedFalse(barbershopId, 2, pageRequest);
+            case MEDIUM ->
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingAndIsDeletedFalse(barbershopId, 3, pageRequest);
+            case HIGH ->
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqualAndIsDeletedFalse(barbershopId, 4, pageRequest);
+            case ALL -> feedbacks = feedbackRepository.findByBarbershopIdAndIsDeletedFalse(barbershopId, pageRequest);
             default -> throw new IllegalArgumentException("Unknown rating category: " + category);
         }
 
@@ -79,6 +82,7 @@ public class FeedbackService {
         return new ApiResponse(customPageable);
     }
 
+
     public ApiResponse deleteFeedback(Long id) {
         Feedback feedback = feedbackRepository.findById(id).orElse(null);
         if (feedback == null) {
@@ -89,7 +93,6 @@ public class FeedbackService {
         feedbackRepository.save(feedback);
         return new ApiResponse("success");
     }
-
 
     private ResFeedback toResFeedback(Feedback feedback) {
         return ResFeedback.builder()

@@ -4,10 +4,7 @@ import com.example.shedu.entity.enums.BarbershopRegion;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -16,21 +13,20 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class Barbershop {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String title;
 
     @Column(nullable = false)
     private String info;
 
     @CreationTimestamp
-    private LocalDate date;
+    private LocalDate created;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private User owner;
 
     private boolean isActive;
@@ -41,13 +37,12 @@ public class Barbershop {
     private Double latitude;
 
     private Double longitude;
-
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private BarbershopRegion region;
-
+    @Column(nullable = false,unique = true)
     private String address;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private File barbershopPic;
 }
-

@@ -40,12 +40,12 @@ public class OffersService {
                 .build();
 
         offersRepository.save(offer);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse getAllOffers(int page, int size, boolean isDeleted) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Offers> offersPage = offersRepository.findAllByIsDeletedOrderByIdDesc(isDeleted, pageable);
+        Page<Offers> offersPage = offersRepository.findAllByDeletedOrderByIdDesc(isDeleted, pageable);
 
         List<ResOffers> resOffersList = offersPage.getContent()
                 .stream().map(this::mapToResOffers)
@@ -75,7 +75,7 @@ public class OffersService {
         offer.setDuration(reqOffers.getDuration());
 
         offersRepository.save(offer);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse deleteOffer(Long id) {
@@ -89,7 +89,6 @@ public class OffersService {
         offersRepository.save(offer);
         return new ApiResponse("success");
     }
-
 
     private ResOffers mapToResOffers(Offers offer) {
         return ResOffers.builder()

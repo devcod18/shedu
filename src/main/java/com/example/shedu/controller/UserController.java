@@ -9,54 +9,59 @@ import com.example.shedu.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/user")
+@Validated
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/getMe")
+    @GetMapping("/me")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_MODERATOR','ROLE_MASTER','ROLE_BARBER')")
-    public ResponseEntity<ApiResponse> showProfile(@CurrentUser User user) {
-        ApiResponse me = userService.getMe(user);
-        return ResponseEntity.ok(me);
+    public ResponseEntity<ApiResponse> getCurrentUserProfile(@CurrentUser User user) {
+        ApiResponse response = userService.getMe(user);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("getAllUsers")
-    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> getAllUsers(@RequestParam int page, @RequestParam int size, @RequestParam UserRole role) {
-        ApiResponse allUsersByRole = userService.getAllUsersByRole(page, size, role);
-        return ResponseEntity.ok(allUsersByRole);
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ApiResponse> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam UserRole role) {
+        ApiResponse response = userService.getAllUsersByRole(page, size, role);
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/updateUser")
+    @PutMapping("/update")
     @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN','ROLE_SUPER_ADMIN','ROLE_MODERATOR','ROLE_MASTER','ROLE_BARBER')")
-    public ResponseEntity<ApiResponse> updateUser(@CurrentUser User user, @RequestBody AuthRegister authRegister) {
-        ApiResponse apiResponse = userService.updateUser(user, authRegister);
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<ApiResponse> updateUser(@CurrentUser User user,@RequestBody AuthRegister authRegister) {
+        ApiResponse response = userService.updateUser(user, authRegister);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse> searchUser(@RequestParam String field, @RequestParam UserRole role) {
-        ApiResponse apiResponse = userService.searchUserByRole(field, role);
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<ApiResponse> searchUserByRole(@RequestParam String field, @RequestParam UserRole role) {
+        ApiResponse response = userService.searchUserByRole(field, role);
+        return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/changeStatus/{userId}")
+    @PutMapping("/status/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse> enableDisableUser(@PathVariable Long userId, @RequestParam boolean enable) {
-        ApiResponse apiResponse = userService.enableUser(userId, enable);
-        return ResponseEntity.ok(apiResponse);
+    public ResponseEntity<ApiResponse> changeUserStatus(@PathVariable Long userId, @RequestParam boolean enable) {
+        ApiResponse response = userService.enableUser(userId, enable);
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/deleteUser/{userId}")
+    @DeleteMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
-        ApiResponse apiResponse = userService.deleteUser(userId);
-        return ResponseEntity.ok(apiResponse);
+        ApiResponse response = userService.deleteUser(userId);
+        return ResponseEntity.ok(response);
     }
 }
 

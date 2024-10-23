@@ -1,5 +1,6 @@
 package com.example.shedu.payload.res;
 
+import com.example.shedu.entity.enums.BarbershopRegion;
 import lombok.*;
 
 @Getter
@@ -15,7 +16,10 @@ public class ResBarbershop {
     private Long owner;
     private Double lat;
     private Double lng;
-    private String homeNumber;
-    private Long file_id ;
-    private String region;
+    private Long file_id;
+    private BarbershopRegion region;
+    private String address;
+    private String phone;
+
+
 }
