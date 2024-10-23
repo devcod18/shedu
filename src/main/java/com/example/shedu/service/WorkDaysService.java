@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -65,7 +64,7 @@ public class WorkDaysService {
             workDays.setClose(reqWorkDays.getCloseTime());
             workDaysRepository.save(workDays);
         }
-            return new ApiResponse("sucsess");
+            return new ApiResponse("success");
         }
         public ResWorkDay getWorkDays(Long id) {
             WorkDays workDays = workDaysRepository.findByBarbershopId_Id(id).orElse(null);

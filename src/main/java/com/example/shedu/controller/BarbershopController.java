@@ -95,7 +95,3 @@ public class BarbershopController {
         return ResponseEntity.ok(apiResponse);
     }
 }
-
-
-
-

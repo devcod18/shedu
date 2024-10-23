@@ -9,13 +9,7 @@ import java.util.Optional;
 
 
 public interface WorkDaysRepository extends JpaRepository<WorkDays, Long> {
-
-
    boolean existsByBarbershopId_Id(Long id);
 
-
    Optional<WorkDays> findByBarbershopId_Id(Long barbershopId);
-
-
-
 }
