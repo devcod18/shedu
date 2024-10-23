@@ -33,5 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByActivationCode(Integer activationCode);
 
     boolean existsByPhoneNumber(String phoneNumber);
+
+    Optional<User> findByIdAndUserRole(Long id, UserRole role);
 }
 
