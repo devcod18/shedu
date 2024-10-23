@@ -90,7 +90,6 @@ public class OffersService {
         return new ApiResponse("success");
     }
 
-
     private ResOffers mapToResOffers(Offers offer) {
         return ResOffers.builder()
                 .id(offer.getId())
