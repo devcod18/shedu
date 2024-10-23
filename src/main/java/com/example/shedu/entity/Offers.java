@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class    Offers {
+public class Offers {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +31,5 @@ public class    Offers {
     @Column(nullable = false)
     private Long duration;
 
-    private boolean deleted = false;
+    private boolean deleted;
 }

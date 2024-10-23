@@ -19,6 +19,6 @@ public class WorkDays {
     private Barbershop barbershopId;
     private String open;
     private String close;
-    @OneToMany
+    @ManyToMany
     private List<Days> daysList;
 }

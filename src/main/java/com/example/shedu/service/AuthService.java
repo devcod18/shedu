@@ -23,15 +23,12 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
+    private final NotificationService notificationService;
 
     public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
-        if (user == null || !passwordEncoder.matches(authLogin.getPassword(), user.getPassword())) {
-            return new ApiResponse(ResponseError.NOTFOUND("User") + " or " + ResponseError.PASSWORD_DID_NOT_MATCH());
-        }
-
-        if (!user.isEnabled()) {
-            return new ApiResponse(ResponseError.DEFAULT_ERROR("Profile not activated!"));
+        if (user == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
 
         String token = jwtProvider.generateToken(authLogin.getPhoneNumber());
@@ -46,6 +43,16 @@ public class AuthService {
         User user = saveUser(auth, UserRole.ROLE_USER);
         emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
         return new ApiResponse("Success. Please activate your profile");
+
+
+        notificationService.saveNotification(
+             user,
+             "Hurmatli " + user.getFullName() + "!",
+             "Siz muvaffaqiyatli ruyhatdan utdingiz",
+             0L,
+             false
+        );
+        return new ApiResponse("Success");
     }
 
     public ApiResponse adminSaveLibrarian(AuthRegister auth, UserRole role) {

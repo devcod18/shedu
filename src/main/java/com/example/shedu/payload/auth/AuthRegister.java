@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 public class AuthRegister {
 
-    @Size(min = 3, max = 15)
+    @Size(min = 3, max = 30)
     @NotBlank
     private String fullName;
 
