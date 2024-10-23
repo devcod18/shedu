@@ -28,7 +28,10 @@ public class UserController {
 
     @GetMapping("/all")
     @PreAuthorize("hasRole('ROLE_SUPER_ADMIN') or hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse> getAllUsers(@RequestParam int page, @RequestParam int size, @RequestParam UserRole role) {
+    public ResponseEntity<ApiResponse> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam UserRole role) {
         ApiResponse response = userService.getAllUsersByRole(page, size, role);
         return ResponseEntity.ok(response);
     }
@@ -61,3 +64,4 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 }
+

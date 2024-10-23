@@ -20,7 +20,7 @@ public class OrderController {
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ApiResponse> addOrder( @RequestBody ReqOrders reqOrders, @CurrentUser User user) {
+    public ResponseEntity<ApiResponse> addOrder(@RequestBody ReqOrders reqOrders, @CurrentUser User user) {
         ApiResponse apiResponse = orderService.addOrder(reqOrders, user);
         return ResponseEntity.ok(apiResponse);
     }
@@ -41,7 +41,9 @@ public class OrderController {
 
     @GetMapping("/all")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
-    public ResponseEntity<ApiResponse> getAllOrders(@RequestParam int size, @RequestParam int page) {
+    public ResponseEntity<ApiResponse> getAllOrders(
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "0") int page) {
         ApiResponse apiResponse = orderService.getAllOrders(size, page);
         return ResponseEntity.ok(apiResponse);
     }
@@ -53,3 +55,4 @@ public class OrderController {
         return ResponseEntity.ok(apiResponse);
     }
 }
+
