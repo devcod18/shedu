@@ -19,4 +19,8 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 
     @Query("SELECT u FROM Favorite u WHERE u.isDeleted = false ORDER BY u.date DESC")
     Page<Favorite> findAllActiveSorted(Pageable pageable);
+
+    boolean existsByUserAndBarber(User user, User barber);
+    boolean existsByUserAndBarbershop(User user, Barbershop barbershop);
+    boolean existsByUserAndBarberAndBarbershop(User user, User barber, Barbershop barbershop);
 }
