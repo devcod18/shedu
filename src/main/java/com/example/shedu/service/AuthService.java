@@ -10,11 +10,9 @@ import com.example.shedu.payload.auth.ResponseLogin;
 import com.example.shedu.repository.UserRepository;
 import com.example.shedu.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -45,12 +43,12 @@ public class AuthService {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        User user = saveUser(auth,UserRole.ROLE_USER);
+        User user = saveUser(auth, UserRole.ROLE_USER);
         emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
         return new ApiResponse("Success. Please activate your profile");
     }
 
-    public ApiResponse adminSaveLibrarian(AuthRegister auth,UserRole role) {
+    public ApiResponse adminSaveLibrarian(AuthRegister auth, UserRole role) {
         if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/chats")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin
 public class ChatController {
 
     private final ChatMessageService chatMessageService;

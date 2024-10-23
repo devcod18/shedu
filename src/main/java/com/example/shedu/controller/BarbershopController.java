@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/barbershop")
+@CrossOrigin
 public class BarbershopController {
 
     private final BarbershopService barbershopService;

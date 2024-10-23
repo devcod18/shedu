@@ -72,4 +72,3 @@ public class ChatMessageService {
         return new ApiResponse(messageDTO);
     }
 }
-

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/favorite")
 @RequiredArgsConstructor
+@CrossOrigin
 public class FavoriteController {
 
     private final FavoriteService favoriteService;

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/feedback")
 @RequiredArgsConstructor
+@CrossOrigin
 public class FeedbackController {
 
     private final FeedbackService feedbackService;

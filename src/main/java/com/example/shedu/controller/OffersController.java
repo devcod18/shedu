@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/offers")
 @RequiredArgsConstructor
+@CrossOrigin
 public class OffersController {
 
     private final OffersService offersService;

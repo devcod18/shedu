@@ -29,7 +29,7 @@ public class UserService {
     public ApiResponse getAllUsersByRole(int page, int size, UserRole role) {
         var users = userRepository.findAllByUserRole(role, PageRequest.of(page, size));
         return users.getTotalElements() == 0 ?
-                new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchilar")) :
+                new ApiResponse(ResponseError.NOTFOUND("Users")) :
                 new ApiResponse(CustomPageable.builder()
                         .page(users.getNumber())
                         .size(users.getSize())

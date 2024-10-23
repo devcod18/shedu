@@ -32,21 +32,25 @@ public class FavoriteService {
 
     @Transactional
     public ApiResponse addFavorite(ReqFavorite reqFavorite, User user) {
-        User barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
+        User barber = null;
+        Barbershop barbershop = null;
 
-        if (barber == null && reqFavorite.getBarberId() != null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barber"));
+        if (reqFavorite.getBarberId() != null) {
+            barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
+            if (barber == null) {
+                return new ApiResponse(ResponseError.NOTFOUND("Barber"));
+            }
         }
 
-        Barbershop barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
-
-        if (barbershop == null && reqFavorite.getBarbershopId() != null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        if (reqFavorite.getBarbershopId() != null) {
+            barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
+            if (barbershop == null) {
+                return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+            }
         }
 
         if (barber != null && reqFavorite.getBarbershopId() == null) {
             boolean existsBarberFavorite = favoriteRepository.existsByUserAndBarber(user, barber);
-
             if (existsBarberFavorite) {
                 return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barber"));
             }
@@ -54,7 +58,6 @@ public class FavoriteService {
 
         if (barbershop != null && reqFavorite.getBarberId() == null) {
             boolean existsBarbershopFavorite = favoriteRepository.existsByUserAndBarbershop(user, barbershop);
-
             if (existsBarbershopFavorite) {
                 return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barbershop"));
             }
@@ -62,7 +65,6 @@ public class FavoriteService {
 
         if (barber != null && barbershop != null) {
             boolean existsFavorite = favoriteRepository.existsByUserAndBarberAndBarbershop(user, barber, barbershop);
-
             if (existsFavorite) {
                 return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barber and Barbershop"));
             }
@@ -122,6 +124,6 @@ public class FavoriteService {
                 .barbershopId(favorite.getBarbershop().getId())
                 .barbershopName(favorite.getBarbershop().getTitle())
                 .date(favorite.getDate().toLocalDate())
-                .isDeleted(favorite.isDeleted()).build();
+                .deleted(favorite.isDeleted()).build();
     }
 }

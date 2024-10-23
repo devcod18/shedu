@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("api/user")
 @Validated
+@CrossOrigin
 public class UserController {
     private final UserService userService;
 
