@@ -20,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final NotificationService notificationService;
 
     public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
@@ -43,8 +44,16 @@ public class AuthService {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        saveUser(auth, role);
+        User user = saveUser(auth, role);
 
+
+        notificationService.saveNotification(
+             user,
+             "Hurmatli " + user.getFullName() + "!",
+             "Siz muvaffaqiyatli ruyhatdan utdingiz",
+             0L,
+             false
+        );
         return new ApiResponse("Success");
     }
 
@@ -63,7 +72,7 @@ public class AuthService {
     }
 
 
-    private void saveUser(AuthRegister auth, UserRole role) {
+    private User saveUser(AuthRegister auth, UserRole role) {
         User user = User.builder()
                 .fullName(auth.getFullName())
                 .email(auth.getEmail())
@@ -77,7 +86,7 @@ public class AuthService {
                 .credentialsNonExpired(true)
                 .build();
 
-        userRepository.save(user);
+       return  userRepository.save(user);
 
     }
 }
