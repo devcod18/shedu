@@ -51,4 +51,10 @@ public class ChatController {
         ApiResponse message = chatMessageService.createMessage(messageDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
+
+    @PutMapping("/changeRead/{messageId}")
+    public ResponseEntity<ApiResponse> changeRead(@PathVariable Long messageId){
+        ApiResponse apiResponse = chatMessageService.markMessageAsRead(messageId);
+        return ResponseEntity.ok(apiResponse);
+    }
 }

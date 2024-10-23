@@ -57,8 +57,19 @@ public class ChatMessageService {
 
     public ApiResponse createMessage(MessageDTO messageDTO) {
         Message message = modelMapper.map(messageDTO, Message.class);
+        message.setRead(false);
         Message savedMessage = messageRepository.save(message);
         MessageDTO savedMessageDTO = modelMapper.map(savedMessage, MessageDTO.class);
         return new ApiResponse(savedMessageDTO);
     }
+
+    public ApiResponse markMessageAsRead(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        message.setRead(true);
+        Message updatedMessage = messageRepository.save(message);
+        MessageDTO messageDTO = modelMapper.map(updatedMessage, MessageDTO.class);
+        return new ApiResponse(messageDTO);
+    }
 }
+
