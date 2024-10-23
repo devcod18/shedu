@@ -32,6 +32,7 @@ public class Chat {
     @OneToMany
     @Column(nullable = false)
     private List<Message> messages;
+
 }
 
 

@@ -25,6 +25,7 @@ public class JwtProvider implements AuthenticationProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + ttl))
                 .signWith(SignatureAlgorithm.HS512, key)
                 .compact();
+
     }
 
     public String getPhoneNumberFromToken(String token){
@@ -33,6 +34,7 @@ public class JwtProvider implements AuthenticationProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+
     }
 
     @Override
@@ -44,6 +46,7 @@ public class JwtProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return false;
     }
+
 }
 
 

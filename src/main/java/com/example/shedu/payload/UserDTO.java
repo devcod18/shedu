@@ -23,6 +23,7 @@ public class UserDTO {
     private boolean accountNonLocked;
     private boolean enabled;
     private Long fileId;
+
 }
 
 

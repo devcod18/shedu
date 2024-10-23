@@ -31,4 +31,5 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
 
     @Query("select b from Barbershop b where b.owner.id= ?1 and b.isActive=true ")
     List<Barbershop> findByOwner(Long id);
+
 }

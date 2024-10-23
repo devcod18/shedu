@@ -66,6 +66,7 @@ public class FavoriteService {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
 
+
         favoriteRepository.delete(favourite);
         return new ApiResponse("Favorite deleted successfully");
     }
@@ -80,6 +81,7 @@ public class FavoriteService {
                 .date(favorite.getDate())
                 .build();
     }
+
 }
 
 

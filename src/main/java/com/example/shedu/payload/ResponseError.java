@@ -49,6 +49,7 @@ public class ResponseError {
     }
 
     public static ResponseError SERVER_ERROR(String message) { return new ResponseError(8, message); }
+
 }
 
 

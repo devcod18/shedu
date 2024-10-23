@@ -11,6 +11,7 @@ public class ResponseLogin {
     private String token;
     private String role;
     private Long id;
+
 }
 
 
