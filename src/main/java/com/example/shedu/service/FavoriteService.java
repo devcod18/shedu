@@ -80,7 +80,6 @@ public class FavoriteService {
         return new ApiResponse("success");
     }
 
-
     @Transactional
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));

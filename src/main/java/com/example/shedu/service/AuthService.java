@@ -48,7 +48,6 @@ public class AuthService {
         return new ApiResponse("Success");
     }
 
-
     public ApiResponse adminSaveLibrarian(AuthRegister auth) {
 
         User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
@@ -61,7 +60,6 @@ public class AuthService {
 
         return new ApiResponse("Success");
     }
-
 
     private void saveUser(AuthRegister auth, UserRole role) {
         User user = User.builder()
@@ -78,7 +76,6 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-
     }
 }
 
