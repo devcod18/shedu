@@ -142,7 +142,7 @@ public class NotificationService {
         return new ApiResponse(notificationDTOS);
     }
 
-    private void saveNotification(User user, String title, String content, Long fileId, boolean contact) {
+    public void saveNotification(User user, String title, String content, Long fileId, boolean contact) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setContent(content);
