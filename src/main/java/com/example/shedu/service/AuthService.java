@@ -10,11 +10,9 @@ import com.example.shedu.payload.auth.ResponseLogin;
 import com.example.shedu.repository.UserRepository;
 import com.example.shedu.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Random;
 
 @Service
