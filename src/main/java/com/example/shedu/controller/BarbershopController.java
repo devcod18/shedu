@@ -1,12 +1,10 @@
 package com.example.shedu.controller;
 
-import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.req.ReqWorkDays;
-import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.BarbershopService;
 import com.example.shedu.service.WorkDaysService;
@@ -31,7 +29,7 @@ public class BarbershopController {
     public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop,
                                                       @CurrentUser User user,
                                                       @RequestParam BarbershopRegion region
-                                                     ) {
+    ) {
         ApiResponse apiResponse = barbershopService.save(reqBarbershop, user, region);
         return ResponseEntity.ok(apiResponse);
     }
@@ -52,15 +50,16 @@ public class BarbershopController {
         ApiResponse apiResponse = barbershopService.delete(id);
         return ResponseEntity.ok(apiResponse);
     }
+
     // Barbershopni o'zgartirish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
-    @PutMapping("/update/{userId}")
+    @PutMapping("/update")
     public ResponseEntity<ApiResponse> updateBarbershop(@CurrentUser User user,
                                                         @RequestParam Long barbershopId,
                                                         @RequestParam BarbershopRegion region,
-                                                       @RequestBody ReqBarbershop reqBarbershop
-                                                       ) {
-        ApiResponse apiResponse = barbershopService.update(user,reqBarbershop, barbershopId,region);
+                                                        @RequestBody ReqBarbershop reqBarbershop
+    ) {
+        ApiResponse apiResponse = barbershopService.update(user, reqBarbershop, barbershopId, region);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -73,6 +72,7 @@ public class BarbershopController {
         ApiResponse apiResponse = barbershopService.search(title, region);
         return ResponseEntity.ok(apiResponse);
     }
+
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @GetMapping("/getByOwner")
     public ResponseEntity<ApiResponse> getBarbershopByOwner(@CurrentUser User user) {
@@ -81,18 +81,17 @@ public class BarbershopController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PostMapping("/saveWorkdays/{id}")
+    @PostMapping("/saveWorkdays")
     public ResponseEntity<ApiResponse> save(@Valid @RequestBody ReqWorkDays days) {
         ApiResponse apiResponse = workDaysService.saveWorkDays(days);
         return ResponseEntity.ok(apiResponse);
     }
+
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/updateWorks/{id}")
+    @PutMapping("/updateWorks")
     public ResponseEntity<ApiResponse> update(@RequestBody ReqWorkDays days
-                                             ) {
+    ) {
         ApiResponse apiResponse = workDaysService.update(days);
         return ResponseEntity.ok(apiResponse);
     }
 }
-
-

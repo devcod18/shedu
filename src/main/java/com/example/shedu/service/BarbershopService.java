@@ -1,20 +1,16 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.Days;
 import com.example.shedu.entity.User;
-import com.example.shedu.entity.WorkDays;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.*;
 import com.example.shedu.payload.req.ReqBarbershop;
-import com.example.shedu.payload.req.ReqWorkDays;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
-import com.example.shedu.repository.WorkDaysRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -87,7 +83,9 @@ public class BarbershopService {
     }
 
     public ApiResponse update(User user, ReqBarbershop reqBarbershop, Long barberId,BarbershopRegion region) {
-          Barbershop barbershop= barberShopRepository.findByIdAndOwnerAndActiveTrue(barberId,user.getId());
+        boolean barbershopExist = barberShopRepository.existsByTitleAndIdNot(reqBarbershop.getTitle(), barberId);
+        if (barbershopExist) return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
+          Barbershop barbershop= barberShopRepository.findByIdAndOwnerId(barberId,user.getId());
           if (barbershop==null) return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
           barbershop.setInfo(reqBarbershop.getInfo());
           barbershop.setLatitude(reqBarbershop.getLat());
@@ -118,9 +116,6 @@ public class BarbershopService {
         List<BarbershopDto> dtos = new ArrayList<>();
         for (ResBarbershop resBarbershop : dto) {
             ResWorkDay workDays = workDaysService.getWorkDays(resBarbershop.getId());
-//            if (workDays == null) {
-//                return new ApiResponse(ResponseError.NOTFOUND("WorkDays"));
-//            }
             dtos.add(BarbershopDto.builder()
                     .workDay(workDays != null ? workDays : null)
                     .barbershop(resBarbershop)
