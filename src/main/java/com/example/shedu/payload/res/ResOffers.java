@@ -14,5 +14,5 @@ public class ResOffers {
     private String info;
     private Double price;
     private Long duration;
-    private boolean isDeleted;
+    private boolean deleted;
 }

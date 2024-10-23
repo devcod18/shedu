@@ -1,6 +1,5 @@
 package com.example.shedu.service;
 
-import com.example.shedu.entity.Offers;
 import com.example.shedu.entity.Orders;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BookingStatus;

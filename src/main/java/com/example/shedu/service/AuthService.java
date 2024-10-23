@@ -40,22 +40,19 @@ public class AuthService {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        User user = saveUser(auth,UserRole.ROLE_USER);
+        User user = saveUser(auth, UserRole.ROLE_USER);
         emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
-        return new ApiResponse("Success. Please activate your profile");
-
-
         notificationService.saveNotification(
-             user,
-             "Hurmatli " + user.getFullName() + "!",
-             "Siz muvaffaqiyatli ruyhatdan utdingiz",
-             0L,
-             false
+                user,
+                "Hurmatli " + user.getFullName().toUpperCase().trim() + "!",
+                "Siz muvaffaqiyatli ruyhatdan utdingiz",
+                0L,
+                false
         );
-        return new ApiResponse("Success");
+        return new ApiResponse("Success. Please activate your profile");
     }
 
-    public ApiResponse adminSaveLibrarian(AuthRegister auth,UserRole role) {
+    public ApiResponse adminSaveLibrarian(AuthRegister auth, UserRole role) {
         if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }

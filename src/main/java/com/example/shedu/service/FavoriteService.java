@@ -82,7 +82,6 @@ public class FavoriteService {
         return new ApiResponse("success");
     }
 
-
     @Transactional
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));
@@ -125,6 +124,6 @@ public class FavoriteService {
                 .barbershopId(favorite.getBarbershop() != null ? favorite.getBarbershop().getId() : null)
                 .barbershopName(favorite.getBarbershop() != null ? favorite.getBarbershop().getTitle() : null)
                 .date(favorite.getDate().toLocalDate())
-                .isDeleted(favorite.isDeleted()).build();
+                .deleted(favorite.isDeleted()).build();
     }
 }

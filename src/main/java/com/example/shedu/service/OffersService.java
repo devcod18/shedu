@@ -98,6 +98,6 @@ public class OffersService {
                 .price(offer.getPrice())
                 .duration(offer.getDuration())
                 .barbershopId(offer.getBarbershop().getId())
-                .isDeleted(offer.isDeleted()).build();
+                .deleted(offer.isDeleted()).build();
     }
 }
