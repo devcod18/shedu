@@ -16,5 +16,3 @@ public class ResOffers {
     private Long duration;
     private boolean isDeleted;
 }
-
-

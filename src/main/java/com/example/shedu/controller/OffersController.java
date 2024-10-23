@@ -1,3 +1,4 @@
+
 package com.example.shedu.controller;
 
 import com.example.shedu.payload.ApiResponse;
@@ -45,5 +46,3 @@ public class OffersController {
         return ResponseEntity.ok(apiResponse);
     }
 }
-
-

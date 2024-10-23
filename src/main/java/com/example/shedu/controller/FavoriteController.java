@@ -7,6 +7,7 @@ import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.FavoriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,13 +17,16 @@ public class FavoriteController {
 
     private final FavoriteService favoriteService;
 
-    @PostMapping("/addFavorite")
-    public ResponseEntity<ApiResponse> addFavorite(@RequestParam(required = false) Long barberId,
-                                                   @RequestParam(required = false) Long barbershopId,
-                                                   @CurrentUser User user) {
-        ApiResponse apiResponse = favoriteService.addFavorite(barberId,barbershopId,user);
-        return ResponseEntity.ok(apiResponse);
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/add")
+    public ResponseEntity<ApiResponse> addFavorite(
+            @RequestBody ReqFavorite reqFavorite,
+            @CurrentUser User user) {
+
+        ApiResponse response = favoriteService.addFavorite(reqFavorite, user);
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/getAllFavorites")
     public ResponseEntity<ApiResponse> getAllFavorites(
@@ -32,11 +36,10 @@ public class FavoriteController {
         return ResponseEntity.ok(allFavorites);
     }
 
-    @DeleteMapping("/deleteFavorite/{deleteId}")
-    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deleteId) {
-        ApiResponse apiResponse = favoriteService.deleteFavorite(deleteId);
-        return ResponseEntity.ok(apiResponse);
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/delete/{deletedId}")
+    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deletedId) {
+        ApiResponse response = favoriteService.deleteFavorite(deletedId);
+        return ResponseEntity.ok(response);
     }
 }
-
-

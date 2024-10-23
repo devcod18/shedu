@@ -9,5 +9,3 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface OffersRepository extends JpaRepository<Offers, Long> {
     Page<Offers> findAllByIsDeletedOrderByIdDesc(boolean isDeleted, Pageable pageable);
 }
-
-

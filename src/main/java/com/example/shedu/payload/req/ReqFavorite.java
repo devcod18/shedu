@@ -10,7 +10,4 @@ import lombok.*;
 public class ReqFavorite {
     private Long barberId;
     private Long barbershopId;
-
 }
-
-

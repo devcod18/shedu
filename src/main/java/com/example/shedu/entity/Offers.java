@@ -1,3 +1,4 @@
+
 package com.example.shedu.entity;
 
 import jakarta.persistence.*;
@@ -32,6 +33,3 @@ public class Offers {
 
     private boolean isDeleted;
 }
-
-
-

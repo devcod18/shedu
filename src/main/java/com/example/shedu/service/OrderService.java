@@ -12,104 +12,94 @@ import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OffersRepository;
 import com.example.shedu.repository.OrderRepository;
+import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OffersRepository offersRepository;
+    private final OffersRepository serviceRepository;
     private final BarberShopRepository barberShopRepository;
 
-    public ApiResponse addOrder(ReqOrders reqOrders, User user) {
-        Offers offer = offersRepository.findById(reqOrders.getServiceId())
-                .orElse(null);
-        if (offer == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Offer not found"));
+    public ApiResponse addOrder(ReqOrders reqOrders,User user) {
+        Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
+        if (service == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Ofer"));
         }
-
-        Barbershop barbershop = barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null);
-        if (barbershop == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Barbershop not found"));
-        }
-
-        Orders order = Orders.builder()
-                .offers(offer)
+        Orders orders = Orders.builder()
+                .offers(service)
                 .user(user)
-                .barbershop(barbershop)
                 .createdAt(LocalDateTime.now())
                 .duration(reqOrders.getDuration())
                 .status(BookingStatus.PENDING)
-                .bookingDay(reqOrders.getBookingDay())
-                .bookingTime(reqOrders.getBookingTime())
+                .barbershop(barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null))
+                .bookingDaytime(reqOrders.getBookingDaytime())
                 .build();
 
-        orderRepository.save(order);
-        return new ApiResponse("Success");
+        orderRepository.save(orders);
+        return new ApiResponse("Succes");
     }
 
     public ApiResponse getAllOrdersByUser(User user) {
-        return new ApiResponse(orderRepository.findAllByUserId(user.getId()));
+        List<Orders> allByUserId = orderRepository.findAllByUserId(user.getId());
+        return new ApiResponse(allByUserId);
     }
 
     public ApiResponse getAllOrders(int page, int size) {
-        var pageable = PageRequest.of(page, size);
-        var ordersPage = orderRepository.findAll(pageable);
+        PageRequest pageable = PageRequest.of(page, size);
+        Page<Orders> ordersPage = orderRepository.findAll(pageable);
 
-        var resOrdersList = ordersPage.map(this::toResponse).toList();
+        List<ResOrders> resOrdersList = ordersPage.stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+
         return new ApiResponse(resOrdersList);
     }
 
-    public ApiResponse changeStatus(Long orderId, BookingStatus status) {
-        Orders order = orderRepository.findById(orderId)
-                .orElse(null);
-        if (order == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Order not found"));
+    public ApiResponse changeStatus(Long orderId, BookingStatus status){
+        Orders orders = orderRepository.findById(orderId).orElse(null);
+        if (orders == null){
+            return new ApiResponse(ResponseError.NOTFOUND("Order"));
         }
-        order.setStatus(status);
-        orderRepository.save(order);
-        return new ApiResponse("Success");
+        orders.setStatus(status);
+        orderRepository.save(orders);
+        return new ApiResponse("Succes");
     }
 
-    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
-        Orders order = orderRepository.findById(orderId)
-                .orElse(null);
-        if (order == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Order not found"));
+    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders,User user) {
+        Orders orders = orderRepository.findById(orderId).orElse(null);
+        if (orders == null){
+            return new ApiResponse(ResponseError.NOTFOUND("Order"));
         }
+        orders.setOffers(serviceRepository.findById(reqOrders.getServiceId()).orElse(null));
+        orders.setUser(user);
+        orders.setBookingDaytime(reqOrders.getBookingDaytime());
+        orders.setDuration(reqOrders.getDuration());
+        orders.setStatus(BookingStatus.PENDING);
 
-        Offers offer = offersRepository.findById(reqOrders.getServiceId()).orElse(null);
-        if (offer == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Offer not found"));
-        }
-
-        order.setOffers(offer);
-        order.setUser(user);
-        order.setBookingDay(reqOrders.getBookingDay());
-        order.setBookingTime(reqOrders.getBookingTime());
-        order.setDuration(reqOrders.getDuration());
-        order.setStatus(BookingStatus.PENDING);
-
-        orderRepository.save(order);
-        return new ApiResponse("Success");
+        orderRepository.save(orders);
+        return new ApiResponse("Succes");
     }
 
-    private ResOrders toResponse(Orders order) {
-        return ResOrders.builder()
-                .serviceId(order.getOffers().getId())
-                .userId(order.getUser().getId())
-                .createdAt(order.getCreatedAt())
-                .duration(order.getDuration())
-                .status(order.getStatus())
-                .bookingDay(LocalDate.parse(order.getBookingDay().toString()))
-                .bookingTime(LocalTime.parse(order.getBookingTime().toString()))
+    private ResOrders toResponse(Orders orders){
+        ResOrders resOrders = ResOrders.builder()
+                .serviceId(orders.getOffers().getId())
+                .userId(orders.getUser().getId())
+                .createdAt(orders.getCreatedAt())
+                .duration(orders.getDuration())
+                .status(orders.getStatus())
+                .bookingDaytime(orders.getBookingDaytime())
                 .build();
+
+        return resOrders;
     }
 }
+

@@ -20,5 +20,3 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     @Query("SELECT u FROM Favorite u WHERE u.isDeleted = false ORDER BY u.date DESC")
     Page<Favorite> findAllActiveSorted(Pageable pageable);
 }
-
-
