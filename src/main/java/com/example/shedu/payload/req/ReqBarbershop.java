@@ -20,5 +20,3 @@ public class ReqBarbershop {
     private String address;
     private Long file_id;
 }
-
-

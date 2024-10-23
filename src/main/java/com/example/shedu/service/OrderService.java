@@ -1,6 +1,5 @@
 package com.example.shedu.service;
 
-import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Offers;
 import com.example.shedu.entity.Orders;
 import com.example.shedu.entity.User;
@@ -12,85 +11,72 @@ import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OffersRepository;
 import com.example.shedu.repository.OrderRepository;
-import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+
     private final OrderRepository orderRepository;
-    private final OffersRepository serviceRepository;
+    private final OffersRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
 
-    public ApiResponse addOrder(ReqOrders reqOrders,User user) {
-        Offers service = serviceRepository.findById(reqOrders.getServiceId()).orElse(null);
-        if (service == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Ofer"));
-        }
-        Orders orders = Orders.builder()
-                .offers(service)
-                .user(user)
-                .createdAt(LocalDateTime.now())
-                .duration(reqOrders.getDuration())
-                .status(BookingStatus.PENDING)
-                .barbershop(barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null))
-                .bookingDaytime(reqOrders.getBookingDaytime())
-                .build();
-
-        orderRepository.save(orders);
-        return new ApiResponse("Succes");
+    public ApiResponse addOrder(ReqOrders reqOrders, User user) {
+        return offersRepository.findById(reqOrders.getServiceId())
+                .map(service -> {
+                    Orders orders = Orders.builder()
+                            .offers(service)
+                            .user(user)
+                            .barbershop(barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null))
+                            .duration(reqOrders.getDuration())
+                            .bookingDaytime(reqOrders.getBookingDaytime())
+                            .status(BookingStatus.PENDING)
+                            .build();
+                    orderRepository.save(orders);
+                    return new ApiResponse("Success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Offer")));
     }
 
     public ApiResponse getAllOrdersByUser(User user) {
-        List<Orders> allByUserId = orderRepository.findAllByUserId(user.getId());
-        return new ApiResponse(allByUserId);
+        return new ApiResponse(orderRepository.findAllByUserId(user.getId()));
     }
 
     public ApiResponse getAllOrders(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Orders> ordersPage = orderRepository.findAll(pageable);
-
-        List<ResOrders> resOrdersList = ordersPage.stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
-
+        Page<Orders> ordersPage = orderRepository.findAll(PageRequest.of(page, size));
+        List<ResOrders> resOrdersList = ordersPage.stream().map(this::toResponse).collect(Collectors.toList());
         return new ApiResponse(resOrdersList);
     }
 
-    public ApiResponse changeStatus(Long orderId, BookingStatus status){
-        Orders orders = orderRepository.findById(orderId).orElse(null);
-        if (orders == null){
-            return new ApiResponse(ResponseError.NOTFOUND("Order"));
-        }
-        orders.setStatus(status);
-        orderRepository.save(orders);
-        return new ApiResponse("Succes");
+    public ApiResponse changeStatus(Long orderId, BookingStatus status) {
+        return orderRepository.findById(orderId)
+                .map(orders -> {
+                    orders.setStatus(status);
+                    orderRepository.save(orders);
+                    return new ApiResponse("Success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Order")));
     }
 
-    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders,User user) {
-        Orders orders = orderRepository.findById(orderId).orElse(null);
-        if (orders == null){
-            return new ApiResponse(ResponseError.NOTFOUND("Order"));
-        }
-        orders.setOffers(serviceRepository.findById(reqOrders.getServiceId()).orElse(null));
-        orders.setUser(user);
-        orders.setBookingDaytime(reqOrders.getBookingDaytime());
-        orders.setDuration(reqOrders.getDuration());
-        orders.setStatus(BookingStatus.PENDING);
-
-        orderRepository.save(orders);
-        return new ApiResponse("Succes");
+    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
+        return orderRepository.findById(orderId)
+                .map(orders -> {
+                    orders.setOffers(offersRepository.findById(reqOrders.getServiceId()).orElse(null));
+                    orders.setUser(user);
+                    orders.setBookingDaytime(reqOrders.getBookingDaytime());
+                    orders.setDuration(reqOrders.getDuration());
+                    orders.setStatus(BookingStatus.PENDING);
+                    orderRepository.save(orders);
+                    return new ApiResponse("Success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Order")));
     }
 
-    private ResOrders toResponse(Orders orders){
-        ResOrders resOrders = ResOrders.builder()
+    private ResOrders toResponse(Orders orders) {
+        return ResOrders.builder()
                 .serviceId(orders.getOffers().getId())
                 .userId(orders.getUser().getId())
                 .createdAt(orders.getCreatedAt())
@@ -98,8 +84,5 @@ public class OrderService {
                 .status(orders.getStatus())
                 .bookingDaytime(orders.getBookingDaytime())
                 .build();
-
-        return resOrders;
     }
 }
-

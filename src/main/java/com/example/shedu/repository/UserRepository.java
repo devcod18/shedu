@@ -29,5 +29,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                          @Param("role") UserRole role);
 
     Page<User> findAllByUserRole(UserRole role, Pageable pageable);
+
+    User findByActivationCode(Integer activationCode);
+
+    boolean existsByPhoneNumber(String phoneNumber);
 }
 
