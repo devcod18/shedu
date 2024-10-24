@@ -103,12 +103,11 @@ public class FavoriteService {
 
     @Transactional
     public ApiResponse deleteFavorite(Long id) {
-        Optional<Favorite> favoriteOpt = favoriteRepository.findActiveById(id);
-        if (favoriteOpt.isEmpty()) {
+        Favorite favorite = favoriteRepository.findActiveById(id).orElse(null);
+        if (favorite == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
 
-        Favorite favorite = favoriteOpt.get();
         favorite.setDeleted(true);
         favoriteRepository.save(favorite);
         return new ApiResponse("success");
