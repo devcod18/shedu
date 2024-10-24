@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,38 +29,41 @@ public class FavoriteService {
     private final UserRepository userRepository;
     private final BarberShopRepository barbershopRepository;
 
+    @Transactional
     public ApiResponse addFavorite(ReqFavorite reqFavorite, User user) {
-        Optional<User> optionalBarber = Optional.empty();
-        Optional<Barbershop> optionalBarbershop = Optional.empty();
-        if (reqFavorite.getBarberId() != null && reqFavorite.getBarberId() != 0) {
-            optionalBarber = userRepository.findById(reqFavorite.getBarberId());
-            if (optionalBarber.isEmpty() || !optionalBarber.get().getUserRole().equals("ROLE_BARBER")) {
-                return new ApiResponse(ResponseError.NOTFOUND("Barber"));
-            }
-        }
+        User barber = null;
+        Barbershop barbershop = null;
+
         if (reqFavorite.getBarbershopId() != null && reqFavorite.getBarbershopId() != 0) {
-            optionalBarbershop = barbershopRepository.findById(reqFavorite.getBarbershopId());
-            if (optionalBarbershop.isEmpty()) {
+            barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
+            if (barbershop == null) {
                 return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
             }
-        }
-        boolean existsFavorite = favoriteRepository.existsByUserAndBarberAndBarbershop(
-                user,
-                optionalBarber.orElse(null),
-                optionalBarbershop.orElse(null)
-        );
 
-        if (existsFavorite) {
-            return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite"));
+            if (favoriteRepository.existsByUserAndBarbershop(user, barbershop)) {
+                return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
+            }
         }
+
+        if (reqFavorite.getBarberId() != null && reqFavorite.getBarberId() != 0) {
+            barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
+            if (barber == null) {
+                return new ApiResponse(ResponseError.NOTFOUND("Barber"));
+            }
+
+            if (favoriteRepository.existsByUserAndBarber(user, barber)) {
+                return new ApiResponse(ResponseError.ALREADY_EXIST("Barber"));
+            }
+        }
+
         Favorite favorite = Favorite.builder()
                 .user(user)
-                .barber(optionalBarber.orElse(null))
-                .barbershop(optionalBarbershop.orElse(null))
+                .barber(barber)
+                .barbershop(barbershop)
                 .date(LocalDateTime.now())
                 .build();
-        favoriteRepository.save(favorite);
 
+        favoriteRepository.save(favorite);
         return new ApiResponse("success");
     }
 
@@ -105,7 +107,6 @@ public class FavoriteService {
                 .barbershopId(favorite.getBarbershop() != null ? favorite.getBarbershop().getId() : null)
                 .barbershopName(favorite.getBarbershop() != null ? favorite.getBarbershop().getTitle() : null)
                 .date(favorite.getDate().toLocalDate())
-                .deleted(favorite.isDeleted())
-                .build();
+                .deleted(favorite.isDeleted()).build();
     }
 }
