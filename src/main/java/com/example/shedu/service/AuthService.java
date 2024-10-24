@@ -40,25 +40,27 @@ public class AuthService {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        User user = saveUser(auth, UserRole.ROLE_USER);
+        User user = saveUser(auth,UserRole.ROLE_USER);
         emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
+
         notificationService.saveNotification(
                 user,
-                "Hurmatli " + user.getFullName().toUpperCase().trim() + "!",
-                "Siz muvaffaqiyatli ro'yxatdan o'tdingiz!",
+                "Hurmatli " + user.getFullName() + "!",
+                "Siz muvaffaqiyatli ruyhatdan utdingiz",
                 0L,
                 false
         );
-        return new ApiResponse("success");
+        return new ApiResponse("Success. Please activate your profile");
+
     }
 
-    public ApiResponse adminSaveLibrarian(AuthRegister auth, UserRole role) {
+    public ApiResponse adminSaveLibrarian(AuthRegister auth,UserRole role) {
         if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
         saveUser(auth, role);
-        return new ApiResponse("success");
+        return new ApiResponse("Success");
     }
 
     private User saveUser(AuthRegister auth, UserRole role) {
@@ -92,7 +94,7 @@ public class AuthService {
         user.setActivationCode(null);
         user.setEnabled(true);
         userRepository.save(user);
-        return new ApiResponse("success");
+        return new ApiResponse("Success");
     }
 
     private Integer generateFiveDigitNumber() {
