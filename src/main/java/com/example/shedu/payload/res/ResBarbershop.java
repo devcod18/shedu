@@ -3,6 +3,8 @@ package com.example.shedu.payload.res;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,4 +22,5 @@ public class ResBarbershop {
     private BarbershopRegion region;
     private String address;
     private String phone;
+    private List<ResUser> barberList;
 }
