@@ -1,4 +1,3 @@
-
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
@@ -20,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,9 +85,9 @@ public class FavoriteService {
     @Transactional
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));
-
         List<ResFavorite> responseList = favoritePage.getContent()
-                .stream().map(this::toResFavorite)
+                .stream()
+                .map(this::toResFavorite)
                 .collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
@@ -95,22 +95,22 @@ public class FavoriteService {
                 .page(favoritePage.getNumber())
                 .totalPage(favoritePage.getTotalPages())
                 .totalElements(favoritePage.getTotalElements())
-                .data(responseList).build();
+                .data(responseList)
+                .build();
 
         return new ApiResponse(customPageable);
     }
 
     @Transactional
     public ApiResponse deleteFavorite(Long id) {
-        Favorite favourite = favoriteRepository.findActiveById(id).orElse(null);
-
-        if (favourite == null) {
+        Optional<Favorite> favoriteOpt = favoriteRepository.findActiveById(id);
+        if (favoriteOpt.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
 
-        favourite.setDeleted(true);
-        favoriteRepository.save(favourite);
-
+        Favorite favorite = favoriteOpt.get();
+        favorite.setDeleted(true);
+        favoriteRepository.save(favorite);
         return new ApiResponse("success");
     }
 
@@ -119,10 +119,10 @@ public class FavoriteService {
                 .id(favorite.getId())
                 .userId(favorite.getUser().getId())
                 .userName(favorite.getUser().getFullName())
-                .barberId(favorite.getBarber() != null ? favorite.getBarber().getId() : null)
-                .barberName(favorite.getBarber() != null ? favorite.getBarber().getFullName() : null)
-                .barbershopId(favorite.getBarbershop() != null ? favorite.getBarbershop().getId() : null)
-                .barbershopName(favorite.getBarbershop() != null ? favorite.getBarbershop().getTitle() : null)
+                .barberId(Optional.ofNullable(favorite.getBarber()).map(User::getId).orElse(null))
+                .barberName(Optional.ofNullable(favorite.getBarber()).map(User::getFullName).orElse(null))
+                .barbershopId(Optional.ofNullable(favorite.getBarbershop()).map(Barbershop::getId).orElse(null))
+                .barbershopName(Optional.ofNullable(favorite.getBarbershop()).map(Barbershop::getTitle).orElse(null))
                 .date(favorite.getDate().toLocalDate())
                 .deleted(favorite.isDeleted()).build();
     }

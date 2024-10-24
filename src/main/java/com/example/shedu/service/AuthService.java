@@ -45,11 +45,11 @@ public class AuthService {
         notificationService.saveNotification(
                 user,
                 "Hurmatli " + user.getFullName().toUpperCase().trim() + "!",
-                "Siz muvaffaqiyatli ruyhatdan utdingiz",
+                "Siz muvaffaqiyatli ro'yxatdan o'tdingiz!",
                 0L,
                 false
         );
-        return new ApiResponse("Success. Please activate your profile");
+        return new ApiResponse("success");
     }
 
     public ApiResponse adminSaveLibrarian(AuthRegister auth, UserRole role) {
@@ -58,7 +58,7 @@ public class AuthService {
         }
 
         saveUser(auth, role);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     private User saveUser(AuthRegister auth, UserRole role) {
@@ -92,7 +92,7 @@ public class AuthService {
         user.setActivationCode(null);
         user.setEnabled(true);
         userRepository.save(user);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     private Integer generateFiveDigitNumber() {

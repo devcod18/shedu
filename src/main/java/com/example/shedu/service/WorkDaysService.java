@@ -46,7 +46,7 @@ public class WorkDaysService {
                 .open(reqWorkDays.getOpenTime())
                 .build();
         workDaysRepository.save(workDays);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse update(ReqWorkDays reqWorkDays) {

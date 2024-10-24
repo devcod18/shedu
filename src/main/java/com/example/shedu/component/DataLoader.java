@@ -25,34 +25,47 @@ public class DataLoader implements CommandLineRunner {
     @Value(value = "${spring.jpa.hibernate.ddl-auto}")
 
     @Override
-    public void run(String... args)  {
+    public void run(String... args) {
         if (userRepository.count() == 0) {
-            User newUser = new User();
-            newUser.setFullName("Admin Admin");
-            newUser.setPassword(passwordEncoder.encode("root123"));
-            newUser.setUserRole(UserRole.ROLE_SUPER_ADMIN);
-            newUser.setPhoneNumber("998901234567");
-            newUser.setEmail("admin@gmail.com");
-            newUser.setCreated(LocalDateTime.now());
-            newUser.setEnabled(true);
-            newUser.setAccountNonExpired(true);
-            newUser.setAccountNonLocked(true);
-            newUser.setCredentialsNonExpired(true);
-            userRepository.save(newUser);
-           User user = User.builder()
-                   .fullName("Asilbek")
-                   .password(passwordEncoder.encode("asilbek"))
-                   .userRole(UserRole.ROLE_MASTER)
-                   .phoneNumber("998901234569")
-                   .email("asil@gmail.com")
-                   .created(LocalDateTime.now())
-                   .enabled(true)
-                   .accountNonExpired(true)
-                   .accountNonLocked(true)
-                   .credentialsNonExpired(true)
-                   .build();
-           userRepository.save(user);
-
+            User user1 = User.builder()
+                    .fullName("Adminov Adminbek")
+                    .password(passwordEncoder.encode("root123"))
+                    .userRole(UserRole.ROLE_SUPER_ADMIN)
+                    .phoneNumber("998901234567")
+                    .email("admin@gmail.com")
+                    .created(LocalDateTime.now())
+                    .enabled(true)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .build();
+            userRepository.save(user1);
+            User user2 = User.builder()
+                    .fullName("Muhammad Nabiyev")
+                    .password(passwordEncoder.encode("root123"))
+                    .userRole(UserRole.ROLE_MASTER)
+                    .phoneNumber("998972911785")
+                    .email("mn@gmail.com")
+                    .created(LocalDateTime.now())
+                    .enabled(true)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .build();
+            userRepository.save(user2);
+            User user3 = User.builder()
+                    .fullName("Asilbek Abdihamidov")
+                    .password(passwordEncoder.encode("root123"))
+                    .userRole(UserRole.ROLE_ADMIN)
+                    .phoneNumber("998901234569")
+                    .email("asilbek@gmail.com")
+                    .created(LocalDateTime.now())
+                    .enabled(true)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .build();
+            userRepository.save(user3);
 
             Days days = new Days();
             days.setWeekDays(WeekDays.DUSHANBA);
