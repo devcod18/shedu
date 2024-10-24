@@ -12,7 +12,6 @@ import com.example.shedu.repository.OffersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,9 +42,8 @@ public class OffersService {
         return new ApiResponse("success");
     }
 
-    public ApiResponse getAllOffers(int page, int size, boolean isDeleted) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Offers> offersPage = offersRepository.findAllByDeletedOrderByIdDesc(isDeleted, pageable);
+    public ApiResponse getAllOffers(int page, int size) {
+        Page<Offers> offersPage = offersRepository.findAllActiveSorted(PageRequest.of(page, size));
 
         List<ResOffers> resOffersList = offersPage.getContent()
                 .stream().map(this::mapToResOffers)
@@ -66,7 +64,7 @@ public class OffersService {
         Offers offer = offersRepository.findById(id)
                 .orElse(null);
         if (offer == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Offer"));
+            return new ApiResponse(ResponseError.NOTFOUND("Offers"));
         }
 
         offer.setTitle(reqOffers.getTitle());
@@ -82,7 +80,7 @@ public class OffersService {
         Offers offer = offersRepository.findById(id)
                 .orElse(null);
         if (offer == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Offer"));
+            return new ApiResponse(ResponseError.NOTFOUND("Offers"));
         }
 
         offer.setDeleted(true);

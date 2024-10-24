@@ -49,16 +49,16 @@ public class UserService {
         }
 
         userRepository.save(user);
-        return new ApiResponse("Foydalanuvchi muvaffaqiyatli yangilandi");
+        return new ApiResponse("success");
     }
 
     public ApiResponse deleteUser(Long id) {
         return userRepository.findById(id)
                 .map(user -> {
                     userRepository.delete(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'chirildi");
+                    return new ApiResponse("success");
                 })
-                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Users")));
     }
 
     public ApiResponse enableUser(Long id, boolean enabled) {
@@ -66,15 +66,15 @@ public class UserService {
                 .map(user -> {
                     user.setEnabled(enabled);
                     userRepository.save(user);
-                    return new ApiResponse("Foydalanuvchi muvaffaqiyatli o'zgartirildi!");
+                    return new ApiResponse("success");
                 })
-                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")));
+                .orElseGet(() -> new ApiResponse(ResponseError.NOTFOUND("Users")));
     }
 
     public ApiResponse searchUserByRole(String field, UserRole role) {
         List<User> users = userRepository.searchByFieldsAndUserRole(field, role);
         return users.isEmpty() ?
-                new ApiResponse(ResponseError.NOTFOUND("Foydalanuvchi")) :
+                new ApiResponse(ResponseError.NOTFOUND("Users")) :
                 new ApiResponse(users.stream().map(this::toResponseUser).toList());
     }
 

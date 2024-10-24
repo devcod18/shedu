@@ -20,6 +20,4 @@ public class ResBarbershop {
     private BarbershopRegion region;
     private String address;
     private String phone;
-
-
 }

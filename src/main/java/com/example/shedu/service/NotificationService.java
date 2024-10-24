@@ -108,7 +108,7 @@ public class NotificationService {
         );
 
         String title = "Bildirishnoma!";
-        String content = "( " + user.getFullName() + " ) foydalanuvchi sizdan edu tizimga kirish uchun ruxsat so'ramozda . . .";
+        String content = "( " + user.getFullName() + " ) foydalanuvchi sizdan shedu tizimga kirish uchun ruxsat so'ramozda . . .";
         saveNotification(admin, title, content, null, false);
 
         return new ApiResponse("Success");

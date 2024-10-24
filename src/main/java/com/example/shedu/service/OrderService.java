@@ -38,8 +38,8 @@ public class OrderService {
                             .status(BookingStatus.PENDING)
                             .build();
                     orderRepository.save(orders);
-                    return new ApiResponse("Success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Offer")));
+                    return new ApiResponse("success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Offers")));
     }
 
     public ApiResponse getAllOrdersByUser(User user) {
@@ -48,7 +48,8 @@ public class OrderService {
 
     public ApiResponse getAllOrders(int page, int size) {
         Page<Orders> ordersPage = orderRepository.findAll(PageRequest.of(page, size));
-        List<ResOrders> resOrdersList = ordersPage.stream().map(this::toResponse).collect(Collectors.toList());
+        List<ResOrders> resOrdersList = ordersPage.stream()
+                .map(this::toResponse).collect(Collectors.toList());
         return new ApiResponse(resOrdersList);
     }
 
@@ -57,8 +58,8 @@ public class OrderService {
                 .map(orders -> {
                     orders.setStatus(status);
                     orderRepository.save(orders);
-                    return new ApiResponse("Success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Order")));
+                    return new ApiResponse("success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
     }
 
     public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
@@ -70,8 +71,8 @@ public class OrderService {
                     orders.setDuration(reqOrders.getDuration());
                     orders.setStatus(BookingStatus.PENDING);
                     orderRepository.save(orders);
-                    return new ApiResponse("Success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Order")));
+                    return new ApiResponse("success");
+                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
     }
 
     private ResOrders toResponse(Orders orders) {
