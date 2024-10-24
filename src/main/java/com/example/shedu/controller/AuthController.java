@@ -31,7 +31,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.register(authRegister));
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @PostMapping("/admin/save-admin")
     public ResponseEntity<ApiResponse> adminSaveTeacher(@Valid @RequestBody AuthRegister auth,
                                                         @RequestParam UserRole role) {
