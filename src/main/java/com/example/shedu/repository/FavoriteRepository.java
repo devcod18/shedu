@@ -12,15 +12,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
-    @Query("SELECT u FROM Favorite u WHERE u.isDeleted = false AND u.id = :id")
+    @Query("SELECT u FROM Favorite u WHERE u.deleted = false AND u.id = :id")
     Optional<Favorite> findActiveById(@Param("id") Long id);
 
-    boolean existsByBarberAndBarbershop(User barber, Barbershop barbershop);
-
-    @Query("SELECT u FROM Favorite u WHERE u.isDeleted = false ORDER BY u.date DESC")
+    @Query("SELECT u FROM Favorite u WHERE u.deleted = false ORDER BY u.date DESC")
     Page<Favorite> findAllActiveSorted(Pageable pageable);
 
     boolean existsByUserAndBarber(User user, User barber);
+
     boolean existsByUserAndBarbershop(User user, Barbershop barbershop);
+
     boolean existsByUserAndBarberAndBarbershop(User user, User barber, Barbershop barbershop);
 }

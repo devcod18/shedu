@@ -30,5 +30,5 @@ public class Favorite {
     @CreationTimestamp
     private LocalDateTime date;
 
-    private boolean isDeleted = false;
+    private boolean deleted = false;
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/favorite")
 @RequiredArgsConstructor
+@CrossOrigin
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
@@ -27,7 +28,6 @@ public class FavoriteController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/getAllFavorites")
     public ResponseEntity<ApiResponse> getAllFavorites(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -37,9 +37,9 @@ public class FavoriteController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @DeleteMapping("/delete/{deletedId}")
-    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deletedId) {
-        ApiResponse response = favoriteService.deleteFavorite(deletedId);
+    @DeleteMapping("/delete/{deleteFavoriteId}")
+    public ResponseEntity<ApiResponse> deleteFavorite(@PathVariable Long deleteFavoriteId) {
+        ApiResponse response = favoriteService.deleteFavorite(deleteFavoriteId);
         return ResponseEntity.ok(response);
     }
 }

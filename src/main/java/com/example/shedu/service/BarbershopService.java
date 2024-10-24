@@ -4,7 +4,10 @@ import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
-import com.example.shedu.payload.*;
+import com.example.shedu.payload.ApiResponse;
+import com.example.shedu.payload.BarbershopDto;
+import com.example.shedu.payload.CustomPageable;
+import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.payload.res.ResWorkDay;
@@ -37,10 +40,9 @@ public class BarbershopService {
         Optional<Barbershop> existingBarbershop = barberShopRepository.findByTitle(reqBarbershop.getTitle());
 
         if (existingBarbershop.isPresent()) {
-            return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop bu nom bilan allaqachon mavjud!"));
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
         }
 
-        // Yangi barbershop yaratish
         Barbershop barbershop = Barbershop.builder()
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
@@ -55,7 +57,7 @@ public class BarbershopService {
                 .phoneNumber(user.getPhoneNumber())
                 .build();
         barberShopRepository.save(barbershop);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
 
@@ -79,7 +81,7 @@ public class BarbershopService {
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
 
         barbershop.setActive(false);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse update(User user, ReqBarbershop reqBarbershop, Long barberId,BarbershopRegion region) {
@@ -95,7 +97,7 @@ public class BarbershopService {
           barbershop.setRegion(region);
           barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
           barberShopRepository.save(barbershop);
-        return new ApiResponse("Barbershop muvaffaqiyatli yangilandi.");
+        return new ApiResponse("success");
     }
 
 
@@ -151,4 +153,3 @@ public class BarbershopService {
         return responseList;
     }
 }
-

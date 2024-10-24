@@ -22,5 +22,5 @@ public class ResFeedback {
     private LocalDateTime createdAt;
     private Long barbershopId;
     private Long userId;
-    private boolean isDeleted;
+    private boolean deleted;
 }

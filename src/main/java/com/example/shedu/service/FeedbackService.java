@@ -82,7 +82,6 @@ public class FeedbackService {
         return new ApiResponse(customPageable);
     }
 
-
     public ApiResponse deleteFeedback(Long id) {
         Feedback feedback = feedbackRepository.findById(id).orElse(null);
         if (feedback == null) {
@@ -102,6 +101,6 @@ public class FeedbackService {
                 .createdAt(feedback.getCreatedAt())
                 .userId(feedback.getUser().getId())
                 .barbershopId(feedback.getBarbershopId())
-                .isDeleted(feedback.isDeleted()).build();
+                .deleted(feedback.isDeleted()).build();
     }
 }

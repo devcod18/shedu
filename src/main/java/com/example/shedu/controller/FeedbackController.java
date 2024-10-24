@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/feedback")
 @RequiredArgsConstructor
+@CrossOrigin
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
@@ -36,9 +37,9 @@ public class FeedbackController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_USER')")
-    @DeleteMapping("/deleteFeedback/{feedbackId}")
-    public ResponseEntity<ApiResponse> deleteFeedback(@PathVariable Long feedbackId) {
-        ApiResponse apiResponse = feedbackService.deleteFeedback(feedbackId);
+    @DeleteMapping("/deleteFeedback/{deleteFeedbackId}")
+    public ResponseEntity<ApiResponse> deleteFeedback(@PathVariable Long deleteFeedbackId) {
+        ApiResponse apiResponse = feedbackService.deleteFeedback(deleteFeedbackId);
         return ResponseEntity.ok(apiResponse);
     }
 }

@@ -6,6 +6,7 @@ import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.ChatDTO;
 import com.example.shedu.payload.MessageDTO;
+import com.example.shedu.payload.ResponseError;
 import com.example.shedu.repository.ChatRepository;
 import com.example.shedu.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,12 +65,13 @@ public class ChatMessageService {
     }
 
     public ApiResponse markMessageAsRead(Long messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new RuntimeException("Message not found"));
+        Message message = messageRepository.findById(messageId).orElse(null);
+        if (message == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Message"));
+        }
         message.setRead(true);
         Message updatedMessage = messageRepository.save(message);
         MessageDTO messageDTO = modelMapper.map(updatedMessage, MessageDTO.class);
         return new ApiResponse(messageDTO);
     }
 }
-

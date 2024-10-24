@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/barbershop")
+@CrossOrigin
 public class BarbershopController {
 
     private final BarbershopService barbershopService;
     private final WorkDaysService workDaysService;
 
 
-    // Barbershop qo'shish
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN')")
     @PostMapping("/save")
     public ResponseEntity<ApiResponse> saveBarbershop(@RequestBody ReqBarbershop reqBarbershop,
@@ -34,16 +34,14 @@ public class BarbershopController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Barcha barbershoplarni olish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_MASTER','ROLE_ADMIN','ROLE_USER')")
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam int page,
-                                                         @RequestParam int size) {
+    public ResponseEntity<ApiResponse> getAllBarbershops(@RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "10") int size) {
         ApiResponse apiResponse = barbershopService.getAll(size, page);
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Barbershopni o'chirish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteBarbershop(@PathVariable Long id) {
@@ -51,7 +49,6 @@ public class BarbershopController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Barbershopni o'zgartirish
     @PreAuthorize("hasAnyRole('ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_MASTER')")
     @PutMapping("/update")
     public ResponseEntity<ApiResponse> updateBarbershop(@CurrentUser User user,
@@ -64,7 +61,6 @@ public class BarbershopController {
     }
 
 
-    // Barbershopni nomi va region bo'yicha qidirish
     @PreAuthorize("hasAnyRole('ROLE_SUPEER_ADMIN','ROLE_ADMIN','ROLE_USER','ROLE_MASTER')")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
