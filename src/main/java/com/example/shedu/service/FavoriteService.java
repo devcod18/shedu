@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,58 +34,44 @@ public class FavoriteService {
         User barber = null;
         Barbershop barbershop = null;
 
-        if (reqFavorite.getBarberId() != null && reqFavorite.getBarberId() != 0) {
-            barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
-            if (barber == null) {
-                return new ApiResponse(ResponseError.NOTFOUND("Barber"));
-            }
-        }
-
         if (reqFavorite.getBarbershopId() != null && reqFavorite.getBarbershopId() != 0) {
             barbershop = barbershopRepository.findById(reqFavorite.getBarbershopId()).orElse(null);
             if (barbershop == null) {
                 return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
             }
-        }
 
-        if (barber != null && reqFavorite.getBarbershopId() == null) {
-            boolean existsBarberFavorite = favoriteRepository.existsByUserAndBarber(user, barber);
-            if (existsBarberFavorite) {
-                return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barber"));
+            if (favoriteRepository.existsByUserAndBarbershop(user, barbershop)) {
+                return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
             }
         }
 
-        if (barbershop != null && reqFavorite.getBarberId() == null) {
-            boolean existsBarbershopFavorite = favoriteRepository.existsByUserAndBarbershop(user, barbershop);
-            if (existsBarbershopFavorite) {
-                return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barbershop"));
+        if (reqFavorite.getBarberId() != null && reqFavorite.getBarberId() != 0) {
+            barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
+            if (barber == null) {
+                return new ApiResponse(ResponseError.NOTFOUND("Barber"));
+            }
+
+            if (favoriteRepository.existsByUserAndBarber(user, barber)) {
+                return new ApiResponse(ResponseError.ALREADY_EXIST("Barber"));
             }
         }
 
-        if (barber != null && barbershop != null) {
-            boolean existsFavorite = favoriteRepository.existsByUserAndBarberAndBarbershop(user, barber, barbershop);
-            if (existsFavorite) {
-                return new ApiResponse(ResponseError.ALREADY_EXIST("Favorite for Barber and Barbershop"));
-            }
-        }
-
-        Favorite favourite = Favorite.builder()
+        Favorite favorite = Favorite.builder()
                 .user(user)
                 .barber(barber)
                 .barbershop(barbershop)
                 .date(LocalDateTime.now())
                 .build();
 
-        favoriteRepository.save(favourite);
-
+        favoriteRepository.save(favorite);
         return new ApiResponse("success");
     }
+
 
     @Transactional
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));
-        List<ResFavorite> responseList = favoritePage.getContent()
-                .stream()
+        List<ResFavorite> responseList = favoritePage.getContent().stream()
                 .map(this::toResFavorite)
                 .collect(Collectors.toList());
 
@@ -103,26 +88,24 @@ public class FavoriteService {
 
     @Transactional
     public ApiResponse deleteFavorite(Long id) {
-        Optional<Favorite> favoriteOpt = favoriteRepository.findActiveById(id);
-        if (favoriteOpt.isEmpty()) {
+        Favorite favorite = favoriteRepository.findActiveById(id).orElse(null);
+        if (favorite == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
-
-        Favorite favorite = favoriteOpt.get();
         favorite.setDeleted(true);
         favoriteRepository.save(favorite);
         return new ApiResponse("success");
     }
 
-    public ResFavorite toResFavorite(Favorite favorite) {
+    private ResFavorite toResFavorite(Favorite favorite) {
         return ResFavorite.builder()
                 .id(favorite.getId())
                 .userId(favorite.getUser().getId())
                 .userName(favorite.getUser().getFullName())
-                .barberId(Optional.ofNullable(favorite.getBarber()).map(User::getId).orElse(null))
-                .barberName(Optional.ofNullable(favorite.getBarber()).map(User::getFullName).orElse(null))
-                .barbershopId(Optional.ofNullable(favorite.getBarbershop()).map(Barbershop::getId).orElse(null))
-                .barbershopName(Optional.ofNullable(favorite.getBarbershop()).map(Barbershop::getTitle).orElse(null))
+                .barberId(favorite.getBarber() != null ? favorite.getBarber().getId() : null)
+                .barberName(favorite.getBarber() != null ? favorite.getBarber().getFullName() : null)
+                .barbershopId(favorite.getBarbershop() != null ? favorite.getBarbershop().getId() : null)
+                .barbershopName(favorite.getBarbershop() != null ? favorite.getBarbershop().getTitle() : null)
                 .date(favorite.getDate().toLocalDate())
                 .deleted(favorite.isDeleted()).build();
     }
