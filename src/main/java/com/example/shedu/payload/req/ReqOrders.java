@@ -1,9 +1,8 @@
 package com.example.shedu.payload.req;
 
-import com.example.shedu.entity.enums.BookingStatus;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,9 +11,7 @@ import java.sql.Timestamp;
 @Builder
 public class ReqOrders {
     private Long serviceId;
-    private Timestamp bookingDaytime;
+    private LocalDateTime bookingDaytime;
     private Long duration;
     private Long barbershopId;
 }
-
-

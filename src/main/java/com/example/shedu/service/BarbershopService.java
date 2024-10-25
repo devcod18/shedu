@@ -4,9 +4,13 @@ import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
-import com.example.shedu.payload.*;
+import com.example.shedu.payload.ApiResponse;
+import com.example.shedu.payload.BarbershopDto;
+import com.example.shedu.payload.CustomPageable;
+import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
+import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +42,9 @@ public class BarbershopService {
         Optional<Barbershop> existingBarbershop = barberShopRepository.findByTitle(reqBarbershop.getTitle());
 
         if (existingBarbershop.isPresent()) {
-            return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop bu nom bilan allaqachon mavjud!"));
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Barbershop"));
         }
 
-        // Yangi barbershop yaratish
         Barbershop barbershop = Barbershop.builder()
                 .title(reqBarbershop.getTitle())
                 .info(reqBarbershop.getInfo())
@@ -55,7 +59,7 @@ public class BarbershopService {
                 .phoneNumber(user.getPhoneNumber())
                 .build();
         barberShopRepository.save(barbershop);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
 
@@ -79,7 +83,7 @@ public class BarbershopService {
                 .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
 
         barbershop.setActive(false);
-        return new ApiResponse("Success");
+        return new ApiResponse("success");
     }
 
     public ApiResponse update(User user, ReqBarbershop reqBarbershop, Long barberId,BarbershopRegion region) {
@@ -95,18 +99,51 @@ public class BarbershopService {
           barbershop.setRegion(region);
           barbershop.setBarbershopPic(fileRepository.findById(reqBarbershop.getFile_id()).orElse(null));
           barberShopRepository.save(barbershop);
-        return new ApiResponse("Barbershop muvaffaqiyatli yangilandi.");
+        return new ApiResponse("success");
     }
 
 
-    public ApiResponse search(String title,BarbershopRegion region) {
-        List<Barbershop> barbershops = barberShopRepository.findByTitleContainingIgnoreCase(title,region);
-        if(barbershops!=null){
-            List<ResBarbershop> list= toResponseBarbershopList(barbershops);
-            return new ApiResponse(list);
+    public ApiResponse search(String title, BarbershopRegion region) {
+        List<Barbershop> barbershops = barberShopRepository.findByTitleContainingIgnoreCase(title, region);
+
+        if (barbershops.isEmpty()) {
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
-        return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+
+        List<ResBarbershop> resBarbershopList = new ArrayList<>();
+
+        for (Barbershop barbershop : barbershops) {
+            List<User> barbers = userRepository.findByBarbershopIdAndUserRoleAndEnabledTrue(barbershop.getId(), UserRole.ROLE_BARBER);
+            List<ResUser> resBarberList = barbers.stream()
+                    .map(barber -> ResUser.builder()
+                            .id(barber.getId())
+                            .fullName(barber.getFullName())
+                            .email(barber.getEmail())
+                            .phoneNumber(barber.getPhoneNumber())
+                            .build())
+                    .collect(Collectors.toList());
+
+            ResBarbershop resBarbershop = ResBarbershop.builder()
+                    .id(barbershop.getId())
+                    .title(barbershop.getTitle())
+                    .owner(barbershop.getOwner().getId())
+                    .lat(barbershop.getLatitude())
+                    .lng(barbershop.getLongitude())
+                    .info(barbershop.getInfo())
+                    .email(barbershop.getEmail())
+                    .file_id(barbershop.getBarbershopPic() != null ? barbershop.getBarbershopPic().getId() : null)
+                    .region(barbershop.getRegion())
+                    .address(barbershop.getAddress())
+                    .phone(barbershop.getPhoneNumber())
+                    .barberList(resBarberList)
+                    .build();
+
+            resBarbershopList.add(resBarbershop);
+        }
+
+        return new ApiResponse(resBarbershopList);
     }
+
     public ApiResponse getByOwner(User user) {
         List<Barbershop> list = barberShopRepository.findByOwner(user.getId());
         if (list == null) {

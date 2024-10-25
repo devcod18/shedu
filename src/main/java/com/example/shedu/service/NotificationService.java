@@ -108,7 +108,7 @@ public class NotificationService {
         );
 
         String title = "Bildirishnoma!";
-        String content = "( " + user.getFullName() + " ) foydalanuvchi sizdan edu tizimga kirish uchun ruxsat so'ramozda . . .";
+        String content = "( " + user.getFullName() + " ) foydalanuvchi sizdan shedu tizimga kirish uchun ruxsat so'ramozda . . .";
         saveNotification(admin, title, content, null, false);
 
         return new ApiResponse("Success");
@@ -142,7 +142,7 @@ public class NotificationService {
         return new ApiResponse(notificationDTOS);
     }
 
-    private void saveNotification(User user, String title, String content, Long fileId, boolean contact) {
+    public void saveNotification(User user, String title, String content, Long fileId, boolean contact) {
         Notification notification = new Notification();
         notification.setTitle(title);
         notification.setContent(content);

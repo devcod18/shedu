@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -20,6 +22,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final EmailSenderService emailSenderService;
+    private final NotificationService notificationService;
 
     public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
@@ -27,43 +31,39 @@ public class AuthService {
             return new ApiResponse(ResponseError.NOTFOUND("User"));
         }
 
-        if (passwordEncoder.matches(authLogin.getPassword(), user.getPassword())) {
-            String token = jwtProvider.generateToken(authLogin.getPhoneNumber());
-            ResponseLogin responseLogin = new ResponseLogin(token, user.getUserRole().name(), user.getId());
-            return new ApiResponse(responseLogin);
-        }
-
-        return new ApiResponse(ResponseError.PASSWORD_DID_NOT_MATCH());
+        String token = jwtProvider.generateToken(authLogin.getPhoneNumber());
+        return new ApiResponse(new ResponseLogin(token, user.getUserRole().name(), user.getId()));
     }
 
-    public ApiResponse register(AuthRegister auth, UserRole role) {
-
-        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
-        if (byPhoneNumber != null) {
+    public ApiResponse register(AuthRegister auth,UserRole role) {
+        if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        saveUser(auth, role);
+        User user = saveUser(auth,role);
+        emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
 
-        return new ApiResponse("Success");
+        notificationService.saveNotification(
+                user,
+                "Hurmatli " + user.getFullName() + "!",
+                "Siz muvaffaqiyatli ruyhatdan utdingiz",
+                0L,
+                false
+        );
+        return new ApiResponse("Success. Please activate your profile");
+
     }
-
 
     public ApiResponse adminSaveLibrarian(AuthRegister auth) {
-
-        User byPhoneNumber = userRepository.findByPhoneNumber(auth.getPhoneNumber()).orElse(null);
-        if (byPhoneNumber != null) {
+        if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        saveUser(auth, UserRole.ROLE_ADMIN);
-
-
+        saveUser(auth,UserRole.ROLE_ADMIN);
         return new ApiResponse("Success");
     }
 
-
-    private void saveUser(AuthRegister auth, UserRole role) {
+    private User saveUser(AuthRegister auth, UserRole role) {
         User user = User.builder()
                 .fullName(auth.getFullName())
                 .email(auth.getEmail())
@@ -71,12 +71,33 @@ public class AuthService {
                 .password(passwordEncoder.encode(auth.getPassword()))
                 .userRole(role)
                 .barbershopId(auth.getBarbershopId())
-                .enabled(true)
+                .enabled(false)
+                .activationCode(generateFiveDigitNumber())
                 .accountNonExpired(true)
                 .accountNonLocked(true)
                 .credentialsNonExpired(true)
                 .build();
 
+        return userRepository.save(user);
+    }
+
+    public ApiResponse checkCode(Integer code) {
+        User user = userRepository.findByActivationCode(code);
+        if (user == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("User"));
+        }
+
+        if (!user.getActivationCode().equals(code)) {
+            return new ApiResponse(ResponseError.PASSWORD_DID_NOT_MATCH());
+        }
+
+        user.setActivationCode(null);
+        user.setEnabled(true);
         userRepository.save(user);
+        return new ApiResponse("Success");
+    }
+
+    private Integer generateFiveDigitNumber() {
+        return new Random().nextInt(90000) + 10000;
     }
 }

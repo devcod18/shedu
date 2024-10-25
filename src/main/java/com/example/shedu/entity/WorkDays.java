@@ -15,10 +15,10 @@ public class WorkDays {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-   @OneToOne
+   @OneToOne(cascade = CascadeType.MERGE)
     private Barbershop barbershopId;
     private String open;
     private String close;
-    @OneToMany
+    @ManyToMany
     private List<Days> daysList;
 }
