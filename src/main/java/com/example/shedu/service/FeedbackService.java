@@ -25,6 +25,7 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse addFeedback(ReqFeedback reqFeedback, User user) {
         if (user == null) {
@@ -45,7 +46,13 @@ public class FeedbackService {
                 .build();
 
         feedbackRepository.save(feedback);
-
+        notificationService.saveNotification(
+                user,
+                "Hurmatli " + user.getFullName() + "!",
+                "Siz muvaffaqiyatli comment qoldirdingiz",
+                0L,
+                false
+        );
         return new ApiResponse("success");
     }
 

@@ -5,5 +5,3 @@ public enum BookingStatus {
     CONFIRMED,  // Buyurtma tasdiqlandi
     CANCELLED   // Buyurtma bekor qilindi
 }
-
-

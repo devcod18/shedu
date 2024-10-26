@@ -27,7 +27,7 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
     List<Barbershop> findByTitleContainingIgnoreCase(String title, BarbershopRegion region);
 
     @Query("select b from Barbershop b where b.isActive = true order by b.id desc ")
-    Page<Barbershop> FindAllByActive(Pageable pageable);
+    Page<Barbershop> findAllByActive(Pageable pageable);
 
     @Query("select b from Barbershop b where b.owner.id= ?1 and b.isActive=true ")
     List<Barbershop> findByOwner(Long id);
