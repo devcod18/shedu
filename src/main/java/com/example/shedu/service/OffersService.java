@@ -31,6 +31,13 @@ public class OffersService {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
+        if (reqOffers.getTitle() == null || reqOffers.getTitle().trim().isEmpty() ||
+                reqOffers.getInfo() == null || reqOffers.getInfo().trim().isEmpty() ||
+                reqOffers.getPrice() == null || reqOffers.getPrice() <= 0 ||
+                reqOffers.getDuration() == null || reqOffers.getDuration() <= 0) {
+            return new ApiResponse("Bo'sh bo'lmasin 0 ga ham teng bo'lmasin");
+        }
+
         Offers offer = Offers.builder()
                 .barbershop(barbershop)
                 .title(reqOffers.getTitle())
@@ -47,8 +54,10 @@ public class OffersService {
                 0L,
                 false
         );
+
         return new ApiResponse("success");
     }
+
 
     public ApiResponse getAllOffers(int page, int size) {
         Page<Offers> offersPage = offersRepository.findAllActiveSorted(PageRequest.of(page, size));

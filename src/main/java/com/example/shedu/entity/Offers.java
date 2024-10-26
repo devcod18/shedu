@@ -19,7 +19,7 @@ public class Offers {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Barbershop barbershop;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
     @Column(nullable = false)

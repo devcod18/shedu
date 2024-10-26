@@ -4,7 +4,6 @@ import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqOffers;
 import com.example.shedu.service.OffersService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/offers")
 @RequiredArgsConstructor
 @CrossOrigin
-@Tag(name = "Offers Controller", description = "Xizmat takliflarini boshqarish uchun controller")
 public class OffersController {
 
     private final OffersService offersService;

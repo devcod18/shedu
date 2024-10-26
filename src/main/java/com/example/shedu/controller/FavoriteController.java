@@ -6,7 +6,6 @@ import com.example.shedu.payload.req.ReqFavorite;
 import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.FavoriteService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/favorite")
 @RequiredArgsConstructor
 @CrossOrigin
-@Tag(name = "Favorite Controller", description = "Foydalanuvchi favoritlarini boshqarish uchun controller")
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
