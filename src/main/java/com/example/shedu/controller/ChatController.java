@@ -42,10 +42,8 @@ public class ChatController {
 
     @GetMapping("/{chatId}/messages")
     @Operation(summary = "Chat bo'yicha xabarlarni olish", description = "Berilgan chat ID bo'yicha xabarlarni olish.")
-    public ResponseEntity<ApiResponse> getMessagesByChat(@PathVariable Long chatId,
-                                                         @RequestParam(value = "size", defaultValue = "10") int size,
-                                                         @RequestParam(value = "page", defaultValue = "0") int page) {
-        ApiResponse messagesByChatId = chatMessageService.getMessagesByChatId(chatId, size, page);
+    public ResponseEntity<ApiResponse> getMessagesByChat(@PathVariable Long chatId) {
+        ApiResponse messagesByChatId = chatMessageService.getMessagesByChatId(chatId);
         return ResponseEntity.ok(messagesByChatId);
     }
 
@@ -53,7 +51,7 @@ public class ChatController {
     @Operation(summary = "Yangi xabar yaratish", description = "Berilgan chat ID bo'yicha yangi xabar yaratish.")
     public ResponseEntity<ApiResponse> createMessage(@PathVariable Long chatId, @RequestBody MessageDTO messageDTO) {
         messageDTO.setChatId(chatId);
-        ApiResponse message = chatMessageService.createMessage(messageDTO);
+        ApiResponse message = chatMessageService.createMessage(chatId,messageDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 

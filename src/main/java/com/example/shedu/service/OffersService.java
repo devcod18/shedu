@@ -23,6 +23,7 @@ public class OffersService {
 
     private final OffersRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse addService(ReqOffers reqOffers) {
         Barbershop barbershop = barberShopRepository.findById(reqOffers.getBarbershopId()).orElse(null);
@@ -39,6 +40,13 @@ public class OffersService {
                 .build();
 
         offersRepository.save(offer);
+        notificationService.saveNotification(
+                barbershop.getOwner(),
+                "Hurmatli " + barbershop.getOwner().getFullName() + "!",
+                "Siz muvaffaqiyatli xizmat qo'shdingiz",
+                0L,
+                false
+        );
         return new ApiResponse("success");
     }
 

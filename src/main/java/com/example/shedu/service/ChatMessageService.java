@@ -47,17 +47,18 @@ public class ChatMessageService {
         return new ApiResponse(chatDTO);
     }
 
-    public ApiResponse getMessagesByChatId(Long chatId, int size, int page) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Message> messages = messageRepository.findAllByChatId(chatId, pageable);
+    public ApiResponse getMessagesByChatId(Long chatId) {
+        List<Message> messages = messageRepository.findAllByChatId(chatId);
         List<MessageDTO> messageDTOs = messages.stream()
                 .map(message -> modelMapper.map(message, MessageDTO.class))
                 .collect(Collectors.toList());
         return new ApiResponse(messageDTOs);
     }
 
-    public ApiResponse createMessage(MessageDTO messageDTO) {
+    public ApiResponse createMessage(Long chatId, MessageDTO messageDTO) {
         Message message = modelMapper.map(messageDTO, Message.class);
+        Chat chat = chatRepository.findById(chatId).orElse(null);
+        message.setChat(chat); // Xabarni chatga bog'lash
         message.setRead(false);
         Message savedMessage = messageRepository.save(message);
         MessageDTO savedMessageDTO = modelMapper.map(savedMessage, MessageDTO.class);
@@ -73,5 +74,14 @@ public class ChatMessageService {
         Message updatedMessage = messageRepository.save(message);
         MessageDTO messageDTO = modelMapper.map(updatedMessage, MessageDTO.class);
         return new ApiResponse(messageDTO);
+    }
+
+    public ApiResponse delete(Long messageId){
+        Message message = messageRepository.findById(messageId).orElse(null);
+        if (message == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Message"));
+        }
+        messageRepository.delete(message);
+        return new ApiResponse("Success");
     }
 }
