@@ -25,6 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OffersRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
         return offersRepository.findById(reqOrders.getServiceId())
@@ -38,6 +39,13 @@ public class OrderService {
                             .status(BookingStatus.PENDING)
                             .build();
                     orderRepository.save(orders);
+                    notificationService.saveNotification(
+                            user,
+                            "Hurmatli " + user.getFullName() + "!",
+                            "Siz muvaffaqiyatli buyurtma qildingiz",
+                            0L,
+                            false
+                    );
                     return new ApiResponse("success");
                 }).orElse(new ApiResponse(ResponseError.NOTFOUND("Offers")));
     }

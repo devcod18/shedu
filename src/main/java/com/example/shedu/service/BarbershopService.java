@@ -64,7 +64,7 @@ public class BarbershopService {
 
 
     public ApiResponse getAll(int size, int page) {
-        Page<Barbershop> barbershopPage = barberShopRepository.FindAllByActive(PageRequest.of(page, size));
+        Page<Barbershop> barbershopPage = barberShopRepository.findAllByActive(PageRequest.of(page, size));
         List<ResBarbershop> list = toResponseBarbershopList(barbershopPage.getContent());
 
         CustomPageable customPageable = CustomPageable.builder()
@@ -119,6 +119,7 @@ public class BarbershopService {
                             .id(barber.getId())
                             .fullName(barber.getFullName())
                             .email(barber.getEmail())
+                            .role(String.valueOf(barber.getUserRole()))
                             .phoneNumber(barber.getPhoneNumber())
                             .build())
                     .collect(Collectors.toList());

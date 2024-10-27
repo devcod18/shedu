@@ -66,6 +66,19 @@ public class DataLoader implements CommandLineRunner {
                     .credentialsNonExpired(true)
                     .build();
             userRepository.save(user3);
+            User user4 = User.builder()
+                    .fullName("Nabiyev Otabek")
+                    .password(passwordEncoder.encode("root123"))
+                    .userRole(UserRole.ROLE_USER)
+                    .phoneNumber("998916368424")
+                    .email("otabek@gmail.com")
+                    .created(LocalDateTime.now())
+                    .enabled(true)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .build();
+            userRepository.save(user3);
 
             Days days = new Days();
             days.setWeekDays(WeekDays.DUSHANBA);
