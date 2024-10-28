@@ -1,6 +1,7 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.Notification;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
@@ -14,6 +15,7 @@ import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
+import com.example.shedu.repository.NotificationRepository;
 import com.example.shedu.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class BarbershopService {
     private final BarberShopRepository barberShopRepository;
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
+    private final NotificationRepository notificationRepository;
 
     private final WorkDaysService workDaysService;
 
@@ -59,7 +62,15 @@ public class BarbershopService {
                 .phoneNumber(user.getPhoneNumber())
                 .build();
         barberShopRepository.save(barbershop);
+        Notification notification = Notification.builder()
+                .title("Succsess")
+                .content("Barbershop qo'shildi")
+                .read(false)
+                .user(user)
+                .build();
+        notificationRepository.save(notification);
         return new ApiResponse("success");
+
     }
 
 
