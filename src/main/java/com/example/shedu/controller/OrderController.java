@@ -61,4 +61,12 @@ public class OrderController {
         ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders, user);
         return ResponseEntity.ok(apiResponse);
     }
+
+    @GetMapping("/getOrdersByBarbershop")
+    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_BARBER')")
+    @Operation(summary = "Barbershop buyurtmalari",description = "Barbershop ga tushgan buyurtmalarni olish uchun")
+    public ResponseEntity<ApiResponse> getOrders(@CurrentUser User user){
+        ApiResponse apiResponse = orderService.getAllOrdersByUser(user);
+        return ResponseEntity.ok(apiResponse);
+    }
 }

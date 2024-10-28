@@ -1,5 +1,6 @@
 package com.example.shedu.service;
 
+import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Orders;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BookingStatus;
@@ -81,6 +82,24 @@ public class OrderService {
                     orderRepository.save(orders);
                     return new ApiResponse("success");
                 }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
+    }
+
+    public ApiResponse getOrdersByBarbershop(User user) {
+        List<Barbershop> barbershops = barberShopRepository.findByOwner(user.getId());
+        if (barbershops.isEmpty()) {
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershops"));
+        }
+        List<Orders> orders = barbershops.stream()
+                .flatMap(barbershop -> orderRepository.findByBarbershopId(barbershop.getId()).stream())
+                .toList();
+        if (orders.isEmpty()) {
+            return new ApiResponse(ResponseError.NOTFOUND("Orders"));
+        }
+        List<ResOrders> resOrders = orders.stream()
+                .map(this::toResponse)
+                .toList();
+
+        return new ApiResponse(resOrders);
     }
 
     private ResOrders toResponse(Orders orders) {

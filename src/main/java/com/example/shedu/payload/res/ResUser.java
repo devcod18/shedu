@@ -13,6 +13,7 @@ public class ResUser {
     private String phoneNumber;
     private String role;
     private String email;
+    private Long fileId;
 }
 
 
