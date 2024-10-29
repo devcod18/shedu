@@ -29,6 +29,9 @@ public class OrderService {
     private final NotificationService notificationService;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
+        if (orderRepository.existsByBookingDaytime(reqOrders.getBookingDaytime())){
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Order"));
+        }
         return offersRepository.findById(reqOrders.getServiceId())
                 .map(service -> {
                     Orders orders = Orders.builder()
@@ -52,7 +55,10 @@ public class OrderService {
     }
 
     public ApiResponse getAllOrdersByUser(User user) {
-        return new ApiResponse(orderRepository.findAllByUserId(user.getId()));
+        List<Orders> orders = orderRepository.findAllByUserId(user.getId());
+        List<ResOrders> resOrders = orders.stream()
+                .map(this::toResponse).collect(Collectors.toList());
+        return new ApiResponse(resOrders);
     }
 
     public ApiResponse getAllOrders(int page, int size) {
