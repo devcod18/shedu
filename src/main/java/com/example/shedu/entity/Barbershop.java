@@ -44,7 +44,7 @@ public class Barbershop {
     @Column(nullable = false,unique = true)
     private String address;
 
-    @ManyToOne(optional = false)
+    @ManyToOne()
     private File barbershopPic;
 
     @OneToMany

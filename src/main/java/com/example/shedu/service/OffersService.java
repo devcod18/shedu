@@ -30,6 +30,9 @@ public class OffersService {
         if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
+        if (offersRepository.existsByBarbershopIdAndTitle(reqOffers.getBarbershopId(), reqOffers.getTitle())) {
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Offers"));
+        }
 
         Offers offer = Offers.builder()
                 .barbershop(barbershop)

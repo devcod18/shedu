@@ -79,6 +79,7 @@ public class DataLoader implements CommandLineRunner {
                     .credentialsNonExpired(true)
                     .build();
             userRepository.save(user3);
+            userRepository.save(user4);
 
             Days days = new Days();
             days.setWeekDays(WeekDays.DUSHANBA);

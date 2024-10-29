@@ -11,4 +11,5 @@ import org.springframework.data.jpa.repository.Query;
 public interface OffersRepository extends JpaRepository<Offers, Long> {
     @Query("SELECT u FROM Offers u WHERE u.deleted = false ORDER BY u.id DESC")
     Page<Offers> findAllActiveSorted(Pageable pageable);
+    boolean existsByBarbershopIdAndTitle(Long barbershopId, String title);
 }
