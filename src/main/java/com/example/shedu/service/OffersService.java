@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,22 +32,32 @@ public class OffersService {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
-        if (reqOffers.getTitle() == null || reqOffers.getTitle().trim().isEmpty() ||
-                reqOffers.getInfo() == null || reqOffers.getInfo().trim().isEmpty() ||
+        String trimmedTitle = reqOffers.getTitle() != null ? reqOffers.getTitle().trim() : null;
+        if (trimmedTitle == null || trimmedTitle.isEmpty()) {
+            return new ApiResponse("Title bo'sh bo'lmasligi kerak");
+        }
+
+        Optional<Offers> existingOffer = offersRepository.findByTitle(trimmedTitle);
+        if (existingOffer.isPresent()) {
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Offer"));
+        }
+
+        if (reqOffers.getInfo() == null || reqOffers.getInfo().trim().isEmpty() ||
                 reqOffers.getPrice() == null || reqOffers.getPrice() <= 0 ||
                 reqOffers.getDuration() == null || reqOffers.getDuration() <= 0) {
-            return new ApiResponse("Bo'sh bo'lmasin 0 ga ham teng bo'lmasin");
+            return new ApiResponse("Barchasini to'ldirganingizga ishonch hosil qiling!");
         }
 
         Offers offer = Offers.builder()
                 .barbershop(barbershop)
-                .title(reqOffers.getTitle())
+                .title(trimmedTitle)
                 .info(reqOffers.getInfo())
                 .price(reqOffers.getPrice())
                 .duration(reqOffers.getDuration())
                 .build();
 
         offersRepository.save(offer);
+
         notificationService.saveNotification(
                 barbershop.getOwner(),
                 "Hurmatli " + barbershop.getOwner().getFullName() + "!",

@@ -35,18 +35,18 @@ public class OffersController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/updateOffers/{updateOffersId}")
+    @PutMapping("/updateOffers/{updateId}")
     @Operation(summary = "Taklifni yangilash", description = "Mavjud xizmat taklifini yangilash imkonini beradi.")
-    public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long updateOffersId, @RequestBody ReqOffers reqOffers) {
-        ApiResponse apiResponse = offersService.updateOffer(updateOffersId, reqOffers);
+    public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long updateId, @RequestBody ReqOffers reqOffers) {
+        ApiResponse apiResponse = offersService.updateOffer(updateId, reqOffers);
         return ResponseEntity.ok(apiResponse);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
-    @DeleteMapping("/deleteOffers/{deleteOffersId}")
+    @DeleteMapping("/deleteOffers/{deleteId}")
     @Operation(summary = "Taklifni o'chirish", description = "Muayyan xizmat taklifini o'chirish imkonini beradi.")
-    public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteOffersId) {
-        ApiResponse apiResponse = offersService.deleteOffer(deleteOffersId);
+    public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteId) {
+        ApiResponse apiResponse = offersService.deleteOffer(deleteId);
         return ResponseEntity.ok(apiResponse);
     }
 }
