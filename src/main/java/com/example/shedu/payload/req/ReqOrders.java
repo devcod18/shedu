@@ -13,5 +13,4 @@ public class ReqOrders {
     private Long serviceId;
     private LocalDateTime bookingDaytime;
     private Long duration;
-    private Long barbershopId;
 }

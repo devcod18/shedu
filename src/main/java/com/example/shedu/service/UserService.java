@@ -1,5 +1,6 @@
 package com.example.shedu.service;
 
+import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.File;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.UserRole;
@@ -8,6 +9,7 @@ import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.payload.res.ResUser;
+import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final FileRepository fileRepository;
+    private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse getMe(User user) {
         return new ApiResponse(toResponseUser(user));
@@ -41,6 +45,10 @@ public class UserService {
 
 
     public ApiResponse updateUser(User user, AuthRegister authRegister) {
+        Barbershop barbershop = barberShopRepository.findById(authRegister.getBarbershopId()).orElse(null);
+        if (barbershop==null || !barbershop.isActive()){
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
         File file = fileRepository.findById(authRegister.getFileId()).orElse(null);
         user.setFullName(authRegister.getFullName());
         user.setFile(file);
@@ -52,6 +60,13 @@ public class UserService {
         }
 
         userRepository.save(user);
+        notificationService.saveNotification(
+                user,
+                "Hurmatli " + user.getFullName(),
+                "Profil muvaffaqiyatli yangilandi!",
+                0L,
+                false
+        );
         return new ApiResponse("success");
     }
 
