@@ -25,12 +25,12 @@ public class OffersService {
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
 
-    public ApiResponse addService(ReqOffers reqOffers) {
-        Barbershop barbershop = barberShopRepository.findById(reqOffers.getBarbershopId()).orElse(null);
-        if (barbershop == null) {
+    public ApiResponse addService(ReqOffers reqOffers,Long barberId) {
+        Barbershop barbershop = barberShopRepository.findById(barberId).orElse(null);
+        if (barbershop == null ||!barbershop.isActive()) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
-        if (offersRepository.existsByBarbershopIdAndTitle(reqOffers.getBarbershopId(), reqOffers.getTitle())) {
+        if (offersRepository.existsByBarbershopIdAndTitle(barberId, reqOffers.getTitle())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Offers"));
         }
 
@@ -74,7 +74,7 @@ public class OffersService {
     public ApiResponse updateOffer(Long id, ReqOffers reqOffers) {
         Offers offer = offersRepository.findById(id)
                 .orElse(null);
-        if (offer == null) {
+        if (offer==null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offers"));
         }
 
@@ -97,6 +97,24 @@ public class OffersService {
         offer.setDeleted(true);
         offersRepository.save(offer);
         return new ApiResponse("success");
+    }
+
+    public ApiResponse getOffersByBarbershopId(Long barbershopId) {
+        Barbershop barbershop = barberShopRepository.findById(barbershopId).orElse(null);
+        if (barbershop == null || !barbershop.isActive()) {
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
+        List<Offers> offers = offersRepository.findAllByBarbershopId(barbershopId);
+        return new ApiResponse(offers.stream()
+                .map(this::mapToResOffers).collect(Collectors.toList()));
+    }
+    public ApiResponse getOfferById(Long id) {
+        Offers offer = offersRepository.findById(id)
+                .orElse(null);
+        if (offer == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Offers"));
+        }
+        return new ApiResponse(mapToResOffers(offer));
     }
 
     private ResOffers mapToResOffers(Offers offer) {

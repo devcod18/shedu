@@ -91,7 +91,7 @@ public class OrderService {
     }
 
     public ApiResponse getOrdersByBarbershop(User user) {
-        List<Barbershop> barbershops = barberShopRepository.findByOwner(user.getId());
+        List<Barbershop> barbershops = barberShopRepository.findByOwnerOrderByDesc(user.getId());
         if (barbershops.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershops"));
         }

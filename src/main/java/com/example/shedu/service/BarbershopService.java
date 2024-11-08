@@ -2,6 +2,7 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Notification;
+import com.example.shedu.entity.Offers;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
@@ -13,10 +14,7 @@ import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
 import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
-import com.example.shedu.repository.BarberShopRepository;
-import com.example.shedu.repository.FileRepository;
-import com.example.shedu.repository.NotificationRepository;
-import com.example.shedu.repository.UserRepository;
+import com.example.shedu.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +35,8 @@ public class BarbershopService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final NotificationRepository notificationRepository;
+    private final OffersRepository offersRepository;
+    private final NotificationService notificationService;
 
     private final WorkDaysService workDaysService;
 
@@ -91,10 +91,26 @@ public class BarbershopService {
     }
 
     public ApiResponse delete(Long id) {
-        Barbershop barbershop = barberShopRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(ResponseError.NOTFOUND("Barbershop").getMessage()));
+
+        Barbershop barbershop = barberShopRepository.findById(id).orElse(null);
+        if (!barbershop.isActive()) {
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
 
         barbershop.setActive(false);
+        barberShopRepository.save(barbershop);
+        notificationService.saveNotification(
+                barbershop.getOwner(),
+                "Hurmatli " + barbershop.getOwner().getFullName() + "!",
+                "Siz muvaffaqiyatli barbershopni o'chirdingiz",
+                0L,
+                false
+        );
+        Offers offers=offersRepository.findByBarbershopId(barbershop.getId());
+        if (offers!=null){
+            offersRepository.delete(offers);
+        }
+
         return new ApiResponse("success");
     }
 
@@ -180,7 +196,7 @@ public class BarbershopService {
                 .build();
     }
     public ApiResponse getByOwner(User user) {
-        List<Barbershop> list = barberShopRepository.findByOwner(user.getId());
+        List<Barbershop> list = barberShopRepository.findByOwnerOrderByDesc(user.getId());
         if (list == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
