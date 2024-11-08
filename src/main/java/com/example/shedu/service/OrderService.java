@@ -1,6 +1,7 @@
 package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.Offers;
 import com.example.shedu.entity.Orders;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BookingStatus;
@@ -29,15 +30,17 @@ public class OrderService {
     private final NotificationService notificationService;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
+        Offers offer = offersRepository.findById(reqOrders.getServiceId()).orElse(null);
         if (orderRepository.existsByBookingDaytime(reqOrders.getBookingDaytime())){
             return new ApiResponse(ResponseError.ALREADY_EXIST("Order"));
         }
         return offersRepository.findById(reqOrders.getServiceId())
                 .map(service -> {
+                    assert offer != null;
                     Orders orders = Orders.builder()
                             .offers(service)
                             .user(user)
-                            .barbershop(barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null))
+                            .barbershop(barberShopRepository.findById(offer.getBarbershop().getId()).orElse(null))
                             .duration(reqOrders.getDuration())
                             .bookingDaytime(reqOrders.getBookingDaytime())
                             .status(BookingStatus.PENDING)

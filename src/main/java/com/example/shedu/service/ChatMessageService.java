@@ -37,6 +37,7 @@ public class ChatMessageService {
     // Convert Message entity to MessageDTO
     private MessageDTO toResponse(Message message) {
         MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setId(message.getId());
         messageDTO.setChatId(message.getChat().getId());
         messageDTO.setText(message.getText());
         messageDTO.setCreatedAt(message.getCreatedAt());
