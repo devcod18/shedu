@@ -86,19 +86,21 @@ public class BarbershopController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PostMapping("/saveWorkdays")
+    @PostMapping("/saveWorkdays/{id}")
     @Operation(summary = "Ish kunlari yaratish", description = "Ish kunlari yaratish")
-    public ResponseEntity<ApiResponse> save(@Valid @RequestBody ReqWorkDays days) {
-        ApiResponse apiResponse = workDaysService.saveWorkDays(days);
+    public ResponseEntity<ApiResponse> save(@Valid @RequestBody ReqWorkDays days,
+                                             @PathVariable Long id) {
+        ApiResponse apiResponse = workDaysService.saveWorkDays(days,id);
         return ResponseEntity.ok(apiResponse);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/updateWorks")
+    @PutMapping("/updateWorks/{id}")
     @Operation(summary = "Ish kunlari yangilash", description = "Ish kunlari yangilash")
     public ResponseEntity<ApiResponse> update(@RequestBody ReqWorkDays days
+                                              ,@PathVariable Long id
     ) {
-        ApiResponse apiResponse = workDaysService.update(days);
+        ApiResponse apiResponse = workDaysService.update(days,id);
         return ResponseEntity.ok(apiResponse);
     }
 }

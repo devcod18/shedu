@@ -31,7 +31,7 @@ public class OrderService {
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
         Offers offer = offersRepository.findById(reqOrders.getServiceId()).orElse(null);
-        if (orderRepository.existsByBookingDaytime(reqOrders.getBookingDaytime())){
+        if (orderRepository.existsByBookingDaytime(reqOrders.getBookingDaytime())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Order"));
         }
         return offersRepository.findById(reqOrders.getServiceId())

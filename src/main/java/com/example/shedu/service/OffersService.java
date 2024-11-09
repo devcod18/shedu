@@ -88,17 +88,15 @@ public class OffersService {
     }
 
     public ApiResponse deleteOffer(Long id) {
-        Offers offer = offersRepository.findById(id)
-                .orElse(null);
-        if (offer == null) {
+        Offers offers = offersRepository.findById(id).orElse(null);
+        if (offers == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offers"));
+        } else {
+            offers.setDeleted(true);
+            offersRepository.save(offers);
+            return new ApiResponse("success");
         }
-
-        offer.setDeleted(true);
-        offersRepository.save(offer);
-        return new ApiResponse("success");
     }
-
     public ApiResponse getOffersByBarbershopId(Long barbershopId) {
         Barbershop barbershop = barberShopRepository.findById(barbershopId).orElse(null);
         if (barbershop == null || !barbershop.isActive()) {
@@ -108,14 +106,14 @@ public class OffersService {
         return new ApiResponse(offers.stream()
                 .map(this::mapToResOffers).collect(Collectors.toList()));
     }
-    public ApiResponse getOfferById(Long id) {
-        Offers offer = offersRepository.findById(id)
-                .orElse(null);
-        if (offer == null) {
-            return new ApiResponse(ResponseError.NOTFOUND("Offers"));
-        }
-        return new ApiResponse(mapToResOffers(offer));
-    }
+//    public ApiResponse getOfferById(Long id) {
+//        Offers offer = offersRepository.findById(id)
+//                .orElse(null);
+//        if (offer == null) {
+//            return new ApiResponse(ResponseError.NOTFOUND("Offers"));
+//        }
+//        return new ApiResponse(mapToResOffers(offer));
+//    }
 
     private ResOffers mapToResOffers(Offers offer) {
         return ResOffers.builder()
