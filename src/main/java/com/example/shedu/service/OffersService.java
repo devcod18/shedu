@@ -13,7 +13,6 @@ import com.example.shedu.payload.res.ResOffers;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferTypeRepository;
 import com.example.shedu.repository.OffersRepository;
-import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -34,7 +33,6 @@ public class OffersService {
     private final OfferTypeRepository offerTypeRepository;
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
-    private final UserRepository userRepository;
 
 
     public ApiResponse create(ReqOffers reqOffers ,Long barbershopId) {
@@ -51,7 +49,7 @@ public class OffersService {
                 .price(reqOffers.getPrice())
                 .duration(reqOffers.getDuration())
                 .deleted(false)
-                .barbershop(barberShopRepository.findById(barbershopId).get())
+                .barbershop(barberShopRepository.findById(barbershopId).orElse(null))
                 .offerTypes(offerTypes)
                 .build();
         offersRepository.save(offers);
@@ -78,7 +76,7 @@ public class OffersService {
         offers.setPrice(reqOffers.getPrice());
         offers.setDuration(reqOffers.getDuration());
         offers.setOfferTypes(offerTypes);
-        offers.setBarbershop(barberShopRepository.findById(barbershopId).get());
+        offers.setBarbershop(barberShopRepository.findById(barbershopId).orElse(null));
         offersRepository.save(offers);
         return new ApiResponse("Updated");
     }

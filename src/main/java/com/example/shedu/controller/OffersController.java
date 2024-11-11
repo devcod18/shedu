@@ -4,7 +4,7 @@ package com.example.shedu.controller;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqOffers;
 import com.example.shedu.service.OffersService;
-import io.swagger.annotations.Api;
+
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

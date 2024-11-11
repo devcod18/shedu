@@ -1,7 +1,7 @@
 
 package com.example.shedu.entity;
 
-import com.example.shedu.entity.enums.ServiceType;
+
 import jakarta.persistence.*;
 import lombok.*;
 

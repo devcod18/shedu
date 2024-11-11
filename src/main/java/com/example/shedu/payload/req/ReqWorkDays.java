@@ -2,16 +2,11 @@ package com.example.shedu.payload.req;
 
 
 
-import com.example.shedu.entity.Days;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @Data

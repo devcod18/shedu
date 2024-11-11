@@ -10,7 +10,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@Table(name = "offer_type")
 @Entity
 public class OfferType {
     @Id
