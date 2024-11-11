@@ -22,7 +22,7 @@ public class OffersController {
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/addOffers/{barbershopId}")
     public ResponseEntity<ApiResponse> addOffers(@PathVariable Long barbershopId,@RequestBody ReqOffers reqOffers) {
-        ApiResponse apiResponse = offersService.addService(reqOffers,barbershopId);
+        ApiResponse apiResponse = offersService.create(reqOffers,barbershopId);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -30,7 +30,7 @@ public class OffersController {
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @Operation(summary = "Barbershopni ko'rish", description = "Barbershopni ko'rish")
     public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId) {
-        ApiResponse apiResponse = offersService.getOffersByBarbershopId(barbershopId);
+        ApiResponse apiResponse = offersService.getOffersByBarberShop(barbershopId);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -43,16 +43,17 @@ public class OffersController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/updateOffers/{updateOffersId}")
-    public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long updateOffersId, @RequestBody ReqOffers reqOffers) {
-        ApiResponse apiResponse = offersService.updateOffer(updateOffersId, reqOffers);
+    @PutMapping("/updateOffers/{Id}/{barbershopId}")
+    public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long Id, @RequestBody ReqOffers reqOffers,
+                                                   @PathVariable Long barbershopId) {
+        ApiResponse apiResponse = offersService.update(reqOffers, Id, barbershopId);
         return ResponseEntity.ok(apiResponse);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @DeleteMapping("/deleteOffers/{deleteOffersId}")
     public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteOffersId) {
-        ApiResponse apiResponse = offersService.deleteOffer(deleteOffersId);
+        ApiResponse apiResponse = offersService.delete(deleteOffersId);
         return ResponseEntity.ok(apiResponse);
     }
 }

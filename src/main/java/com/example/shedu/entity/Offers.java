@@ -1,8 +1,11 @@
 
 package com.example.shedu.entity;
 
+import com.example.shedu.entity.enums.ServiceType;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,9 +22,10 @@ public class Offers {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     private Barbershop barbershop;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
-
+    @ManyToMany
+    private List<OfferType> offerTypes;
     @Column(nullable = false)
     private String info;
 

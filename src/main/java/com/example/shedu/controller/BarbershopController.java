@@ -71,8 +71,8 @@ public class BarbershopController {
     @Operation(summary = "Barbershoplarni qidirish", description = "Barbershoplarni qidirish")
     public ResponseEntity<ApiResponse> searchBarbershops(@RequestParam String title,
                                                          @RequestParam BarbershopRegion region,
-                                                         @RequestParam (defaultValue = "0" )int page,
-                                                         @RequestParam (defaultValue = "10" )int size) {
+                                                         @RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "10") int size) {
         ApiResponse apiResponse = barbershopService.search(title, region, size, page);
         return ResponseEntity.ok(apiResponse);
     }
@@ -89,8 +89,8 @@ public class BarbershopController {
     @PostMapping("/saveWorkdays/{id}")
     @Operation(summary = "Ish kunlari yaratish", description = "Ish kunlari yaratish")
     public ResponseEntity<ApiResponse> save(@Valid @RequestBody ReqWorkDays days,
-                                             @PathVariable Long id) {
-        ApiResponse apiResponse = workDaysService.saveWorkDays(days,id);
+                                            @PathVariable Long id) {
+        ApiResponse apiResponse = workDaysService.saveWorkDays(days, id);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -98,9 +98,9 @@ public class BarbershopController {
     @PutMapping("/updateWorks/{id}")
     @Operation(summary = "Ish kunlari yangilash", description = "Ish kunlari yangilash")
     public ResponseEntity<ApiResponse> update(@RequestBody ReqWorkDays days
-                                              ,@PathVariable Long id
+            , @PathVariable Long id
     ) {
-        ApiResponse apiResponse = workDaysService.update(days,id);
+        ApiResponse apiResponse = workDaysService.update(days, id);
         return ResponseEntity.ok(apiResponse);
     }
 }

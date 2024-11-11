@@ -19,8 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ReqWorkDays {
-    @Min(1)
-    @Max(6)
     private List<Integer> dayOfWeekId;
     @DateTimeFormat(pattern = "HH:mm")
     private String openTime;
