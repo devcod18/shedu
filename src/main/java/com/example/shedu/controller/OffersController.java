@@ -26,11 +26,11 @@ public class OffersController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/getByBarbershop/{barbershopId}")
+    @GetMapping("/getByBarbershop/{barbershopId}/")
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @Operation(summary = "Barbershopni ko'rish", description = "Barbershopni ko'rish")
-    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId) {
-        ApiResponse apiResponse = offersService.getOffersByBarberShop(barbershopId);
+    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,@RequestParam Boolean b) {
+        ApiResponse apiResponse = offersService.getOffersByBarberShop(barbershopId,b);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -53,7 +53,7 @@ public class OffersController {
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @DeleteMapping("/deleteOffers/{deleteOffersId}")
     public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteOffersId) {
-        ApiResponse apiResponse = offersService.delete(deleteOffersId);
+        ApiResponse apiResponse = offersService.isDetlete(deleteOffersId);
         return ResponseEntity.ok(apiResponse);
     }
 }

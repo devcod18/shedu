@@ -2,6 +2,7 @@ package com.example.shedu.service;
 
 
 
+import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.OfferType;
 import com.example.shedu.entity.Offers;
 
@@ -13,6 +14,7 @@ import com.example.shedu.payload.res.ResOffers;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferTypeRepository;
 import com.example.shedu.repository.OffersRepository;
+import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -33,9 +35,11 @@ public class OffersService {
     private final OfferTypeRepository offerTypeRepository;
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
 
     public ApiResponse create(ReqOffers reqOffers ,Long barbershopId) {
+        Barbershop barbershop = barberShopRepository.findById(barbershopId).orElse(null);
         boolean b = offersRepository.existsByBarbershopIdAndTitle(barbershopId, reqOffers.getTitle());
         if (!b) {
         List<OfferType> offerTypes = new LinkedList <>();
@@ -53,11 +57,20 @@ public class OffersService {
                 .offerTypes(offerTypes)
                 .build();
         offersRepository.save(offers);
-        return new ApiResponse("Created");
+            notificationService.saveNotification(
+                    barbershop.getOwner(),
+                    "Hurmatli " + barbershop.getOwner().getFullName() + " !",
+                    "Offer muvaffaqiyatli yaratildi",
+                    null,
+                    false
+            );
+            return new ApiResponse("Created");
         }
         return new ApiResponse(ResponseError.ALREADY_EXIST("Offers"));
     }
     public ApiResponse update(ReqOffers reqOffers, Long id, Long barbershopId) {
+        Barbershop barbershop = barberShopRepository.findById(barbershopId).orElse(null);
+        boolean b = offersRepository.existsByBarbershopIdAndTitle(barbershopId, reqOffers.getTitle());
         Offers offers = offersRepository.findById(id).orElse(null);
         if (offers == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offers"));
@@ -78,15 +91,29 @@ public class OffersService {
         offers.setOfferTypes(offerTypes);
         offers.setBarbershop(barberShopRepository.findById(barbershopId).orElse(null));
         offersRepository.save(offers);
+        assert barbershop != null;
+        notificationService.saveNotification(
+                barbershop.getOwner(),
+                "Hurmatli " + barbershop.getOwner().getFullName() + " !",
+                "Offer muvaffaqiyatli yaratildi",
+                null,
+                false
+        );
         return new ApiResponse("Updated");
     }
 
-    public ApiResponse delete(Long id) {
+    public ApiResponse isDetlete(Long id) {
         Offers offers = offersRepository.findByIdAndDeleted(id);
         if (offers == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offers"));
+
         }
-        offers.setDeleted(true);
+        if ((offers.isDeleted())) {
+            offers.setDeleted(false);
+        } else {
+            offers.setDeleted(true);
+        }
+
         offersRepository.save(offers);
         return new ApiResponse("Deleted");
     }
@@ -102,9 +129,11 @@ public class OffersService {
                 .build();
         return new ApiResponse(customPageable);
     }
-    public ApiResponse getOffersByBarberShop(Long id) {
-        List<Offers> offers = offersRepository.findByBarbershopIdAndDeleted(id, false);
+
+    public ApiResponse getOffersByBarberShop(Long id,boolean b) {
+        List<Offers> offers = offersRepository.findByBarbershopIdAndDeleted(id, b);
         List<ResOffers> resOffersList = offers.stream()
+
                 .map(this::toResponse).collect(Collectors.toList());
         if(resOffersList.isEmpty()){
             return new ApiResponse(ResponseError.NOTFOUND("Offers"));
@@ -121,5 +150,8 @@ public class OffersService {
                 .duration(offers.getDuration())
                 .offerTypes(offers.getOfferTypes())
                 .build();
+
     }
+
+
 }
