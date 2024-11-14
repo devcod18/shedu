@@ -65,8 +65,10 @@ public class FavoriteService {
         return new ApiResponse("success");
     }
 
-    public ApiResponse getAllFavorites(int page, int size) {
-        Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));
+    public ApiResponse getAllFavorites(int page, int size, User user) {
+        Page<Favorite> favoritePage = favoriteRepository.findAllByUserOrderByDateDesc(
+                user, PageRequest.of(page, size));
+
         List<ResFavorite> responseList = favoritePage.getContent()
                 .stream().map(this::toResFavorite)
                 .collect(Collectors.toList());
@@ -83,11 +85,11 @@ public class FavoriteService {
     }
 
     public ApiResponse deleteFavorite(Long id) {
-        Favorite favorite = favoriteRepository.findActiveById(id).orElse(null);
+        Favorite favorite = favoriteRepository.findById(id).orElse(null);
         if (favorite == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Favorite"));
         }
-        favorite.setDeleted(true);
+
         favoriteRepository.save(favorite);
         return new ApiResponse("success");
     }
@@ -101,7 +103,6 @@ public class FavoriteService {
                 .barberName(favorite.getBarber() != null ? favorite.getBarber().getFullName() : null)
                 .barbershopId(favorite.getBarbershop() != null ? favorite.getBarbershop().getId() : null)
                 .barbershopName(favorite.getBarbershop() != null ? favorite.getBarbershop().getTitle() : null)
-                .date(favorite.getDate().toLocalDate())
-                .deleted(favorite.isDeleted()).build();
+                .date(favorite.getDate().toLocalDate()).build();
     }
 }

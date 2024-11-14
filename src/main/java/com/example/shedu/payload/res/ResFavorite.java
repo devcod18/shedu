@@ -19,5 +19,4 @@ public class ResFavorite {
     private Long barbershopId;
     private String barbershopName;
     private LocalDate date;
-    private boolean deleted;
 }

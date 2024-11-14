@@ -34,8 +34,10 @@ public class FavoriteController {
     @Operation(summary = "Barcha favoritlarni olish", description = "Foydalanuvchining barcha favorit elementlarini qaytaradi.")
     public ResponseEntity<ApiResponse> getAllFavorites(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "20") int size) {
-        ApiResponse allFavorites = favoriteService.getAllFavorites(page, size);
+            @RequestParam(name = "size", defaultValue = "20") int size,
+            @CurrentUser User user) {
+
+        ApiResponse allFavorites = favoriteService.getAllFavorites(page, size, user);
         return ResponseEntity.ok(allFavorites);
     }
 
