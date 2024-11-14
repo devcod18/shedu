@@ -50,5 +50,6 @@ public class Barbershop {
     @OneToMany
     private List<User> barber;
 
+   
 
 }

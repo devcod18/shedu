@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +17,9 @@ public class ReqBarbershop {
     @NotBlank(message = "Info cannot be empty")
     private String info;
     @NotBlank(message = "Address cannot be empty")
+    private String address;
     private Double lat;
     private Double lng;
-    private String address;
     private Long file_id;
+
 }

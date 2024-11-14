@@ -12,12 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResOffers {
+public class ResOffer {
     private Long id;
     private Long barbershopId;
-    private String title;
-    private String info;
-    private Double price;
-    private Long duration;
     private List<OfferType> offerTypes;
+    private Double prise;
+    private String  info;
 }

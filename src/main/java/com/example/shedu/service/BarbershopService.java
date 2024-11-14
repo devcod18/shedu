@@ -2,7 +2,8 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Notification;
-import com.example.shedu.entity.Offers;
+
+import com.example.shedu.entity.Offer;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
@@ -106,9 +107,9 @@ public class BarbershopService {
                 0L,
                 false
         );
-        Offers offers=offersRepository.findByBarbershopId(barbershop.getId());
+        Offer offers=offersRepository.findByBarbershopIdAndDeletedIs(barbershop.getId(),false );
         if (offers!=null){
-            offersRepository.delete(offers);
+            offers.setDeleted(true);
         }
 
         return new ApiResponse("success");
