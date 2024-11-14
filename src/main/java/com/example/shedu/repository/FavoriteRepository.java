@@ -21,6 +21,4 @@ public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
     boolean existsByUserAndBarber(User user, User barber);
 
     boolean existsByUserAndBarbershop(User user, Barbershop barbershop);
-
-    boolean existsByUserAndBarberAndBarbershop(User user, User barber, Barbershop barbershop);
 }

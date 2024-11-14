@@ -49,7 +49,7 @@ public class OffersService {
         }
 
         Offers offer = Offers.builder()
-                .barbershop(barbershop)
+                .barbershop((List<Barbershop>) barbershop)
                 .title(trimmedTitle)
                 .info(reqOffers.getInfo())
                 .price(reqOffers.getPrice())
@@ -123,7 +123,6 @@ public class OffersService {
                 .info(offer.getInfo())
                 .price(offer.getPrice())
                 .duration(offer.getDuration())
-                .barbershopId(offer.getBarbershop().getId())
                 .deleted(offer.isDeleted()).build();
     }
 }

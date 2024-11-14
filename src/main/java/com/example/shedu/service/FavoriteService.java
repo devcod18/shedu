@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,7 +28,6 @@ public class FavoriteService {
     private final UserRepository userRepository;
     private final BarberShopRepository barbershopRepository;
 
-    @Transactional
     public ApiResponse addFavorite(ReqFavorite reqFavorite, User user) {
         User barber = null;
         Barbershop barbershop = null;
@@ -67,12 +65,10 @@ public class FavoriteService {
         return new ApiResponse("success");
     }
 
-
-    @Transactional
     public ApiResponse getAllFavorites(int page, int size) {
         Page<Favorite> favoritePage = favoriteRepository.findAllActiveSorted(PageRequest.of(page, size));
-        List<ResFavorite> responseList = favoritePage.getContent().stream()
-                .map(this::toResFavorite)
+        List<ResFavorite> responseList = favoritePage.getContent()
+                .stream().map(this::toResFavorite)
                 .collect(Collectors.toList());
 
         CustomPageable customPageable = CustomPageable.builder()
@@ -86,7 +82,6 @@ public class FavoriteService {
         return new ApiResponse(customPageable);
     }
 
-    @Transactional
     public ApiResponse deleteFavorite(Long id) {
         Favorite favorite = favoriteRepository.findActiveById(id).orElse(null);
         if (favorite == null) {

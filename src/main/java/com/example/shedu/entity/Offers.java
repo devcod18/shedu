@@ -4,6 +4,8 @@ package com.example.shedu.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -16,8 +18,8 @@ public class Offers {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private Barbershop barbershop;
+    @ManyToMany
+    private List<Barbershop> barbershop;
 
     @Column(nullable = false, unique = true)
     private String title;
