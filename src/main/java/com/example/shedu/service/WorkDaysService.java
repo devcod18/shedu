@@ -24,12 +24,12 @@ public class WorkDaysService {
     private final WorkDaysRepository workDaysRepository;
     private final DaysRepository daysRepository;
 
-    public ApiResponse saveWorkDays(ReqWorkDays reqWorkDays) {
-        boolean b = workDaysRepository.existsByBarbershopId_Id(reqWorkDays.getBarbershopId());
+    public ApiResponse saveWorkDays(ReqWorkDays reqWorkDays,Long id) {
+        boolean b = workDaysRepository.existsByBarbershopId_Id(id);
         if (b) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("WorkDays"));
         }
-        Barbershop barbershop = repository.findById(reqWorkDays.getBarbershopId()).orElse(null);
+        Barbershop barbershop = repository.findById(id).orElse(null);
         if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
@@ -49,8 +49,8 @@ public class WorkDaysService {
         return new ApiResponse("success");
     }
 
-    public ApiResponse update(ReqWorkDays reqWorkDays) {
-        WorkDays workDays = workDaysRepository.findByBarbershopId_Id(reqWorkDays.getBarbershopId()).orElse(null);
+    public ApiResponse update(ReqWorkDays reqWorkDays,Long id) {
+        WorkDays workDays = workDaysRepository.findByBarbershopId_Id(id).orElse(null);
         if (workDays != null) {
             List<Days> daysList = new ArrayList<>();
             for (Integer i : reqWorkDays.getDayOfWeekId()) {

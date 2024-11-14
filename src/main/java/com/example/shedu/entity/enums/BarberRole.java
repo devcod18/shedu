@@ -5,7 +5,8 @@ public enum BarberRole {
     BARBER,
     COLORIST,
     SHAVE_SPECIALIST,
-    APPRENTICE
+    APPRENTICE,
+    NONE
 }
 
 

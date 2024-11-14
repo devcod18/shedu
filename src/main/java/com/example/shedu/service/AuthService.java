@@ -1,12 +1,15 @@
 package com.example.shedu.service;
 
+import com.example.shedu.entity.File;
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.enums.BarberRole;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.auth.AuthLogin;
 import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.payload.auth.ResponseLogin;
+import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
 import com.example.shedu.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailSenderService emailSenderService;
     private final NotificationService notificationService;
+    private final FileRepository fileRepository;
 
     public ApiResponse login(AuthLogin authLogin) {
         User user = userRepository.findByPhoneNumber(authLogin.getPhoneNumber()).orElse(null);
@@ -35,12 +39,12 @@ public class AuthService {
         return new ApiResponse(new ResponseLogin(token, user.getUserRole().name(), user.getId()));
     }
 
-    public ApiResponse register(AuthRegister auth,UserRole role) {
+    public ApiResponse register(AuthRegister auth,UserRole role,BarberRole special) {
         if (userRepository.existsByPhoneNumber(auth.getPhoneNumber())) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        User user = saveUser(auth,role);
+        User user = saveUser(auth,role,special);
         emailSenderService.sendEmail(auth.getEmail(), "Your activation code:", user.getActivationCode().toString());
 
         notificationService.saveNotification(
@@ -59,11 +63,12 @@ public class AuthService {
             return new ApiResponse(ResponseError.ALREADY_EXIST("Phone number"));
         }
 
-        saveUser(auth,UserRole.ROLE_ADMIN);
+        saveUser(auth,UserRole.ROLE_ADMIN,null);
         return new ApiResponse("Success");
     }
 
-    private User saveUser(AuthRegister auth, UserRole role) {
+    private User saveUser(AuthRegister auth, UserRole role, BarberRole special) {
+        File file = fileRepository.findById(auth.getFileId()).orElse(null);
         User user = User.builder()
                 .fullName(auth.getFullName())
                 .email(auth.getEmail())
@@ -72,6 +77,8 @@ public class AuthService {
                 .userRole(role)
                 .barbershopId(auth.getBarbershopId())
                 .enabled(false)
+                .file(file)
+                .specials(special)
                 .activationCode(generateFiveDigitNumber())
                 .accountNonExpired(true)
                 .accountNonLocked(true)

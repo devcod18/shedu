@@ -1,6 +1,7 @@
 
 package com.example.shedu.entity;
 
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,7 +24,8 @@ public class Offers {
 
     @Column(nullable = false, unique = true)
     private String title;
-
+    @ManyToMany
+    private List<OfferType> offerTypes;
     @Column(nullable = false)
     private String info;
 

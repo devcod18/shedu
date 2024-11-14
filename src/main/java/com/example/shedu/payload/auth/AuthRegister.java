@@ -23,6 +23,7 @@ public class AuthRegister {
     private Long barbershopId;
     @Size(min = 5, max = 12)
     private String password;
+    private Long fileId;
 }
 
 

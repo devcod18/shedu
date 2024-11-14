@@ -46,4 +46,5 @@ public class FavoriteController {
         ApiResponse response = favoriteService.deleteFavorite(deleteId);
         return ResponseEntity.ok(response);
     }
+
 }

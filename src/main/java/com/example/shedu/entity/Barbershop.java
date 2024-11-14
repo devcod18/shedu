@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +44,11 @@ public class Barbershop {
     @Column(nullable = false,unique = true)
     private String address;
 
-    @ManyToOne
+    @ManyToOne()
     private File barbershopPic;
+
+    @OneToMany
+    private List<User> barber;
+
+
 }

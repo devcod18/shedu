@@ -1,6 +1,7 @@
 package com.example.shedu.payload.res;
 
 import com.example.shedu.entity.enums.BookingStatus;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResOrders {
     private Long serviceId;
     private Long userId;

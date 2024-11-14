@@ -2,13 +2,11 @@ package com.example.shedu.payload.req;
 
 
 
-import com.example.shedu.entity.Days;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
+import lombok.*;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.List;
 
 @Data
@@ -17,7 +15,8 @@ import java.util.List;
 @Builder
 public class ReqWorkDays {
     private List<Integer> dayOfWeekId;
+    @DateTimeFormat(pattern = "HH:mm")
     private String openTime;
+    @DateTimeFormat(pattern = "HH:mm")
     private String closeTime;
-    private Long barbershopId;
 }
