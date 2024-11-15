@@ -108,51 +108,6 @@ public class DataLoader implements CommandLineRunner {
             daysRepository.save(days6);
 
 
-            OfferType offerType = OfferType.builder()
-                    .type(ServiceType.HAIR_CUT)
-                    .build();
-            offerTypeRepository.save(offerType);
-            OfferType offerType1 = OfferType.builder()
-                    .type(ServiceType.FACIAL)
-                    .build();
-            offerTypeRepository.save(offerType1);
-            OfferType offerType2 = OfferType.builder()
-                    .type(ServiceType.MANICURE)
-                    .build();
-            offerTypeRepository.save(offerType2);
-            OfferType offerType3 = OfferType.builder()
-                    .type(ServiceType.PEDICURE)
-                    .build();
-            offerTypeRepository.save(offerType3);
-            OfferType offerType4 = OfferType.builder()
-                    .type(ServiceType.MASSAGE)
-                    .build();
-            offerTypeRepository.save(offerType4);
-            OfferType offerType5 = OfferType.builder()
-                    .type(ServiceType.HAIR_TREATMENT)
-                    .build();
-            offerTypeRepository.save(offerType5);
-            OfferType offerType6 = OfferType.builder()
-                    .type(ServiceType.HAIR_REMOVAL)
-                    .build();
-            offerTypeRepository.save(offerType6);
-            OfferType offerType7 = OfferType.builder()
-                    .type(ServiceType.HAIR_STYLING)
-                    .build();
-            offerTypeRepository.save(offerType7);
-            OfferType offerType8 = OfferType.builder()
-                    .type(ServiceType.BEARD_TRIMMING)
-                    .build();
-            offerTypeRepository.save(offerType8);
-            OfferType offerType9 = OfferType.builder()
-                    .type(ServiceType.SHAVING)
-                    .build();
-            offerTypeRepository.save(offerType9);
-            OfferType offerType10 = OfferType.builder()
-                    .type(ServiceType.HAIR_COLORING)
-                    .build();
-            offerTypeRepository.save(offerType10);
-
         }
     }
 }

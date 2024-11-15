@@ -27,7 +27,7 @@ public class OfferTypeController {
           return ResponseEntity.ok(apiResponse);
       }
         @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/addOfferType/{Id}")
+    @PutMapping("/addOfferType/{Id}")
     @Operation(summary = "OfferType UPDATE ", description = "OfferType UPDATE")
       public ResponseEntity<ApiResponse> update(
               @Valid @RequestBody ReqOfferType reqOfferType,
@@ -37,7 +37,7 @@ public class OfferTypeController {
          return ResponseEntity.ok(apiResponse);
       }
       @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PostMapping("/addOfferType")
+    @GetMapping("/addOfferType")
     @Operation(summary = "OfferType ALL ", description = "OfferType ALL")
     public ResponseEntity<ApiResponse> getAll(
             @RequestParam String s
