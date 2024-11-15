@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public interface OfferTypeRepository extends JpaRepository<OfferType, Long> {
     Boolean  existsByTitle(String title);
+
+    @Query("select o from OfferType o where LOWER(o.title) like LOWER(concat('%', ?1, '%'))  order by o.id desc ")
     List<OfferType> findAllByTitle(String s);
     OfferType findByTitle(String s);
+
 }

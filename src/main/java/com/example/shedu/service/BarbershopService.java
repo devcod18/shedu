@@ -234,6 +234,7 @@ public class BarbershopService {
                     .region(barbershop.getRegion())
                     .address(barbershop.getAddress())
                     .phone(barbershop.getPhoneNumber())
+                    .offerList(barbershop.getOffers())
                     .build();
 
             responseList.add(resBarbershop);

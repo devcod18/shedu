@@ -20,19 +20,20 @@ public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     private Barbershop barberShop;
+
     @Column(nullable = false)
     private Double price;
 
     @Column(nullable = false)
-    private Integer duration;
+    private String info;
+
+    @ManyToMany
+    private List<OfferType> offerType;
 
     @Column(nullable = false)
-    private String info;
-    @ManyToOne
-    private OfferType offerType;
-    @Column(nullable = false)
-    private boolean isDeleted;
+    private boolean Deleted;
 
 }

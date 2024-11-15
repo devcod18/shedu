@@ -21,18 +21,19 @@ public class OffersController {
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/addOffer")
     @Operation(summary = "Barbershopga qo'shish ", description = "Barbershopga qo'shish")
-    public ResponseEntity<ApiResponse> create(@RequestBody ReqOffer reqOffers) {
-        ApiResponse apiResponse = offersService.create(reqOffers);
+    public ResponseEntity<ApiResponse> create(@RequestBody ReqOffer reqOffers,
+    @RequestParam Long Id) {
+        ApiResponse apiResponse = offersService.create(reqOffers,Id);
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping("/getByBarbershop/{barbershopId}/")
+    @GetMapping("/getByBarbershop")
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @Operation(summary = "Offerlarni ko'rish", description = "Barbershopni Offerlarni ko'rish")
-    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,
+    public ResponseEntity<ApiResponse> getByBarbershop(
                                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                                        @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse apiResponse = offersService.getAll(barbershopId, page, size);
+        ApiResponse apiResponse = offersService.getAll( page, size);
         return ResponseEntity.ok(apiResponse);
     }
 

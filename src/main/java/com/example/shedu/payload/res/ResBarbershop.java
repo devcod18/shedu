@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,5 +27,6 @@ public class ResBarbershop {
     private String address;
     private String phone;
     private List<ResUser> barberList;
+    private Set<Offer> offerList;
     //<ResOffer>
 }//ResBarbershop

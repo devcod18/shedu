@@ -16,5 +16,4 @@ import java.util.List;
 public class ReqOfferType {
     @NotBlank(message = "Title cannot be blank")
     private String title;
-
 }

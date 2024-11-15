@@ -107,6 +107,18 @@ public class DataLoader implements CommandLineRunner {
             days6.setWeekDays(WeekDays.YAKSHANBA);
             daysRepository.save(days6);
 
+            OfferType offerType = new OfferType();
+            offerType.setTitle("HAIR_CUT");
+            offerTypeRepository.save(offerType);
+            OfferType offerType1 = new OfferType();
+            offerType1.setTitle("HAIR_COLORING");
+            offerTypeRepository.save(offerType1);
+            OfferType offerType2 = new OfferType();
+            offerType2.setTitle("HAIR_STYLING");
+            offerTypeRepository.save(offerType2);
+            OfferType offerType3 = new OfferType();
+            offerType3.setTitle("HAIR_TREATMENT");
+            offerTypeRepository.save(offerType3);
 
         }
     }
