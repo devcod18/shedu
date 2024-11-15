@@ -57,7 +57,6 @@ public class OffersService {
       }
       offer.setOfferTypes(reqOffers.getOfferTypes());
       offer.setInfo(reqOffers.getInfo());
-      offer.setPrise(reqOffers.getPrise());
       return new ApiResponse(offer);
     }
 
@@ -98,8 +97,5 @@ public class OffersService {
                 .info(offers.getInfo())
                 .offerTypes(offers.getOfferTypes())
                 .build();
-
     }
-
-
 }
