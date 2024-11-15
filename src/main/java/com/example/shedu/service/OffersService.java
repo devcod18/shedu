@@ -3,29 +3,22 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Offer;
-
 import com.example.shedu.entity.OfferType;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOffer;
-
 import com.example.shedu.payload.res.ResOffer;
-
-
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferTypeRepository;
 import com.example.shedu.repository.OffersRepository;
 import lombok.RequiredArgsConstructor;
-
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Service
@@ -33,7 +26,6 @@ import java.util.Set;
 public class OffersService {
 
     private final OffersRepository offersRepository;
-    private final NotificationService notificationService;
     private final BarberShopRepository barberShopRepository;
     private final OfferTypeRepository offerTypeRepository;
 

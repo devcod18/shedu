@@ -40,7 +40,7 @@ public class OrderService {
                     Orders orders = Orders.builder()
                             .offers(service)
                             .user(user)
-                            .barbershop(barberShopRepository.findById(offer.getBarbershop().getId()).orElse(null))
+                            .barbershop(barberShopRepository.findById(offer.getBarberShop().getId()).orElse(null))
                             .duration(reqOrders.getDuration())
                             .bookingDaytime(reqOrders.getBookingDaytime())
                             .status(BookingStatus.PENDING)
@@ -114,7 +114,7 @@ public class OrderService {
 
     private ResOrders toResponse(Orders orders) {
         return ResOrders.builder()
-                .serviceId(orders.getOffers().getId())
+                .serviceId(orders.getId())
                 .userId(orders.getUser().getId())
                 .createdAt(orders.getCreatedAt())
                 .duration(orders.getDuration())
