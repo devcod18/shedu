@@ -14,7 +14,7 @@ import lombok.*;
 public class ResOffer {
     private Long id;
     private Double price;
-    private Integer duration;
+    private Long duration;
     private String barberShopName; // `BarberShop`ning nomi
     private String offerTypeTitle; // `OfferType`ning nomi (masalan, "Soch olish")
     private boolean isDeleted; // status ko'rsatkich

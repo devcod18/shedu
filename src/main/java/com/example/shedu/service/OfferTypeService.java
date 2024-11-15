@@ -28,6 +28,7 @@ public class OfferTypeService{
                     .title(reqOfferType.getTitle())
                     .created(LocalDateTime.now())
                     .build();
+             offerTypeRepository.save(offerType);
              return new ApiResponse("Success");
         }
         return new ApiResponse(ResponseError.ALREADY_EXIST("OfferType"));

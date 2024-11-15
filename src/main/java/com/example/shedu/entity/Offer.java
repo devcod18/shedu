@@ -26,7 +26,7 @@ public class Offer {
     private Double price;
 
     @Column(nullable = false)
-    private Integer duration;
+    private Long duration;
 
     @Column(nullable = false)
     private String info;

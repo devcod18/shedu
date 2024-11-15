@@ -19,7 +19,7 @@ public class ReqOffer {
     private Double price;
 
     @NotBlank(message = "Xizmat nomini kiritish majburiy")
-    private Integer duration;// xizmat davomiyligi (daqiqalarda)
+    private Long duration;// xizmat davomiyligi (daqiqalarda)
 
     @NotBlank(message = "Xizmat haqida malumot kiritish majburiy")
     private String info;

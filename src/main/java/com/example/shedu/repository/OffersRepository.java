@@ -11,10 +11,8 @@ import java.util.Optional;
 
 
 public interface OffersRepository extends JpaRepository<Offer, Long> {
-  @Query("select o from Offer o where o.id = ?1 and o.isDeleted = ?2")
-  Optional<Offer> findByIdAndDeletedIs(Long id, boolean deleted);
-  @Query("select o from Offer o where o.barberShop.id = ?1 and o.isDeleted = ?2")
-  Page<Offer> findAllByBarberShopIdAndDeletedIs(Long id, boolean deleted, Pageable pageable);
+  @Query("select o from Offer o where o.barberShop.id = ?1 ")
+  Page<Offer> findAllByBarberShopId(Long id, Pageable pageable);
   @Query("select o from Offer o where o.isDeleted = ?1")
   Page<Offer> findAllByDeleted(boolean deleted, Pageable pageable);
   @Query("select o from Offer o where o.offerType.id = ?1 and o.isDeleted = ?2")

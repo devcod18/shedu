@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class OffersService {
@@ -31,7 +30,7 @@ public class OffersService {
 
 
     public ApiResponse create(ReqOffer reqOffer) {
-        Barbershop barberShop = barberShopRepository.findByIdAndActive(reqOffer.getBarberShopId(), true)
+        Barbershop barberShop = barberShopRepository.findById(reqOffer.getBarberShopId())
                 .orElse(null);
         if (barberShop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("BarberShop"));
@@ -102,7 +101,7 @@ public class OffersService {
     }// offerni yangiladi
 
     public ApiResponse delete(Long id) {
-        Optional<Offer> offer = offersRepository.findByIdAndDeletedIs(id, false);
+        Optional<Offer> offer = offersRepository.findById(id);
         if (offer.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
@@ -112,7 +111,7 @@ public class OffersService {
     }// offerni o'chiradi
 
     public ApiResponse getOne(Long id) {
-        Optional<Offer> offer = offersRepository.findByIdAndDeletedIs(id, false);
+        Optional<Offer> offer = offersRepository.findById(id);
         if (offer == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
@@ -120,10 +119,9 @@ public class OffersService {
     }// offerlarni qaytaradi
 
     public ApiResponse getAll(Long barberId, int page, int size) {
-        Page<Offer> offers = offersRepository.findAllByBarberShopIdAndDeletedIs(barberId, false, PageRequest.of(page, size));
+        Page<Offer> offers = offersRepository.findAllByBarberShopId(barberId, PageRequest.of(page, size));
         List<ResOffer> resOffers = offers.stream()
-                .map(this::toResponse)
-                .toList();
+                .map(this::toResponse).toList();
 
         CustomPageable customPageable = CustomPageable.builder()
                 .data(resOffers)
@@ -136,7 +134,8 @@ public class OffersService {
     }// barcha BarberShopda offerlarni qaytaradi
 
     public ApiResponse getAll(int size, int page) {
-        Page<Offer> offers = offersRepository.findAllByDeleted(false, PageRequest.of(page, size));
+        Page<Offer> offers = offersRepository.findAll(PageRequest.of(size
+                , page));
         List<ResOffer> resOffers = offers.stream()
                 .map(this::toResponse)
                 .toList();

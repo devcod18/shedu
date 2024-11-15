@@ -40,7 +40,7 @@ public class OffersController {
     @GetMapping("/getAllOffers")
     public ResponseEntity<ApiResponse> getAllOffers(
             @RequestParam(name = "page", defaultValue = "0") int page,
-            @RequestParam(name = "size", defaultValue = "5") int size) {
+            @RequestParam(name = "size", defaultValue = "10") int size) {
         ApiResponse allOffers = offersService.getAll(page, size);
         return ResponseEntity.ok(allOffers);
     }
