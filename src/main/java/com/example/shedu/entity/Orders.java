@@ -20,7 +20,7 @@ public class Orders {
     private Long id;
 
     @ManyToOne(optional = false)
-    private Offers offers;
+    private Offer offers;
 
     @ManyToOne(optional = false)
     private User user;

@@ -3,7 +3,7 @@ package com.example.shedu.service;
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Notification;
 
-import com.example.shedu.entity.Offer;
+
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
@@ -13,7 +13,7 @@ import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
-import com.example.shedu.payload.res.ResOffer;
+
 import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.*;

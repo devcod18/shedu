@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 @Service
@@ -144,7 +143,7 @@ public class OffersService {
     }// barcha BarberShopda offerlarni qaytaradi
 
     public ApiResponse getAll(int size, int page) {
-        Page<Offer> offers = offersRepository.findAllByDeletedIs(false, PageRequest.of(page, size));
+        Page<Offer> offers = offersRepository.findAllByDeleted(false, PageRequest.of(page, size));
         List<ResOffer> resOffers = offers.stream()
                 .map(this::toResponse)
                 .toList();
