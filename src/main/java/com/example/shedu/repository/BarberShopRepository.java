@@ -26,13 +26,13 @@ public interface BarberShopRepository extends JpaRepository<Barbershop, Long> {
             """)
     Page<Barbershop> findByTitleContainingIgnoreCase(String title, BarbershopRegion region, Pageable pageable);
 
-    @Query("select b from Barbershop b where b.isActive = true order by b.id desc ")
+    @Query("select b from Barbershop b order by b.id desc ")
     Page<Barbershop> findAllByActive(Pageable pageable);
 
      @Query("select b from Barbershop b where b.owner.id= ?1 and b.isActive=true ")
      List<Barbershop> findByOwnerOrderByDesc(Long id);
-     @Query("select b from Barbershop b where b.isActive = true and b.id= ?1 ")
-     Barbershop findByIdAndActiveIsTrue(Long id);
+
+
 
 
 

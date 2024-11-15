@@ -114,7 +114,7 @@ public class OrderService {
 
     private ResOrders toResponse(Orders orders) {
         return ResOrders.builder()
-                .serviceId(orders.getOffers().getId())
+                .serviceId(orders.getId())
                 .userId(orders.getUser().getId())
                 .createdAt(orders.getCreatedAt())
                 .duration(orders.getDuration())

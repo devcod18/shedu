@@ -3,22 +3,16 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Offer;
-
 import com.example.shedu.entity.OfferType;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOffer;
-
 import com.example.shedu.payload.res.ResOffer;
-
-
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferTypeRepository;
 import com.example.shedu.repository.OffersRepository;
 import lombok.RequiredArgsConstructor;
-
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -27,19 +21,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 @RequiredArgsConstructor
 public class OffersService {
 
     private final OffersRepository offersRepository;
-    private final NotificationService notificationService;
     private final BarberShopRepository barberShopRepository;
     private final OfferTypeRepository offerTypeRepository;
 
 
     public ApiResponse create(ReqOffer reqOffer) {
-        Barbershop barberShop = barberShopRepository.findByIdAndActive(reqOffer.getBarberShopId(), true)
+        Barbershop barberShop = barberShopRepository.findById(reqOffer.getBarberShopId())
                 .orElse(null);
         if (barberShop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("BarberShop"));
@@ -110,7 +102,7 @@ public class OffersService {
     }// offerni yangiladi
 
     public ApiResponse delete(Long id) {
-        Optional<Offer> offer = offersRepository.findByIdAndDeletedIs(id, false);
+        Optional<Offer> offer = offersRepository.findById(id);
         if (offer.isEmpty()) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
@@ -120,7 +112,7 @@ public class OffersService {
     }// offerni o'chiradi
 
     public ApiResponse getOne(Long id) {
-        Optional<Offer> offer = offersRepository.findByIdAndDeletedIs(id, false);
+        Optional<Offer> offer = offersRepository.findById(id);
         if (offer == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
         }
@@ -128,10 +120,9 @@ public class OffersService {
     }// offerlarni qaytaradi
 
     public ApiResponse getAll(Long barberId, int page, int size) {
-        Page<Offer> offers = offersRepository.findAllByBarberShopIdAndDeletedIs(barberId, false, PageRequest.of(page, size));
+        Page<Offer> offers = offersRepository.findAllByBarberShopId(barberId, PageRequest.of(page, size));
         List<ResOffer> resOffers = offers.stream()
-                .map(this::toResponse)
-                .toList();
+                .map(this::toResponse).toList();
 
         CustomPageable customPageable = CustomPageable.builder()
                 .data(resOffers)
@@ -144,7 +135,8 @@ public class OffersService {
     }// barcha BarberShopda offerlarni qaytaradi
 
     public ApiResponse getAll(int size, int page) {
-        Page<Offer> offers = offersRepository.findAllByDeleted(false, PageRequest.of(page, size));
+        Page<Offer> offers = offersRepository.findAll(PageRequest.of(size
+                , page));
         List<ResOffer> resOffers = offers.stream()
                 .map(this::toResponse)
                 .toList();

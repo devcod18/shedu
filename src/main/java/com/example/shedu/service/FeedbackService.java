@@ -65,12 +65,11 @@ public class FeedbackService {
 
         switch (category) {
             case LOW ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqualAndIsDeletedFalse(barbershopId, 2, pageRequest);
-            case MEDIUM ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingAndIsDeletedFalse(barbershopId, 3, pageRequest);
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqual(barbershopId, 2, pageRequest);
+            case MEDIUM -> feedbacks = feedbackRepository.findByBarbershopIdAndRating(barbershopId, 3, pageRequest);
             case HIGH ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqualAndIsDeletedFalse(barbershopId, 4, pageRequest);
-            case ALL -> feedbacks = feedbackRepository.findByBarbershopIdAndIsDeletedFalse(barbershopId, pageRequest);
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqual(barbershopId, 4, pageRequest);
+            case ALL -> feedbacks = feedbackRepository.findByBarbershopId(barbershopId, pageRequest);
             default -> throw new IllegalArgumentException("Unknown rating category: " + category);
         }
 
@@ -95,7 +94,6 @@ public class FeedbackService {
             return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
         }
 
-        feedback.setDeleted(true);
         feedbackRepository.save(feedback);
         return new ApiResponse("success");
     }
@@ -107,7 +105,6 @@ public class FeedbackService {
                 .comment(feedback.getComment())
                 .createdAt(feedback.getCreatedAt())
                 .userId(feedback.getUser().getId())
-                .barbershopId(feedback.getBarbershopId())
-                .deleted(feedback.isDeleted()).build();
+                .barbershopId(feedback.getBarbershopId()).build();
     }
 }

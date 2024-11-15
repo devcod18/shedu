@@ -8,8 +8,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
-
 
 @Getter
 @Setter
@@ -19,12 +17,16 @@ import java.util.List;
 public class ReqOffer {
     @Min(value = 1)
     private Double price;
+
+    @NotBlank(message = "Xizmat nomini kiritish majburiy")
+    private Long duration;// xizmat davomiyligi (daqiqalarda)
+
     @NotBlank(message = "Xizmat haqida malumot kiritish majburiy")
     private String info;
 
     @NotNull
     private Long barberShopId;// `BarberShop`ning ID'si
 
-
-    private List<OfferType> offerTypes;// `OfferType`ning ID'si
+    @NotNull
+    private Long offerTypeId;// `OfferType`ning ID'si
 }
