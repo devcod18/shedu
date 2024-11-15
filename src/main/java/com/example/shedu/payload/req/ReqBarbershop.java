@@ -21,5 +21,6 @@ public class ReqBarbershop {
     private Double lat;
     private Double lng;
     private Long file_id;
+    private List<ReqOffer> offers;
 
 }

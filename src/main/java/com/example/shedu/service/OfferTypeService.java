@@ -9,9 +9,9 @@ import com.example.shedu.repository.OfferTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -27,7 +27,6 @@ public class OfferTypeService{
             OfferType offerType=OfferType.builder()
                     .title(reqOfferType.getTitle())
                     .created(LocalDateTime.now())
-                    .prise(reqOfferType.getPrise())
                     .build();
              return new ApiResponse("Success");
         }
@@ -51,16 +50,15 @@ public class OfferTypeService{
         OfferType offerType=offerTypeRepository.findById(id).orElse(null);
         if(offerType!=null){
             offerType.setTitle(reqOfferType.getTitle());
-            offerType.setPrise(reqOfferType.getPrise());
             offerTypeRepository.save(offerType);
         }
         return new ApiResponse("Success");
     }
 
 
-    public ApiResponse getOne( String s) {
-      OfferType offerType=offerTypeRepository.findByTitle(s);
-      if(offerType==null){
+    public ApiResponse getOne( Long id) {
+      Optional<OfferType> offerType=offerTypeRepository.findById(id);
+      if(offerType.isEmpty()){
           return  new ApiResponse(ResponseError.NOTFOUND("OfferType"));
       }
       return new ApiResponse(offerType);

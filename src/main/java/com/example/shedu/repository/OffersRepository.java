@@ -2,16 +2,18 @@ package com.example.shedu.repository;
 
 
 import com.example.shedu.entity.Offer;
-
-
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public interface OffersRepository extends JpaRepository<Offer, Long> {
-   @Query("select o from Offer o where o.barbershop.id = ?1 and o.isDeleted = ?2")
-   Offer findByBarbershopIdAndDeletedIs(Long id, boolean b);
-   Offer findByBarbershopId(Long id);
-
+  Optional<Offer> findByIdAndDeletedIs(Long id, boolean deleted);
+  List<Offer> findAllByBarberShopIdAndDeletedIs(Long id, boolean deleted);
+  Page<Offer> findAllByBarberShopIdAndDeletedIs(Long id, boolean deleted, Pageable pageable);
+  Page<Offer> findAllByDeletedIs(boolean deleted, Pageable pageable);
+  Page<Offer> findAllByOfferTypeIdAndDeletedIs(Long id, boolean deleted, Pageable pageable);
 }

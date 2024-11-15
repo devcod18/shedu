@@ -13,6 +13,7 @@ import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
+import com.example.shedu.payload.res.ResOffer;
 import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.*;
@@ -78,10 +79,10 @@ public class BarbershopService {
     public ApiResponse getAll(int size, int page) {
         Page<Barbershop> barbershopPage = barberShopRepository.findAllByActive(PageRequest.of(page, size));
         List<ResBarbershop> list = toResponseBarbershopList(barbershopPage.getContent());
-        List<BarbershopDto> dtos = barbershopDtos(list);
+        List<BarbershopDto> dto = barbershopDtos(list);
 
         CustomPageable customPageable = CustomPageable.builder()
-                .data(dtos)
+                .data(dto)
                 .page(page)
                 .size(size)
                 .totalElements(barbershopPage.getTotalElements())
@@ -107,11 +108,6 @@ public class BarbershopService {
                 0L,
                 false
         );
-        Offer offers=offersRepository.findByBarbershopIdAndDeletedIs(barbershop.getId(),false );
-        if (offers!=null){
-            offers.setDeleted(true);
-        }
-
         return new ApiResponse("success");
     }
 
@@ -209,6 +205,7 @@ public class BarbershopService {
         List<BarbershopDto> dtos = new ArrayList<>();
         for (ResBarbershop resBarbershop : barbershopList) {
             ResWorkDay workDays = workDaysService.getWorkDays(resBarbershop.getId());
+
             dtos.add(BarbershopDto.builder()
                     .workDay(workDays != null ? workDays : null)
                     .barbershop(resBarbershop)
