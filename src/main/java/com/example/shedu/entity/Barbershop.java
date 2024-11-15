@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -49,6 +51,8 @@ public class Barbershop {
 
     @OneToMany
     private List<User> barber;
+      @OneToMany(mappedBy = "barberShop", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Offer> offers = new HashSet<>();
 
    
 

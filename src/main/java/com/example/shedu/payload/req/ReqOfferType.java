@@ -16,9 +16,5 @@ import java.util.List;
 public class ReqOfferType {
     @NotBlank(message = "Title cannot be blank")
     private String title;
-    @NotBlank(message = "Info cannot be blank")
-    private String info;
-    @NotBlank(message = "Info cannot be blank")
-    private Double prise;
 
 }

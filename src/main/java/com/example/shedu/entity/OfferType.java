@@ -11,6 +11,8 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,13 +21,15 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 public class OfferType  {
-    @Id
+     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column( unique = true)
-    private String title;
-    @Column(nullable = false)
-    private double prise;
+
+    @Column(unique = true, nullable = false)
+    private String title; // Masalan, "soch olish", "soqol olish"
+
+    @OneToMany(mappedBy = "offerType")
+    private Set<Offer> offers = new HashSet<>();
     @CreatedDate
     private LocalDateTime created;
     @UpdateTimestamp

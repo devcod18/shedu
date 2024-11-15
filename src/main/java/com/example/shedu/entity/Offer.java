@@ -4,7 +4,10 @@ package com.example.shedu.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -17,17 +20,19 @@ public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
-    @JoinColumn( nullable = false)
-    private Barbershop barbershop;
-
-    @ManyToMany
-    private List<OfferType> offerTypes;
-    private String info;
-
-
+    private Barbershop barberShop;
+    @Column(nullable = false)
+    private Double price;
 
     @Column(nullable = false)
+    private Integer duration;
+
+    @Column(nullable = false)
+    private String info;
+    @ManyToOne
+    private OfferType offerType;
+    @Column(nullable = false)
     private boolean isDeleted;
+
 }

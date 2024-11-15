@@ -2,7 +2,8 @@
 package com.example.shedu.controller;
 
 import com.example.shedu.payload.ApiResponse;
-import com.example.shedu.payload.req.ReqOffers;
+import com.example.shedu.payload.req.ReqOffer;
+
 import com.example.shedu.service.OffersService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,56 +21,47 @@ public class OffersController {
     private final OffersService offersService;
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PostMapping("/addOffers/{barbershopId}")
+    @PostMapping("/addOffer")
     @Operation(summary = "Barbershopga qo'shish ", description = "Barbershopga qo'shish")
-    public ResponseEntity<ApiResponse> addOffers(@PathVariable Long barbershopId,@RequestBody ReqOffers reqOffers) {
-        ApiResponse apiResponse = offersService.create(reqOffers,barbershopId);
+    public ResponseEntity<ApiResponse> create(@RequestBody ReqOffer reqOffers) {
+        ApiResponse apiResponse = offersService.create(reqOffers);
         return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/getByBarbershop/{barbershopId}/")
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @Operation(summary = "Offerlarni ko'rish", description = "Barbershopni Offerlarni ko'rish")
-    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,@RequestParam Boolean b) {
-        ApiResponse apiResponse = offersService.getOffersByBarberShop(barbershopId,b);
+    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,
+                                                       @RequestParam(name = "page", defaultValue = "0") int page,
+                                                       @RequestParam(name = "size", defaultValue = "5") int size) {
+        ApiResponse apiResponse = offersService.getAll(barbershopId, page, size);
         return ResponseEntity.ok(apiResponse);
     }
+
     @Operation(summary = "Barcha Offerlarni ko'rish", description = "Barcha Offerlarni ko'rish")
     @GetMapping("/getAllOffers")
     public ResponseEntity<ApiResponse> getAllOffers(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse allOffers = offersService.getAllOffers(page, size);
+        ApiResponse allOffers = offersService.getAll(page, size);
         return ResponseEntity.ok(allOffers);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/updateOffers/{Id}/{barbershopId}")
+    @PutMapping("/updateOffers/{Id}")
     @Operation(summary = "Offerlarni o'zgartirish", description = "Offerlarni o'zgartirish")
-    public ResponseEntity<ApiResponse> updateOffer(@PathVariable Long Id, @RequestBody ReqOffers reqOffers,
-                                                   @PathVariable Long barbershopId) {
-        ApiResponse apiResponse = offersService.update(reqOffers, Id, barbershopId);
+    public ResponseEntity<ApiResponse> updateOffer(@RequestBody ReqOffer reqOffers,
+                                                   @PathVariable Long Id) {
+        ApiResponse apiResponse = offersService.update(reqOffers, Id);
         return ResponseEntity.ok(apiResponse);
     }
+
     @Operation(summary = "Offerlarni o'chirish", description = "Offerlarni o'chirish")
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
     @DeleteMapping("/deleteOffers/{deleteOffersId}")
     public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteOffersId) {
-        ApiResponse apiResponse = offersService.isActive(deleteOffersId);
+        ApiResponse apiResponse = offersService.delete(deleteOffersId);
         return ResponseEntity.ok(apiResponse);
     }
-
-//    @GetMapping("/search")
-//    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN','ROLE_USER')")
-//    @Operation(summary = "Offerlarni qidirish ", description = "Offerlarni qidirish")
-//    public ResponseEntity<ApiResponse> search(
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "size", defaultValue = "5") int size,
-//            @RequestParam(name = "name") String name,
-//            @RequestParam ServiceType serviceType){
-//        ApiResponse apiResponse=offersService.search(name,serviceType,page,size);
-//        return ResponseEntity.ok(apiResponse);
-//    }
-
 
 }

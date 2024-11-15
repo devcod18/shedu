@@ -1,5 +1,6 @@
 package com.example.shedu.payload.res;
 
+import com.example.shedu.entity.Offer;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -25,4 +26,5 @@ public class ResBarbershop {
     private String address;
     private String phone;
     private List<ResUser> barberList;
-}
+    //<ResOffer>
+}//ResBarbershop
