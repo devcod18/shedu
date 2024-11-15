@@ -54,19 +54,19 @@ public class OrderController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @PutMapping("/update/{orderId}")
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @Operation(summary = "Buyurtmani yangilash", description = "Foydalanuvchi buyurtmasini yangilashi mumkin.")
-    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders, @CurrentUser User user) {
-        ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders, user);
-        return ResponseEntity.ok(apiResponse);
-    }
+//    @PutMapping("/update/{orderId}")
+//    @PreAuthorize("hasRole('ROLE_USER')")
+//    @Operation(summary = "Buyurtmani yangilash", description = "Foydalanuvchi buyurtmasini yangilashi mumkin.")
+//    public ResponseEntity<ApiResponse> updateOrder(@PathVariable Long orderId, @RequestBody ReqOrders reqOrders, @CurrentUser User user) {
+//        ApiResponse apiResponse = orderService.updateOrder(orderId, reqOrders, user);
+//        return ResponseEntity.ok(apiResponse);
+//    }
 
     @GetMapping("/getOrdersByBarbershop")
     @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_BARBER')")
     @Operation(summary = "Barbershop buyurtmalari",description = "Barbershop ga tushgan buyurtmalarni olish uchun")
     public ResponseEntity<ApiResponse> getOrders(@CurrentUser User user){
-        ApiResponse apiResponse = orderService.getAllOrdersByUser(user);
+        ApiResponse apiResponse = orderService.getOrdersByBarbershop(user);
         return ResponseEntity.ok(apiResponse);
     }
 }

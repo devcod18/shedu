@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,31 +31,39 @@ public class OrderService {
     private final NotificationService notificationService;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
-        Offer offer = offersRepository.findById(reqOrders.getServiceId()).orElse(null);
-        if (orderRepository.existsByBookingDaytime(reqOrders.getBookingDaytime())) {
-            return new ApiResponse(ResponseError.ALREADY_EXIST("Order"));
+        if (reqOrders.getBookingDay().isBefore(LocalDate.now())) {
+            return new ApiResponse(ResponseError.DEFAULT_ERROR("Siz bron qilayotgan sana bugungi kundan orqada bo'lmasligi kerak."));
         }
-        return offersRepository.findById(reqOrders.getServiceId())
-                .map(service -> {
-                    assert offer != null;
-                    Orders orders = Orders.builder()
-                            .offers(service)
-                            .user(user)
-                            .barbershop(barberShopRepository.findById(offer.getBarberShop().getId()).orElse(null))
-                            .duration(reqOrders.getDuration())
-                            .bookingDaytime(reqOrders.getBookingDaytime())
-                            .status(BookingStatus.PENDING)
-                            .build();
-                    orderRepository.save(orders);
-                    notificationService.saveNotification(
-                            user,
-                            "Hurmatli " + user.getFullName() + "!",
-                            "Siz muvaffaqiyatli buyurtma qildingiz",
-                            0L,
-                            false
-                    );
-                    return new ApiResponse("success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Offers")));
+
+        boolean timeConflict = orderRepository.existsByBookingDayAndStartBookingLessThanEqualAndEndBookingGreaterThanEqual(
+                reqOrders.getBookingDay(), reqOrders.getStartBooking(), reqOrders.getEndBooking());
+        if (timeConflict) {
+            return new ApiResponse(ResponseError.DEFAULT_ERROR("Bu vaqt oralig‘ida boshqa foydalanuvchi buyurtma qilingan."));
+        }
+
+        Offer offer = offersRepository.findById(reqOrders.getOfferId()).orElse(null);
+        if (offer == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Offer"));
+        }
+
+        Orders orders = Orders.builder()
+                .offers(offer)
+                .user(user)
+                .bookingDay(reqOrders.getBookingDay())
+                .startBooking(reqOrders.getStartBooking())
+                .endBooking(reqOrders.getEndBooking())
+                .status(BookingStatus.PENDING)
+                .build();
+
+        orderRepository.save(orders);
+        notificationService.saveNotification(
+                user,
+                "Successfully ordered!",
+                user.getFullName() + " siz muvaffaqiyatli buyurtma qildingiz!",
+                0L,
+                false
+        );
+        return new ApiResponse("Ordered!");
     }
 
     public ApiResponse getAllOrdersByUser(User user) {
@@ -75,19 +84,6 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .map(orders -> {
                     orders.setStatus(status);
-                    orderRepository.save(orders);
-                    return new ApiResponse("success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
-    }
-
-    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
-        return orderRepository.findById(orderId)
-                .map(orders -> {
-                    orders.setOffers(offersRepository.findById(reqOrders.getServiceId()).orElse(null));
-                    orders.setUser(user);
-                    orders.setBookingDaytime(reqOrders.getBookingDaytime());
-                    orders.setDuration(reqOrders.getDuration());
-                    orders.setStatus(BookingStatus.PENDING);
                     orderRepository.save(orders);
                     return new ApiResponse("success");
                 }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
@@ -114,13 +110,13 @@ public class OrderService {
 
     private ResOrders toResponse(Orders orders) {
         return ResOrders.builder()
-                .serviceId(orders.getOffers().getId())
+                .offerId(orders.getOffers().getId())
                 .userId(orders.getUser().getId())
+                .barbershopId(orders.getBarbershop().getId())
                 .createdAt(orders.getCreatedAt())
-                .duration(orders.getDuration())
-                .status(orders.getStatus())
-                .bookingDaytime(orders.getBookingDaytime())
-                .build();
+                .start(orders.getStartBooking())
+                .end(orders.getEndBooking())
+                .status(orders.getStatus()).build();
     }
 
 }

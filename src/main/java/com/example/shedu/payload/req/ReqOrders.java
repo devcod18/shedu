@@ -1,8 +1,10 @@
 package com.example.shedu.payload.req;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -10,7 +12,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class ReqOrders {
-    private Long serviceId;
-    private LocalDateTime bookingDaytime;
-    private Long duration;
+    private Long offerId;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private LocalDate bookingDay;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime startBooking;
+    @DateTimeFormat(pattern = "HH:mm")
+    private LocalTime endBooking;
 }
