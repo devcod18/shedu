@@ -1,9 +1,6 @@
 package com.example.shedu.service;
 
-import com.example.shedu.entity.Barbershop;
-import com.example.shedu.entity.Offer;
-import com.example.shedu.entity.Orders;
-import com.example.shedu.entity.User;
+import com.example.shedu.entity.*;
 import com.example.shedu.entity.enums.BookingStatus;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.ResponseError;
@@ -12,12 +9,15 @@ import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferRepository;
 import com.example.shedu.repository.OrderRepository;
+import com.example.shedu.repository.WorkDaysRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,8 +29,13 @@ public class OrderService {
     private final OfferRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
+    private final WorkDaysRepository workDaysRepository;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
+        Barbershop barbershop = barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null);
+        if (barbershop == null){
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
         if (reqOrders.getBookingDay().isBefore(LocalDate.now())) {
             return new ApiResponse(ResponseError.DEFAULT_ERROR("Siz bron qilayotgan sana bugungi kundan orqada bo'lmasligi kerak."));
         }
@@ -44,6 +49,22 @@ public class OrderService {
         Offer offer = offersRepository.findById(reqOrders.getOfferId()).orElse(null);
         if (offer == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Offer"));
+        }
+
+        Long barbershopId = barbershop.getId();
+        WorkDays workday = workDaysRepository.findByBarbershopIdAndDayOfWeek(barbershopId, reqOrders.getBookingDay().getDayOfWeek())
+                .orElse(null);
+
+        if (workday == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Ish kuni"));
+        }
+
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime openTime = LocalTime.parse(workday.getOpen(), timeFormatter);
+        LocalTime closeTime = LocalTime.parse(workday.getClose(), timeFormatter);
+
+        if (reqOrders.getStartBooking().isBefore(openTime) || reqOrders.getEndBooking().isAfter(closeTime)) {
+            return new ApiResponse(ResponseError.DEFAULT_ERROR("Buyurtma vaqti ish vaqtiga mos kelmaydi."));
         }
 
         Orders orders = Orders.builder()
@@ -65,6 +86,8 @@ public class OrderService {
         );
         return new ApiResponse("Ordered!");
     }
+
+
 
     public ApiResponse getAllOrdersByUser(User user) {
         List<Orders> orders = orderRepository.findAllByUserId(user.getId());
