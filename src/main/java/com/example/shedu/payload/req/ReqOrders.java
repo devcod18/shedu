@@ -19,4 +19,6 @@ public class ReqOrders {
     private LocalTime startBooking;
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime endBooking;
+
+    private Long barbershopId;
 }
