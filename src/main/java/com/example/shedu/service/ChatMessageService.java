@@ -4,9 +4,10 @@ import com.example.shedu.entity.Chat;
 import com.example.shedu.entity.Message;
 import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
-import com.example.shedu.payload.ChatDTO;
 import com.example.shedu.payload.MessageDTO;
 import com.example.shedu.payload.ResponseError;
+import com.example.shedu.payload.req.ReqMessage;
+import com.example.shedu.payload.res.ResChat;
 import com.example.shedu.repository.ChatRepository;
 import com.example.shedu.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +27,12 @@ public class ChatMessageService {
     private final MessageRepository messageRepository;
 
     // Convert Chat entity to ChatDTO
-    private ChatDTO toResponse(Chat chat) {
-        ChatDTO chatDTO = new ChatDTO();
-        chatDTO.setId(chat.getId());
-        chatDTO.setSenderId(chat.getSender().getId());
-        chatDTO.setReceiverId(chat.getReceiver().getId());
-        return chatDTO;
+    private ResChat toResponse(Chat chat) {
+        ResChat resChat = ResChat.builder()
+                .receiver(chat.getReceiver().getFullName())
+                .fileId(chat.getReceiver().getFile().getId())
+                .build();
+        return resChat;
     }
 
     // Convert Message entity to MessageDTO
@@ -48,7 +49,7 @@ public class ChatMessageService {
     public ApiResponse getAllChatsByUser(User user, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Chat> chats = chatRepository.findAllBySenderIdOrReceiverId(user.getId(), pageable);
-        List<ChatDTO> chatDTOs = chats.stream()
+        List<ResChat> chatDTOs = chats.stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
         return new ApiResponse(chatDTOs);
@@ -75,7 +76,7 @@ public class ChatMessageService {
         return new ApiResponse(messageDTOs);
     }
 
-    public ApiResponse createMessage(Long chatId, MessageDTO messageDTO) {
+    public ApiResponse createMessage(Long chatId, ReqMessage messageDTO) {
         Chat chat = chatRepository.findById(chatId).orElse(null);
         if (chat == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Chat"));
@@ -83,7 +84,7 @@ public class ChatMessageService {
 
         Message message = new Message();
         message.setChat(chat);
-        message.setText(messageDTO.getText());
+        message.setText(messageDTO.getMessage());
         message.setRead(false);
         Message savedMessage = messageRepository.save(message);
 

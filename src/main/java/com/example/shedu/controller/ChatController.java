@@ -3,6 +3,7 @@ package com.example.shedu.controller;
 import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.MessageDTO;
+import com.example.shedu.payload.req.ReqMessage;
 import com.example.shedu.repository.UserRepository;
 import com.example.shedu.security.CurrentUser;
 import com.example.shedu.service.ChatMessageService;
@@ -49,8 +50,7 @@ public class ChatController {
 
     @PostMapping("/{chatId}/addMessages")
     @Operation(summary = "Yangi xabar yaratish", description = "Berilgan chat ID bo'yicha yangi xabar yaratish.")
-    public ResponseEntity<ApiResponse> createMessage(@PathVariable Long chatId, @RequestBody MessageDTO messageDTO) {
-        messageDTO.setChatId(chatId);
+    public ResponseEntity<ApiResponse> createMessage(@PathVariable Long chatId, @RequestBody ReqMessage messageDTO) {
         ApiResponse message = chatMessageService.createMessage(chatId, messageDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
