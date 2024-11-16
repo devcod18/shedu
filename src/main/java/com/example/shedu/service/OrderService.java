@@ -10,7 +10,7 @@ import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOrders;
 import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
-import com.example.shedu.repository.OffersRepository;
+import com.example.shedu.repository.OfferRepository;
 import com.example.shedu.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OffersRepository offersRepository;
+    private final OfferRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
 
