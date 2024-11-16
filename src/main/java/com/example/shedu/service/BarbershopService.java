@@ -14,6 +14,7 @@ import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
 
+import com.example.shedu.payload.res.ResOffer;
 import com.example.shedu.payload.res.ResUser;
 import com.example.shedu.payload.res.ResWorkDay;
 import com.example.shedu.repository.*;
@@ -37,7 +38,7 @@ public class BarbershopService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final NotificationRepository notificationRepository;
-    private final OffersRepository offersRepository;
+    private final OfferService offerService;
     private final NotificationService notificationService;
 
     private final WorkDaysService workDaysService;
@@ -192,7 +193,8 @@ public class BarbershopService {
                 .totalPage(barbershops.getTotalPages())
                 .build();
     }
-    public ApiResponse getByOwner(User user) {
+
+  public ApiResponse getByOwner(User user) {
         List<Barbershop> list = barberShopRepository.findByOwnerOrderByDesc(user.getId());
         if (list == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
@@ -205,22 +207,26 @@ public class BarbershopService {
         List<BarbershopDto> dtos = new ArrayList<>();
         for (ResBarbershop resBarbershop : barbershopList) {
             ResWorkDay workDays = workDaysService.getWorkDays(resBarbershop.getId());
+            ResOffer offer=offerService.getById(resBarbershop.getId());
 
             dtos.add(BarbershopDto.builder()
-                    .workDay(workDays != null ? workDays : null)
+                    .workDay(workDays)
                     .barbershop(resBarbershop)
+                    .offer(offer)
                     .build());
         }
         return dtos;
 
     }
+
+
     private List<ResBarbershop> toResponseBarbershopList(List<Barbershop> barbershopList) {
         List<ResBarbershop> responseList = new ArrayList<>();
         for (Barbershop barbershop : barbershopList) {
-            Optional<User> user = Optional.ofNullable(userRepository.findByIdAndUserRoleAndEnabledTrue
-                    (barbershop.getOwner().getId(), UserRole.ROLE_MASTER));
+            User user = userRepository.
+                    findByIdAndUserRoleAndEnabledTrue(barbershop.getOwner().getId(), UserRole.ROLE_MASTER);
 
-            Long ownerId = user.map(User::getId).orElse(null);
+            Long ownerId = user.getId();
 
             ResBarbershop resBarbershop = ResBarbershop.builder()
                     .id(barbershop.getId())

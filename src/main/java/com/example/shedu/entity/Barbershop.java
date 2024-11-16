@@ -51,7 +51,7 @@ public class Barbershop {
 
     @OneToMany
     private List<User> barber;
-      @OneToMany(mappedBy = "barberShop", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "barberShop", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Offer> offers = new HashSet<>();
 
    

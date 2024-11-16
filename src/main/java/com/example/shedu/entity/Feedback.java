@@ -31,6 +31,4 @@ public class Feedback {
     private User user;
 
     private Long barbershopId;
-
-    private boolean deleted = false;
 }

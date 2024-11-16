@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class OfferTypeController {
     private final OfferTypeService offerTypeService;
 
-      @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+      @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_SUPER_ADMIN')")
     @PostMapping("/addOfferType")
     @Operation(summary = "OfferType qushadi ", description = "OfferType saqlash")
     public ResponseEntity<ApiResponse> save(
@@ -27,7 +27,7 @@ public class OfferTypeController {
           return ResponseEntity.ok(apiResponse);
       }
         @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @PutMapping("/addOfferType/{Id}")
+    @PutMapping("/update/{Id}")
     @Operation(summary = "OfferType UPDATE ", description = "OfferType UPDATE")
       public ResponseEntity<ApiResponse> update(
               @Valid @RequestBody ReqOfferType reqOfferType,
@@ -36,13 +36,14 @@ public class OfferTypeController {
          ApiResponse apiResponse=offerTypeService.update(reqOfferType ,Id);
          return ResponseEntity.ok(apiResponse);
       }
-      @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @GetMapping("/addOfferType")
+      @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MASTER')")
+    @GetMapping("/get")
     @Operation(summary = "OfferType ALL ", description = "OfferType ALL")
     public ResponseEntity<ApiResponse> getAll(
-            @RequestParam String s
+            @RequestParam (name = "size" , defaultValue = "5")int size,
+            @RequestParam(name = "page" , defaultValue = "0") int page
       ){
-          ApiResponse apiResponse= offerTypeService.getAll(s);
+          ApiResponse apiResponse= offerTypeService.getAll(size,page);
           return ResponseEntity.ok(apiResponse);
       }
 

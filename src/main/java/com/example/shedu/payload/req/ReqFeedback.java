@@ -18,6 +18,5 @@ public class ReqFeedback {
     private int rating;
     @NotBlank
     private String comment;
-    private LocalDateTime createdAt;
     private Long barbershopId;
 }

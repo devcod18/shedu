@@ -1,9 +1,8 @@
-
 package com.example.shedu.controller;
 
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.req.ReqOffer;
-import com.example.shedu.service.OffersService;
+import com.example.shedu.service.OfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/offers")
 @RequiredArgsConstructor
 @CrossOrigin
-public class OffersController {
+public class OfferController {
 
-    private final OffersService offersService;
+    private final OfferService offersService;
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
     @PostMapping("/addOffer")
@@ -32,7 +31,7 @@ public class OffersController {
     public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,
                                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                                        @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse apiResponse = offersService.getAll(barbershopId, page, size);
+        ApiResponse apiResponse = offersService.getAll( page, size);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -41,7 +40,7 @@ public class OffersController {
     public ResponseEntity<ApiResponse> getAllOffers(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse allOffers = offersService.getAll(page, size);
+        ApiResponse allOffers = offersService.getAll(size,page);
         return ResponseEntity.ok(allOffers);
     }
 
@@ -54,12 +53,5 @@ public class OffersController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @Operation(summary = "Offerlarni o'chirish", description = "Offerlarni o'chirish")
-    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
-    @DeleteMapping("/deleteOffers/{deleteOffersId}")
-    public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long deleteOffersId) {
-        ApiResponse apiResponse = offersService.delete(deleteOffersId);
-        return ResponseEntity.ok(apiResponse);
-    }
 
 }

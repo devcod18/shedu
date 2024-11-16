@@ -17,5 +17,6 @@ import lombok.NoArgsConstructor;
 public class BarbershopDto {
     private ResBarbershop barbershop;
     private ResWorkDay workDay;
+    private ResOffer offer;
 
 }

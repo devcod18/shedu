@@ -1,5 +1,5 @@
-
 package com.example.shedu.entity;
+
 
 
 import jakarta.persistence.*;
@@ -26,13 +26,10 @@ public class Offer {
     private Double price;
 
     @Column(nullable = false)
-    private Integer duration;
-
-    @Column(nullable = false)
     private String info;
     @ManyToOne
     private OfferType offerType;
     @Column(nullable = false)
-    private boolean isDeleted;
+    private boolean Deleted;
 
 }
