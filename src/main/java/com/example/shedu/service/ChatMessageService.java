@@ -4,13 +4,13 @@ import com.example.shedu.entity.Chat;
 import com.example.shedu.entity.Message;
 import com.example.shedu.entity.User;
 import com.example.shedu.payload.ApiResponse;
-import com.example.shedu.payload.ChatDTO;
 import com.example.shedu.payload.MessageDTO;
 import com.example.shedu.payload.ResponseError;
+import com.example.shedu.payload.req.ReqMessage;
+import com.example.shedu.payload.res.ResChat;
 import com.example.shedu.repository.ChatRepository;
 import com.example.shedu.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,42 +25,70 @@ public class ChatMessageService {
 
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
+
+    // Convert Chat entity to ChatDTO
+    private ResChat toResponse(Chat chat) {
+        ResChat resChat = ResChat.builder()
+                .receiver(chat.getReceiver().getFullName())
+                .fileId(chat.getReceiver().getFile().getId())
+                .build();
+        return resChat;
+    }
+
+    // Convert Message entity to MessageDTO
+    private MessageDTO toResponse(Message message) {
+        MessageDTO messageDTO = new MessageDTO();
+        messageDTO.setId(message.getId());
+        messageDTO.setChatId(message.getChat().getId());
+        messageDTO.setText(message.getText());
+        messageDTO.setCreatedAt(message.getCreatedAt());
+        messageDTO.setRead(message.isRead());
+        return messageDTO;
+    }
 
     public ApiResponse getAllChatsByUser(User user, int size, int page) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Chat> chats = chatRepository.findAllBySenderIdOrReceiverId(user.getId(), pageable);
-        List<ChatDTO> chatDTOs = chats.stream()
-                .map(chat -> modelMapper.map(chat, ChatDTO.class))
+        List<ResChat> chatDTOs = chats.stream()
+                .map(this::toResponse)
                 .collect(Collectors.toList());
         return new ApiResponse(chatDTOs);
     }
 
     public ApiResponse createChat(User sender, User receiver) {
+        if (chatRepository.existsByReceiverId(receiver.getId())) {
+            return new ApiResponse(ResponseError.ALREADY_EXIST("Chat"));
+        }
         Chat chat = Chat.builder()
                 .sender(sender)
                 .receiver(receiver)
                 .build();
 
         chatRepository.save(chat);
-        ChatDTO chatDTO = modelMapper.map(chat, ChatDTO.class);
-        return new ApiResponse(chatDTO);
+        return new ApiResponse("Success");
     }
 
-    public ApiResponse getMessagesByChatId(Long chatId, int size, int page) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Message> messages = messageRepository.findAllByChatId(chatId, pageable);
+    public ApiResponse getMessagesByChatId(Long chatId) {
+        List<Message> messages = messageRepository.findAllByChatId(chatId);
         List<MessageDTO> messageDTOs = messages.stream()
-                .map(message -> modelMapper.map(message, MessageDTO.class))
+                .map(this::toResponse)
                 .collect(Collectors.toList());
         return new ApiResponse(messageDTOs);
     }
 
-    public ApiResponse createMessage(MessageDTO messageDTO) {
-        Message message = modelMapper.map(messageDTO, Message.class);
+    public ApiResponse createMessage(Long chatId, ReqMessage messageDTO) {
+        Chat chat = chatRepository.findById(chatId).orElse(null);
+        if (chat == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Chat"));
+        }
+
+        Message message = new Message();
+        message.setChat(chat);
+        message.setText(messageDTO.getMessage());
         message.setRead(false);
         Message savedMessage = messageRepository.save(message);
-        MessageDTO savedMessageDTO = modelMapper.map(savedMessage, MessageDTO.class);
+
+        MessageDTO savedMessageDTO = toResponse(savedMessage);
         return new ApiResponse(savedMessageDTO);
     }
 
@@ -71,7 +99,19 @@ public class ChatMessageService {
         }
         message.setRead(true);
         Message updatedMessage = messageRepository.save(message);
-        MessageDTO messageDTO = modelMapper.map(updatedMessage, MessageDTO.class);
+
+        MessageDTO messageDTO = toResponse(updatedMessage);
         return new ApiResponse(messageDTO);
     }
+
+    public ApiResponse delete(Long messageId) {
+        Message message = messageRepository.findById(messageId).orElse(null);
+        if (message == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Message"));
+        }
+        messageRepository.delete(message);
+        return new ApiResponse("Success");
+    }
+
 }
+

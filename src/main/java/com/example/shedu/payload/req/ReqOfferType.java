@@ -2,15 +2,13 @@ package com.example.shedu.payload.req;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-
+import org.hibernate.annotations.Bag;
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReqFavorite {
+public class ReqOfferType {
     @NotBlank
-    private Long barberId;
-    @NotBlank
-    private Long barbershopId;
+    private String offerType;
 }

@@ -1,10 +1,10 @@
 package com.example.shedu.component;
 
-import com.example.shedu.entity.Days;
-import com.example.shedu.entity.User;
+import com.example.shedu.entity.*;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.entity.enums.WeekDays;
 import com.example.shedu.repository.DaysRepository;
+import com.example.shedu.repository.OfferTypeRepository;
 import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +21,7 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final DaysRepository daysRepository;
+    private final OfferTypeRepository offerTypeRepository;
 
     @Value(value = "${spring.jpa.hibernate.ddl-auto}")
 
@@ -40,6 +41,7 @@ public class DataLoader implements CommandLineRunner {
                     .credentialsNonExpired(true)
                     .build();
             userRepository.save(user1);
+
             User user2 = User.builder()
                     .fullName("Muhammad Nabiyev")
                     .password(passwordEncoder.encode("root123"))
@@ -53,6 +55,7 @@ public class DataLoader implements CommandLineRunner {
                     .credentialsNonExpired(true)
                     .build();
             userRepository.save(user2);
+
             User user3 = User.builder()
                     .fullName("Asilbek Abdihamidov")
                     .password(passwordEncoder.encode("root123"))
@@ -66,6 +69,20 @@ public class DataLoader implements CommandLineRunner {
                     .credentialsNonExpired(true)
                     .build();
             userRepository.save(user3);
+
+            User user4 = User.builder()
+                    .fullName("Nabiyev Otabek")
+                    .password(passwordEncoder.encode("root123"))
+                    .userRole(UserRole.ROLE_USER)
+                    .phoneNumber("998916368424")
+                    .email("otabek@gmail.com")
+                    .created(LocalDateTime.now())
+                    .enabled(true)
+                    .accountNonExpired(true)
+                    .accountNonLocked(true)
+                    .credentialsNonExpired(true)
+                    .build();
+            userRepository.save(user4);
 
             Days days = new Days();
             days.setWeekDays(WeekDays.DUSHANBA);
@@ -88,6 +105,17 @@ public class DataLoader implements CommandLineRunner {
             Days days6 = new Days();
             days6.setWeekDays(WeekDays.YAKSHANBA);
             daysRepository.save(days6);
+
+            OfferType offerType = OfferType.builder()
+                    .title("soch olish")
+                    .build();
+
+            offerTypeRepository.save(offerType);
+            OfferType offerType1= OfferType.builder()
+                    .title("soch turmaklash")
+                    .build();
+            offerTypeRepository.save(offerType1);
+
         }
     }
 }

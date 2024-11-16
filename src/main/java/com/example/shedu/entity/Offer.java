@@ -1,8 +1,10 @@
-
 package com.example.shedu.entity;
+
+
 
 import jakarta.persistence.*;
 import lombok.*;
+
 
 @Entity
 @Getter
@@ -10,26 +12,21 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Offers {
+public class Offer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne(optional = false, cascade = CascadeType.ALL)
-    private Barbershop barbershop;
-
-    @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
-    private String info;
-
+    @ManyToOne
+    private Barbershop barberShop;
     @Column(nullable = false)
     private Double price;
 
     @Column(nullable = false)
-    private Long duration;
+    private String info;
+    @ManyToOne
+    private OfferType offerType;
+    @Column(nullable = false)
+    private boolean Deleted;
 
-    private boolean deleted;
 }

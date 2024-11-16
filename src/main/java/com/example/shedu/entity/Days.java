@@ -18,4 +18,6 @@ public class Days {
     private Integer id;
     @Enumerated(EnumType.STRING)
     private WeekDays weekDays;
+
+
 }

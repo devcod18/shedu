@@ -35,5 +35,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByPhoneNumber(String phoneNumber);
 
     Optional<User> findByIdAndUserRole(Long id, UserRole role);
+
+    List<User> findByBarbershopIdAndUserRoleAndEnabledTrue(Long barbershopId, UserRole userRole);
 }
 

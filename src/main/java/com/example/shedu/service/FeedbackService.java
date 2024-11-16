@@ -25,6 +25,7 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
     private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse addFeedback(ReqFeedback reqFeedback, User user) {
         if (user == null) {
@@ -36,7 +37,6 @@ public class FeedbackService {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
-
         Feedback feedback = Feedback.builder()
                 .rating(reqFeedback.getRating())
                 .comment(reqFeedback.getComment())
@@ -44,6 +44,27 @@ public class FeedbackService {
                 .barbershopId(reqFeedback.getBarbershopId())
                 .build();
 
+        feedbackRepository.save(feedback);
+        notificationService.saveNotification(
+                user,
+                "Hurmatli " + user.getFullName() + "!",
+                "Siz muvaffaqiyatli comment qoldirdingiz",
+                0L,
+                false
+        );
+        return new ApiResponse("success");
+    }
+
+    public ApiResponse updateFeedback(Long id,ReqFeedback reqFeedback, User user) {
+        Feedback feedback = feedbackRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
+        }
+
+        assert feedback != null;
+        feedback.setRating(reqFeedback.getRating());
+        feedback.setComment(reqFeedback.getComment());
+        feedback.setUser(user);
         feedbackRepository.save(feedback);
 
         return new ApiResponse("success");
@@ -58,12 +79,11 @@ public class FeedbackService {
 
         switch (category) {
             case LOW ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqualAndIsDeletedFalse(barbershopId, 2, pageRequest);
-            case MEDIUM ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingAndIsDeletedFalse(barbershopId, 3, pageRequest);
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingLessThanEqual(barbershopId, 2, pageRequest);
+            case MEDIUM -> feedbacks = feedbackRepository.findByBarbershopIdAndRating(barbershopId, 3, pageRequest);
             case HIGH ->
-                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqualAndIsDeletedFalse(barbershopId, 4, pageRequest);
-            case ALL -> feedbacks = feedbackRepository.findByBarbershopIdAndIsDeletedFalse(barbershopId, pageRequest);
+                    feedbacks = feedbackRepository.findByBarbershopIdAndRatingGreaterThanEqual(barbershopId, 4, pageRequest);
+            case ALL -> feedbacks = feedbackRepository.findByBarbershopId(barbershopId, pageRequest);
             default -> throw new IllegalArgumentException("Unknown rating category: " + category);
         }
 
@@ -88,7 +108,6 @@ public class FeedbackService {
             return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
         }
 
-        feedback.setDeleted(true);
         feedbackRepository.save(feedback);
         return new ApiResponse("success");
     }
@@ -100,7 +119,6 @@ public class FeedbackService {
                 .comment(feedback.getComment())
                 .createdAt(feedback.getCreatedAt())
                 .userId(feedback.getUser().getId())
-                .barbershopId(feedback.getBarbershopId())
-                .deleted(feedback.isDeleted()).build();
+                .barbershopId(feedback.getBarbershopId()).build();
     }
 }

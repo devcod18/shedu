@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageDTO {
+    private Long id;
     private Long chatId;
     private String text;
     private LocalDateTime createdAt;

@@ -3,6 +3,9 @@ package com.example.shedu.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -17,8 +20,8 @@ public class WorkDays {
     private Long id;
    @OneToOne(cascade = CascadeType.MERGE)
     private Barbershop barbershopId;
-    private String open;
-    private String close;
+    private LocalTime open;
+    private LocalTime close;
     @ManyToMany
     private List<Days> daysList;
 }

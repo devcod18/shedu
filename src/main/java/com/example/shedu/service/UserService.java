@@ -1,5 +1,7 @@
 package com.example.shedu.service;
 
+import com.example.shedu.entity.Barbershop;
+import com.example.shedu.entity.File;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
@@ -7,6 +9,8 @@ import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.auth.AuthRegister;
 import com.example.shedu.payload.res.ResUser;
+import com.example.shedu.repository.BarberShopRepository;
+import com.example.shedu.repository.FileRepository;
 import com.example.shedu.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +25,9 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FileRepository fileRepository;
+    private final BarberShopRepository barberShopRepository;
+    private final NotificationService notificationService;
 
     public ApiResponse getMe(User user) {
         return new ApiResponse(toResponseUser(user));
@@ -28,20 +35,24 @@ public class UserService {
 
     public ApiResponse getAllUsersByRole(int page, int size, UserRole role) {
         var users = userRepository.findAllByUserRole(role, PageRequest.of(page, size));
+        List<ResUser> userResponses = users.stream()
+                .map(this::toResponseUser)
+                .toList();
         return users.getTotalElements() == 0 ?
                 new ApiResponse(ResponseError.NOTFOUND("Users")) :
-                new ApiResponse(CustomPageable.builder()
-                        .page(users.getNumber())
-                        .size(users.getSize())
-                        .totalPage(users.getTotalPages())
-                        .totalElements(users.getTotalElements())
-                        .data(users.map(this::toResponseUser).toList())
-                        .build());
+                new ApiResponse(userResponses);
     }
 
+
     public ApiResponse updateUser(User user, AuthRegister authRegister) {
+        Barbershop barbershop = barberShopRepository.findById(authRegister.getBarbershopId()).orElse(null);
+        if (barbershop==null || !barbershop.isActive()){
+            return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
+        }
+        File file = fileRepository.findById(authRegister.getFileId()).orElse(null);
         user.setFullName(authRegister.getFullName());
-        user.setPhoneNumber(authRegister.getPhoneNumber());
+        user.setFile(file);
+        user.setEmail(authRegister.getEmail());
         user.setUpdated(LocalDateTime.now());
 
         if (authRegister.getPassword() != null && !authRegister.getPassword().isBlank()) {
@@ -49,6 +60,13 @@ public class UserService {
         }
 
         userRepository.save(user);
+        notificationService.saveNotification(
+                user,
+                "Hurmatli " + user.getFullName(),
+                "Profil muvaffaqiyatli yangilandi!",
+                0L,
+                false
+        );
         return new ApiResponse("success");
     }
 
