@@ -10,7 +10,7 @@ import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOrders;
 import com.example.shedu.payload.res.ResOrders;
 import com.example.shedu.repository.BarberShopRepository;
-import com.example.shedu.repository.OfferRepository;
+import com.example.shedu.repository.OffersRepository;
 import com.example.shedu.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OfferRepository offersRepository;
+    private final OffersRepository offersRepository;
     private final BarberShopRepository barberShopRepository;
     private final NotificationService notificationService;
 
@@ -80,19 +80,6 @@ public class OrderService {
                 }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
     }
 
-    public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
-        return orderRepository.findById(orderId)
-                .map(orders -> {
-                    orders.setOffers(offersRepository.findById(reqOrders.getServiceId()).orElse(null));
-                    orders.setUser(user);
-                    orders.setBookingDaytime(reqOrders.getBookingDaytime());
-                    orders.setDuration(reqOrders.getDuration());
-                    orders.setStatus(BookingStatus.PENDING);
-                    orderRepository.save(orders);
-                    return new ApiResponse("success");
-                }).orElse(new ApiResponse(ResponseError.NOTFOUND("Orders")));
-    }
-
     public ApiResponse getOrdersByBarbershop(User user) {
         List<Barbershop> barbershops = barberShopRepository.findByOwnerOrderByDesc(user.getId());
         if (barbershops.isEmpty()) {
@@ -114,7 +101,7 @@ public class OrderService {
 
     private ResOrders toResponse(Orders orders) {
         return ResOrders.builder()
-                .serviceId(orders.getId())
+                .serviceId(orders.getOffers().getId())
                 .userId(orders.getUser().getId())
                 .createdAt(orders.getCreatedAt())
                 .duration(orders.getDuration())

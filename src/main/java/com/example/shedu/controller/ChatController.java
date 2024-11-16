@@ -51,7 +51,7 @@ public class ChatController {
     @Operation(summary = "Yangi xabar yaratish", description = "Berilgan chat ID bo'yicha yangi xabar yaratish.")
     public ResponseEntity<ApiResponse> createMessage(@PathVariable Long chatId, @RequestBody MessageDTO messageDTO) {
         messageDTO.setChatId(chatId);
-        ApiResponse message = chatMessageService.createMessage(chatId,messageDTO);
+        ApiResponse message = chatMessageService.createMessage(chatId, messageDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 

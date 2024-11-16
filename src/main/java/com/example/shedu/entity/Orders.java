@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -31,11 +33,11 @@ public class Orders {
     @ManyToOne(optional = false)
     private Barbershop barbershop;
 
-    @Column(nullable = false)
-    private LocalDateTime bookingDaytime;
+    private LocalDate bookingDay;
 
-    @Column(nullable = false)
-    private Long duration;
+    private LocalTime startBooking;
+
+    private LocalTime endBooking;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
