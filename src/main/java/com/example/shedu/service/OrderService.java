@@ -92,10 +92,10 @@ public class OrderService {
     public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
         return orderRepository.findById(orderId)
                 .map(orders -> {
-                    orders.setOffers(offersRepository.findById(reqOrders.getServiceId()).orElse(null));
+                    orders.setOffers(offersRepository.findById(reqOrders.getOfferId()).orElse(null));
                     orders.setUser(user);
-                    orders.setBookingDaytime(reqOrders.getBookingDaytime());
-                    orders.setDuration(reqOrders.getDuration());
+                    orders.setStartBooking(reqOrders.getStartBooking());
+                    orders.setEndBooking(reqOrders.getEndBooking());
                     orders.setStatus(BookingStatus.PENDING);
                     orderRepository.save(orders);
                     return new ApiResponse("success");
