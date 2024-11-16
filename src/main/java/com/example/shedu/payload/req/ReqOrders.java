@@ -13,12 +13,12 @@ import java.time.LocalTime;
 @Builder
 public class ReqOrders {
     private Long offerId;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
+//    @DateTimeFormat(pattern = "dd-MM-yyyy")
     private LocalDate bookingDay;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime startBooking;
-    @DateTimeFormat(pattern = "HH:mm")
-    private LocalTime endBooking;
+//    @DateTimeFormat(pattern = "HH:mm")
+    private String startBooking;
+//    @DateTimeFormat(pattern = "HH:mm")
+    private String endBooking;
 
     private Long barbershopId;
 }

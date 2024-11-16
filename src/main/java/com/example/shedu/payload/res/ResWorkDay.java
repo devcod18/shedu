@@ -1,7 +1,6 @@
 package com.example.shedu.payload.res;
 
 import com.example.shedu.entity.Days;
-import com.example.shedu.entity.WorkDays;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 

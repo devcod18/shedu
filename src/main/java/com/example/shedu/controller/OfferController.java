@@ -5,7 +5,6 @@ import com.example.shedu.payload.req.ReqOffer;
 import com.example.shedu.service.OfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -25,17 +24,6 @@ public class OfferController {
         ApiResponse apiResponse = offersService.create(reqOffers);
         return ResponseEntity.ok(apiResponse);
     }
-
-    @GetMapping("/getByBarbershop/{barbershopId}/")
-    @PreAuthorize("hasAnyRole('ROLE_MASTER','ROLE_SUPER_ADMIN','ROLE_ADMIN')")
-    @Operation(summary = "Offerlarni ko'rish", description = "Barbershopni Offerlarni ko'rish")
-    public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,
-                                                       @RequestParam(name = "page", defaultValue = "0") int page,
-                                                       @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse apiResponse = offersService.getAll(size, page);
-        return ResponseEntity.ok(apiResponse);
-    }
-
     @Operation(summary = "Barcha Offerlarni ko'rish", description = "Barcha Offerlarni ko'rish")
     @GetMapping("/getAllOffers")
     public ResponseEntity<ApiResponse> getAllOffers(

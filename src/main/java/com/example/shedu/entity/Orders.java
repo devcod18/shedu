@@ -21,16 +21,16 @@ public class Orders {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Offer offers;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private User user;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Barbershop barbershop;
 
     private LocalDate bookingDay;

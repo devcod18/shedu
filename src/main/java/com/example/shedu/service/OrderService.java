@@ -32,16 +32,21 @@ public class OrderService {
     private final WorkDaysRepository workDaysRepository;
 
     public ApiResponse addOrder(ReqOrders reqOrders, User user) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        String currentDate = LocalDate.now().toString(); // Get today's date
+        LocalTime startTime = LocalTime.parse(currentDate + " " + reqOrders.getStartBooking(),
+                formatter);
+        LocalTime endTime = LocalTime.parse(currentDate + " " + reqOrders.getEndBooking(),
+                formatter);
+
+
         Barbershop barbershop = barberShopRepository.findById(reqOrders.getBarbershopId()).orElse(null);
-        if (barbershop == null){
+        if (barbershop == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
-        }
-        if (reqOrders.getBookingDay().isBefore(LocalDate.now())) {
-            return new ApiResponse(ResponseError.DEFAULT_ERROR("Siz bron qilayotgan sana bugungi kundan orqada bo'lmasligi kerak."));
         }
 
         boolean timeConflict = orderRepository.existsByBookingDayAndStartBookingLessThanEqualAndEndBookingGreaterThanEqual(
-                reqOrders.getBookingDay(), reqOrders.getStartBooking(), reqOrders.getEndBooking());
+                reqOrders.getBookingDay(), startTime, endTime);
         if (timeConflict) {
             return new ApiResponse(ResponseError.DEFAULT_ERROR("Bu vaqt oralig‘ida boshqa foydalanuvchi buyurtma qilingan."));
         }
@@ -52,41 +57,47 @@ public class OrderService {
         }
 
         Long barbershopId = barbershop.getId();
-        WorkDays workday = workDaysRepository.findByBarbershopIdAndDayOfWeek(barbershopId, reqOrders.getBookingDay().getDayOfWeek())
+        WorkDays workday = workDaysRepository.findByBarbershopId_Id(barbershopId)
                 .orElse(null);
 
         if (workday == null) {
             return new ApiResponse(ResponseError.NOTFOUND("Ish kuni"));
         }
 
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        LocalTime openTime = LocalTime.parse(workday.getOpen(), timeFormatter);
-        LocalTime closeTime = LocalTime.parse(workday.getClose(), timeFormatter);
 
-        if (reqOrders.getStartBooking().isBefore(openTime) || reqOrders.getEndBooking().isAfter(closeTime)) {
-            return new ApiResponse(ResponseError.DEFAULT_ERROR("Buyurtma vaqti ish vaqtiga mos kelmaydi."));
+        LocalTime openTime = workday.getOpen();
+        LocalTime closeTime = workday.getClose();
+
+        boolean checkBarberShopAndOrderTime = checkOrderTime(openTime, closeTime, startTime, endTime);
+
+
+//        if (reqOrders.getStartBooking().isBefore(openTime) || reqOrders.getEndBooking().isAfter(closeTime)) {
+//        }
+        if (checkBarberShopAndOrderTime) {
+
+            Orders orders = Orders.builder()
+                    .offers(offer)
+                    .user(user)
+                    .bookingDay(reqOrders.getBookingDay())
+                    .startBooking(startTime)
+                    .endBooking(endTime)
+                    .status(BookingStatus.PENDING)
+                    .barbershop(barbershop)
+                    .build();
+
+            orderRepository.save(orders);
+            notificationService.saveNotification(
+                    user,
+                    "Successfully ordered!",
+                    user.getFullName() + " siz muvaffaqiyatli buyurtma qildingiz!",
+                    0L,
+                    false
+            );
+            return new ApiResponse("Ordered!");
         }
+        return new ApiResponse(ResponseError.DEFAULT_ERROR("Buyurtma vaqti ish vaqtiga mos kelmaydi."));
 
-        Orders orders = Orders.builder()
-                .offers(offer)
-                .user(user)
-                .bookingDay(reqOrders.getBookingDay())
-                .startBooking(reqOrders.getStartBooking())
-                .endBooking(reqOrders.getEndBooking())
-                .status(BookingStatus.PENDING)
-                .build();
-
-        orderRepository.save(orders);
-        notificationService.saveNotification(
-                user,
-                "Successfully ordered!",
-                user.getFullName() + " siz muvaffaqiyatli buyurtma qildingiz!",
-                0L,
-                false
-        );
-        return new ApiResponse("Ordered!");
     }
-
 
 
     public ApiResponse getAllOrdersByUser(User user) {
@@ -113,12 +124,14 @@ public class OrderService {
     }
 
     public ApiResponse updateOrder(Long orderId, ReqOrders reqOrders, User user) {
+        LocalTime starTime = LocalTime.parse(reqOrders.getStartBooking());
+        LocalTime endTime = LocalTime.parse(reqOrders.getEndBooking());
         return orderRepository.findById(orderId)
                 .map(orders -> {
                     orders.setOffers(offersRepository.findById(reqOrders.getOfferId()).orElse(null));
                     orders.setUser(user);
-                    orders.setStartBooking(reqOrders.getStartBooking());
-                    orders.setEndBooking(reqOrders.getEndBooking());
+                    orders.setStartBooking(starTime);
+                    orders.setEndBooking(endTime);
                     orders.setStatus(BookingStatus.PENDING);
                     orderRepository.save(orders);
                     return new ApiResponse("success");
@@ -153,6 +166,14 @@ public class OrderService {
                 .start(orders.getStartBooking())
                 .end(orders.getEndBooking())
                 .status(orders.getStatus()).build();
+    }
+
+
+    public static boolean checkOrderTime(LocalTime openTime, LocalTime closeTime,
+                                         LocalTime orderStartTime, LocalTime orderEndTime) {
+        // Tekshiruv shartlari
+        return !orderStartTime.isBefore(openTime) &&
+                !orderEndTime.isAfter(closeTime);
     }
 
 }

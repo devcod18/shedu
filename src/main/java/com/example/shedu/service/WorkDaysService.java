@@ -13,6 +13,9 @@ import com.example.shedu.repository.WorkDaysRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +27,22 @@ public class WorkDaysService {
     private final WorkDaysRepository workDaysRepository;
     private final DaysRepository daysRepository;
 
+
+
+
+private LocalTime startTimeParse(String reqWorkDays){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+String currentDate = LocalDate.now().toString(); // Get today's dat
+    return LocalTime.parse(currentDate + " " + reqWorkDays, formatter);
+}
+private LocalTime endTimeParse(String reqWorkDays){
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm");
+String currentDate = LocalDate.now().toString(); // Get today's dat
+    return LocalTime.parse(currentDate + " " + reqWorkDays, formatter);
+}
+
     public ApiResponse saveWorkDays(ReqWorkDays reqWorkDays,Long id) {
+
         boolean b = workDaysRepository.existsByBarbershopId_Id(id);
         if (b) {
             return new ApiResponse(ResponseError.ALREADY_EXIST("WorkDays"));
@@ -42,8 +60,8 @@ public class WorkDaysService {
         WorkDays workDays = WorkDays.builder()
                 .barbershopId(barbershop)
                 .daysList(daysList)
-                .close(reqWorkDays.getCloseTime())
-                .open(reqWorkDays.getOpenTime())
+                .close(endTimeParse(reqWorkDays.getCloseTime()))
+                .open(startTimeParse(reqWorkDays.getOpenTime()))
                 .build();
         workDaysRepository.save(workDays);
         return new ApiResponse("success");
@@ -57,8 +75,8 @@ public class WorkDaysService {
                 daysList.add(daysRepository.findById(i).orElse(null));
             }
             workDays.setDaysList(daysList);
-            workDays.setOpen(reqWorkDays.getOpenTime());
-            workDays.setClose(reqWorkDays.getCloseTime());
+            workDays.setOpen(startTimeParse(reqWorkDays.getOpenTime()));
+            workDays.setClose(endTimeParse(reqWorkDays.getCloseTime()));
             workDaysRepository.save(workDays);
         }
         return new ApiResponse("success");
@@ -69,8 +87,8 @@ public class WorkDaysService {
         if (workDays != null) {
             ResWorkDay resWorkDay = new ResWorkDay();
             resWorkDay.setDayOfWeek(workDays.getDaysList());
-            resWorkDay.setCloseTime(workDays.getClose());
-            resWorkDay.setOpenTime(workDays.getOpen());
+            resWorkDay.setCloseTime(workDays.getClose().toString());
+            resWorkDay.setOpenTime(workDays.getOpen().toString());
             resWorkDay.setId(workDays.getId());
             resWorkDay.setBarbershopId(workDays.getBarbershopId().getId());
 
