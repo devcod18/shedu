@@ -37,7 +37,6 @@ public class FeedbackService {
             return new ApiResponse(ResponseError.NOTFOUND("Barbershop"));
         }
 
-
         Feedback feedback = Feedback.builder()
                 .rating(reqFeedback.getRating())
                 .comment(reqFeedback.getComment())
@@ -53,6 +52,21 @@ public class FeedbackService {
                 0L,
                 false
         );
+        return new ApiResponse("success");
+    }
+
+    public ApiResponse updateFeedback(Long id,ReqFeedback reqFeedback, User user) {
+        Feedback feedback = feedbackRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Feedback"));
+        }
+
+        assert feedback != null;
+        feedback.setRating(reqFeedback.getRating());
+        feedback.setComment(reqFeedback.getComment());
+        feedback.setUser(user);
+        feedbackRepository.save(feedback);
+
         return new ApiResponse("success");
     }
 

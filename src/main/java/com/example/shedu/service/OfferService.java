@@ -117,10 +117,20 @@ public class OfferService {
         return ResOffer.builder()
                 .id(offers.getId())
                 .price(offers.getPrice())
+                .info(offers.getInfo())
                 .offerTypeTitle(offers.getOfferType().getTitle())
                 .isDeleted(offers.isDeleted())
                 .build();
     }// offerlarni response qilib beradi
+    public  ApiResponse changeStatus(Long id,boolean status) {
+        Offer offer= offerRepository.findById(id).orElse(null);
+        if (offer == null) {
+            return new ApiResponse(ResponseError.NOTFOUND("Offer"));
+        }
+        offer.setDeleted(status);
+        offerRepository.save(offer);
+        return new ApiResponse("Success");
+    }
 
    public ResOffer getById(Long id) {
         Offer offer = offerRepository.findByBarberShopId(id);
@@ -129,4 +139,5 @@ public class OfferService {
         }
         return null;
    }
+
 }

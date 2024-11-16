@@ -3,6 +3,7 @@ package com.example.shedu.service;
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Favorite;
 import com.example.shedu.entity.User;
+import com.example.shedu.entity.enums.UserRole;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
@@ -45,7 +46,7 @@ public class FavoriteService {
 
         if (reqFavorite.getBarberId() != null && reqFavorite.getBarberId() != 0) {
             barber = userRepository.findById(reqFavorite.getBarberId()).orElse(null);
-            if (barber == null) {
+            if (barber == null || !barber.getUserRole().equals(UserRole.ROLE_BARBER)) {
                 return new ApiResponse(ResponseError.NOTFOUND("Barber"));
             }
 

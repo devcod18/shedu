@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 
 @Service
@@ -41,9 +41,7 @@ public class OfferTypeService{
         Page<OfferType> offerTypeList= offerTypeRepository.findAll(PageRequest.of(page, size));
         List<ResOfferType> resOfferTypeList=new ArrayList<>();
         for (OfferType offerType:offerTypeList) {
-            ResOfferType resOfferType=new ResOfferType();
-            resOfferType.setId(offerType.getId());
-            resOfferType.setName(resOfferType.getName());
+            ResOfferType resOfferType=toResOfferType(offerType);
             resOfferTypeList.add(resOfferType);
         }
         CustomPageable customPageable= CustomPageable.builder()

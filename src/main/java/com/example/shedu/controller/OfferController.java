@@ -5,6 +5,7 @@ import com.example.shedu.payload.req.ReqOffer;
 import com.example.shedu.service.OfferService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class OfferController {
     public ResponseEntity<ApiResponse> getByBarbershop(@PathVariable Long barbershopId,
                                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                                        @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse apiResponse = offersService.getAll( page, size);
+        ApiResponse apiResponse = offersService.getAll(size, page);
         return ResponseEntity.ok(apiResponse);
     }
 
@@ -40,7 +41,7 @@ public class OfferController {
     public ResponseEntity<ApiResponse> getAllOffers(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "5") int size) {
-        ApiResponse allOffers = offersService.getAll(size,page);
+        ApiResponse allOffers = offersService.getAll(size, page);
         return ResponseEntity.ok(allOffers);
     }
 
@@ -53,5 +54,11 @@ public class OfferController {
         return ResponseEntity.ok(apiResponse);
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_MASTER')")
+    @PutMapping("/deleteOffers/{Id}")
+    @Operation(summary = "Offerni deleted qilish ",description = "Offer deleted ")
+    public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long Id,@RequestParam boolean b) {
+        ApiResponse apiResponse=offersService.changeStatus(Id,b);
+        return ResponseEntity.ok(apiResponse);
+    }
 }
