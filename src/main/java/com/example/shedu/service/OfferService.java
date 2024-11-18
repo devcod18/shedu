@@ -124,6 +124,7 @@ public class OfferService {
                 .barberShopTitle(offers.getBarberShop().getTitle())
                 .info(offers.getInfo())
                 .offerTypeTitle(offers.getOfferType().getTitle())
+                .deleted(offers.isDeleted())
                 .build();
     }// offerlarni response qilib beradi
     public  ApiResponse changeStatus(Long id,boolean status) {

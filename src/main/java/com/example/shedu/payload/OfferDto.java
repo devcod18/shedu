@@ -26,4 +26,5 @@ public class OfferDto implements Serializable {
     private final String info;
     private final Long offerTypeId;
     private final String offerTypeTitle;
+    private final boolean deleted;
 }
