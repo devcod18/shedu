@@ -2,12 +2,12 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Offer;
+import com.example.shedu.payload.OfferDto;
 import com.example.shedu.entity.OfferType;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOffer;
-import com.example.shedu.payload.res.ResOffer;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferRepository;
 import com.example.shedu.repository.OfferTypeRepository;
@@ -101,7 +101,7 @@ public class OfferService {
 
     public ApiResponse getAll(int size, int page) {
         Page<Offer> offers = offerRepository.findAll( PageRequest.of(page, size));
-        List<ResOffer> resOffers = offers.stream()
+        List<OfferDto> resOffers = offers.stream()
                 .map(this::toResponse)
                 .toList();
         CustomPageable customPageable = CustomPageable.builder()
@@ -113,13 +113,17 @@ public class OfferService {
                 .build();
         return new ApiResponse(customPageable);
     }
-     private ResOffer toResponse(Offer offers) {
-        return ResOffer.builder()
+     private OfferDto toResponse(Offer offers) {
+        return OfferDto.builder()
                 .id(offers.getId())
                 .price(offers.getPrice())
+                .barberShopId(offers.getBarberShop().getId())
+                .offerTypeTitle(offers.getOfferType().getTitle())
+                .barberShopPhoneNumber(offers.getBarberShop().getPhoneNumber())
+                .barberShopRegion(offers.getBarberShop().getRegion())
+                .barberShopTitle(offers.getBarberShop().getTitle())
                 .info(offers.getInfo())
                 .offerTypeTitle(offers.getOfferType().getTitle())
-                .isDeleted(offers.isDeleted())
                 .build();
     }// offerlarni response qilib beradi
     public  ApiResponse changeStatus(Long id,boolean status) {
@@ -132,7 +136,7 @@ public class OfferService {
         return new ApiResponse("Success");
     }
 
-   public ResOffer getById(Long id) {
+   public OfferDto getById(Long id) {
         Offer offer = offerRepository.findByBarberShopId(id);
         if (offer != null) {
             return toResponse(offer);
