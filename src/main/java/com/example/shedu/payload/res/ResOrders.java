@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResOrders {
+    private Long id;
     private Long offerId;
     private Long userId;
     private LocalDateTime createdAt;

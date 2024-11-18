@@ -43,7 +43,7 @@ public class OfferController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_MASTER')")
-    @PutMapping("/deleteOffers/{Id}")
+    @DeleteMapping("/deleteOffers/{Id}")
     @Operation(summary = "Offerni deleted qilish ",description = "Offer deleted ")
     public ResponseEntity<ApiResponse> deleteOffer(@PathVariable Long Id,@RequestParam boolean b) {
         ApiResponse apiResponse=offersService.changeStatus(Id,b);

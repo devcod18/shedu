@@ -13,12 +13,21 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Orders, Long> {
     List<Orders> findAllByUserId(Long userId);
     List<Orders> findByBarbershopId(Long id);
-    @Query("SELECT COUNT(o) > 0 FROM Orders o WHERE o.bookingDay = :bookingDay " +
-            "AND o.startBooking < :endBooking AND o.endBooking > :startBooking")
-    boolean existsByBookingDayAndStartBookingLessThanEqualAndEndBookingGreaterThanEqual(
+    @Query("""
+    SELECT COUNT(o) > 0
+    FROM Orders o
+    WHERE o.barbershop.id = :barbershopId
+      AND o.bookingDay = :bookingDay
+      AND (
+           (o.startBooking <= :endBooking AND o.endBooking >= :startBooking)
+      )
+""")
+    boolean existsByBarbershopIdAndBookingDayAndStartBookingLessThanEqualAndEndBookingGreaterThanEqual(
+            @Param("barbershopId") Long barbershopId,
             @Param("bookingDay") LocalDate bookingDay,
             @Param("startBooking") LocalTime startBooking,
             @Param("endBooking") LocalTime endBooking);
+
 }
 
 
