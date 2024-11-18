@@ -46,4 +46,16 @@ public class FeedbackController {
         ApiResponse apiResponse = feedbackService.deleteFeedback(deleteId);
         return ResponseEntity.ok(apiResponse);
     }
+
+    @PutMapping("/update/{feedbackId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @Operation(summary = "Fikrni tahrirlash")
+    public ResponseEntity<ApiResponse> updateFeedback(
+        @CurrentUser User user,
+        @PathVariable Long feedbackId,
+        @RequestBody ReqFeedback reqFeedback
+    ){
+        ApiResponse apiResponse = feedbackService.updateFeedback(feedbackId, reqFeedback, user);
+        return ResponseEntity.ok(apiResponse);
+    }
 }

@@ -55,7 +55,7 @@ public class OfferService {
                 .barberShop(barberShop)
                 .offerType(offerType)
                 .info(reqOffer.getInfo())
-                .build();
+                .Deleted(false).build();
 
         offerRepository.save(newOffer);
         return new ApiResponse("Success");
