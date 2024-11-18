@@ -7,10 +7,7 @@ import com.example.shedu.entity.Notification;
 import com.example.shedu.entity.User;
 import com.example.shedu.entity.enums.BarbershopRegion;
 import com.example.shedu.entity.enums.UserRole;
-import com.example.shedu.payload.ApiResponse;
-import com.example.shedu.payload.BarbershopDto;
-import com.example.shedu.payload.CustomPageable;
-import com.example.shedu.payload.ResponseError;
+import com.example.shedu.payload.*;
 import com.example.shedu.payload.req.ReqBarbershop;
 import com.example.shedu.payload.res.ResBarbershop;
 

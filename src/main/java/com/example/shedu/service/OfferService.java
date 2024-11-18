@@ -2,12 +2,12 @@ package com.example.shedu.service;
 
 import com.example.shedu.entity.Barbershop;
 import com.example.shedu.entity.Offer;
-import com.example.shedu.payload.OfferDto;
 import com.example.shedu.entity.OfferType;
 import com.example.shedu.payload.ApiResponse;
 import com.example.shedu.payload.CustomPageable;
 import com.example.shedu.payload.ResponseError;
 import com.example.shedu.payload.req.ReqOffer;
+import com.example.shedu.payload.res.ResOffer;
 import com.example.shedu.repository.BarberShopRepository;
 import com.example.shedu.repository.OfferRepository;
 import com.example.shedu.repository.OfferTypeRepository;
@@ -101,7 +101,7 @@ public class OfferService {
 
     public ApiResponse getAll(int size, int page) {
         Page<Offer> offers = offerRepository.findAll( PageRequest.of(page, size));
-        List<OfferDto> resOffers = offers.stream()
+        List<ResOffer> resOffers = offers.stream()
                 .map(this::toResponse)
                 .toList();
         CustomPageable customPageable = CustomPageable.builder()
@@ -113,8 +113,8 @@ public class OfferService {
                 .build();
         return new ApiResponse(customPageable);
     }
-     private OfferDto toResponse(Offer offers) {
-        return OfferDto.builder()
+     private ResOffer toResponse(Offer offers) {
+        return ResOffer.builder()
                 .id(offers.getId())
                 .price(offers.getPrice())
                 .barberShopId(offers.getBarberShop().getId())
@@ -137,7 +137,7 @@ public class OfferService {
         return new ApiResponse("Success");
     }
 
-   public OfferDto getById(Long id) {
+   public ResOffer getById(Long id) {
         Offer offer = offerRepository.findByBarberShopId(id);
         if (offer != null) {
             return toResponse(offer);
